@@ -1,0 +1,5 @@
+package com.medicall.storage.db.core.common.enums;
+
+public enum Gender {
+    MALE, FEMALE
+}

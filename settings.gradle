@@ -1,7 +1,6 @@
 rootProject.name = 'medicall'
 include 'medicall-api-patient'
 include 'medicall-core'
-include 'medicall-stoarage'
 include 'medicall-storage'
 include 'medicall-api-common'
 include 'medicall-api-medical'
