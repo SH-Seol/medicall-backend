@@ -2,6 +2,8 @@ HELP.md
 .gradle
 build/
 .java-version
+**/application.yml
+**/.env
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
