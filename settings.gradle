@@ -3,5 +3,6 @@ include 'medicall-api-patient'
 include 'medicall-core'
 include 'medicall-storage'
 include 'medicall-api-common'
-include 'medicall-api-medical'
+include 'medicall-api-doctor'
+include 'medicall-api-hospital'
 
