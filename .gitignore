@@ -2,7 +2,6 @@ HELP.md
 .gradle
 build/
 .java-version
-**/*.yml
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -45,3 +44,6 @@ infrastructure/db/mysql/mysql-conf
 ### .env ###
 .env
 /*/**/.env
+
+### application.yml ###
+**/application*.yml
