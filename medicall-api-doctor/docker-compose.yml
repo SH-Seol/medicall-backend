@@ -1,0 +1,14 @@
+services:
+  medicall-doctor:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+      target: doctor-runtime
+    ports:
+      - "8081:8081"
+    networks:
+      - medicall-network
+
+networks:
+  medicall-network:
+    external: true
