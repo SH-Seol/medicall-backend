@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:8.0.42
     container_name: medicall-mysql
     environment:
       MYSQL_DATABASE: ${DB_NAME}

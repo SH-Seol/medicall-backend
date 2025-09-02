@@ -2,8 +2,7 @@ HELP.md
 .gradle
 build/
 .java-version
-**/application.yml
-**/.env
+**/*.yml
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -38,3 +37,11 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### volumns ###
+infrastructure/db/mysql/data
+infrastructure/db/mysql/mysql-conf
+
+### .env ###
+.env
+/*/**/.env
