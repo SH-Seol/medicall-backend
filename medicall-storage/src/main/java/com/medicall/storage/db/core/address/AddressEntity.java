@@ -2,12 +2,21 @@ package com.medicall.storage.db.core.address;
 
 import com.medicall.domain.address.Address;
 import com.medicall.storage.db.core.common.domain.BaseEntity;
+import com.medicall.storage.db.core.patient.PatientEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
 public class AddressEntity extends BaseEntity {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_id")
+    private PatientEntity patient;
+
     // 카카오 API의 우편번호 (5자리)
     @Column(nullable = false, length = 5)
     private String zoneCode;

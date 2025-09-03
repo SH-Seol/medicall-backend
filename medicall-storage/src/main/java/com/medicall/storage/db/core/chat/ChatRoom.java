@@ -33,7 +33,7 @@ public class ChatRoom extends BaseEntity {
     @JoinColumn(name = "hospital_id")
     private HospitalEntity hospital;
 
-    @OneToMany(mappedBy = "ChatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdAt ASC")
     private List<ChatMessage> messages = new ArrayList<>();
 
