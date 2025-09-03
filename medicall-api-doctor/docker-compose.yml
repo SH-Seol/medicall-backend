@@ -6,6 +6,12 @@ services:
       target: doctor-runtime
     ports:
       - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - SERVER_PORT=8081
+      - SPRING_DATASOURCE_URL=${SPRING_DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DB_PW}
     networks:
       - medicall-network
 
