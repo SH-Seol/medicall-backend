@@ -6,7 +6,9 @@ import com.medicall.storage.db.core.doctor.DoctorEntity;
 import com.medicall.storage.db.core.doctor.DoctorJpaRepository;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class AppointmentCoreRepository implements AppointmentRepository {
 
     private final AppointmentJpaRepository appointmentJpaRepository;

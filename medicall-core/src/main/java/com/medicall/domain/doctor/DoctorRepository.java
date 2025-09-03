@@ -3,7 +3,9 @@ package com.medicall.domain.doctor;
 import com.medicall.domain.appointment.Appointment;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface DoctorRepository {
     Long save(Doctor newDoctor);
     List<Appointment> getAppointmentsByDoctor(Doctor doctor);

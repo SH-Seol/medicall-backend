@@ -3,7 +3,9 @@ package com.medicall.storage.db.core.patient;
 import com.medicall.domain.Patient.Patient;
 import com.medicall.domain.Patient.PatientRepository;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class PatientCoreRepository implements PatientRepository {
 
     private final PatientJpaRepository patientJpaRepository;

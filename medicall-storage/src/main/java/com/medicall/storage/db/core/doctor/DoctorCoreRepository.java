@@ -8,7 +8,9 @@ import com.medicall.storage.db.core.department.DepartmentEntity;
 import com.medicall.storage.db.core.department.DepartmentJpaRepository;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class DoctorCoreRepository implements DoctorRepository {
 
     private final DoctorJpaRepository doctorJpaRepository;

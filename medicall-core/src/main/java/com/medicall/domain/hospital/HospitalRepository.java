@@ -3,7 +3,9 @@ package com.medicall.domain.hospital;
 import com.medicall.domain.appointment.Appointment;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface HospitalRepository {
     Long save(NewHospital newHospital, List<OperatingTime> operatingTimes);
     List<Appointment> findAppointmentsByHospitalId(Long id);

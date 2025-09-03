@@ -3,7 +3,9 @@ package com.medicall.storage.db.core.department;
 import com.medicall.domain.department.Department;
 import com.medicall.domain.department.DepartmentRepository;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class DepartmentCoreRepository implements DepartmentRepository {
 
     private final DepartmentJpaRepository departmentJpaRepository;

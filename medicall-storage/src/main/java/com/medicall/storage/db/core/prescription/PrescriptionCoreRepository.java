@@ -19,7 +19,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class PrescriptionCoreRepository implements PrescriptionRepository {
 
     private final PrescriptionJpaRepository prescriptionJpaRepository;

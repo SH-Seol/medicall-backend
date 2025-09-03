@@ -12,7 +12,9 @@ import com.medicall.storage.db.core.patient.PatientJpaRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class TreatmentCoreRepository implements TreatmentRepository {
 
     private final TreatmentJpaRepository treatmentJpaRepository;

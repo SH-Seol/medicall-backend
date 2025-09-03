@@ -5,7 +5,9 @@ import com.medicall.domain.medicine.MedicineRepository;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class MedicineCoreRepository implements MedicineRepository {
 
     private final MedicineJpaRepository medicineJpaRepository;
