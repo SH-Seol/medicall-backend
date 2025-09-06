@@ -1,6 +1,8 @@
 dependencies {
     implementation project(':medicall-core')
     implementation project(':medicall-storage')
+    implementation project(':medicall-api-common')
+
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
