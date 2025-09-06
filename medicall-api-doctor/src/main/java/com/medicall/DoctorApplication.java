@@ -2,8 +2,12 @@ package com.medicall;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
+
+import com.medicall.common.config.HealthCheckConfig;
 
 @SpringBootApplication
+@Import(HealthCheckConfig.class)
 public class DoctorApplication {
 
 	public static void main(String[] args) {
