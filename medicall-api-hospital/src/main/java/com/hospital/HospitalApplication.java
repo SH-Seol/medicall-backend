@@ -1,4 +1,4 @@
-package com.medicall;
+package com.hospital;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,10 +8,8 @@ import com.medicall.common.config.HealthCheckConfig;
 
 @SpringBootApplication
 @Import(HealthCheckConfig.class)
-public class DoctorApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(DoctorApplication.class, args);
-	}
-
+public class HospitalApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(HospitalApplication.class, args);
+    }
 }
