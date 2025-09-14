@@ -12,6 +12,8 @@ public enum AuthErrorType {
     MALFORMED_TOKEN(AuthErrorCode.AUTH05, HttpStatus.UNAUTHORIZED, "잘못된 형식의 토큰입니다.", LogLevel.WARN),
     INVALID_SIGNATURE(AuthErrorCode.AUTH06, HttpStatus.UNAUTHORIZED, "토큰 서명이 올바르지 않습니다.", LogLevel.WARN),
     TOKEN_NOT_PROVIDED(AuthErrorCode.AUTH07, HttpStatus.UNAUTHORIZED, "토큰이 제공되지 않았습니다.", LogLevel.WARN),
+    SAVING_REFRESH_TOKEN_FAILED(AuthErrorCode.AUTH08, HttpStatus.UNAUTHORIZED, "리프래시 토큰 저장에 실패하였습니다.", LogLevel.WARN),
+    IS_BLACKED_TOKEN(AuthErrorCode.AUTH09, HttpStatus.UNAUTHORIZED, "블랙리스트에 지정된 토큰입니다.", LogLevel.WARN),
     ;
 
     private final AuthErrorCode authErrorCode;

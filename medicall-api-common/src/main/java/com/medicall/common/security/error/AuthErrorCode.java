@@ -8,6 +8,8 @@ public enum AuthErrorCode {
     AUTH05("AUTH-05"),
     AUTH06("AUTH-06"),
     AUTH07("AUTH-07"),
+    AUTH08("AUTH-08"),
+    AUTH09("AUTH-09"),
     ;
 
     private final String errorCode;
