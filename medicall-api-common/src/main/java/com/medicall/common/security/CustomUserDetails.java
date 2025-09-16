@@ -2,7 +2,6 @@ package com.medicall.common.security;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,5 +28,17 @@ public record CustomUserDetails(
     @Override
     public String getUsername() {
         return userId.toString();
+    }
+
+    public boolean isDoctor(){
+        return serviceType.equals("Doctor");
+    }
+
+    public boolean isPatient(){
+        return serviceType.equals("Patient");
+    }
+
+    public boolean isHospital(){
+        return serviceType.equals("Hospital");
     }
 }
