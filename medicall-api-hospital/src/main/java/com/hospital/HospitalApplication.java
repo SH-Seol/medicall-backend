@@ -2,12 +2,13 @@ package com.hospital;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Import;
-
-import com.medicall.common.config.HealthCheckConfig;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@Import(HealthCheckConfig.class)
+@ComponentScan(basePackages = {
+        "com.medicall.domain",
+        "com.medicall.common"
+})
 public class HospitalApplication {
     public static void main(String[] args) {
         SpringApplication.run(HospitalApplication.class, args);
