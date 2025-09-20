@@ -15,7 +15,8 @@ public enum AuthErrorType {
     SAVING_REFRESH_TOKEN_FAILED(AuthErrorCode.AUTH08, HttpStatus.UNAUTHORIZED, "리프래시 토큰 저장에 실패하였습니다.", LogLevel.WARN),
     IS_BLACKED_TOKEN(AuthErrorCode.AUTH09, HttpStatus.UNAUTHORIZED, "블랙리스트에 지정된 토큰입니다.", LogLevel.WARN),
     ACCESS_DENIED(AuthErrorCode.AUTH10, HttpStatus.FORBIDDEN, "접근 거부되었습니다.", LogLevel.WARN),
-    SERVICE_TYPE_MISMATCH(AuthErrorCode.AUTH11, HttpStatus.BAD_REQUEST, "잘못된 서비스 타입입니다.", LogLevel.WARN)
+    SERVICE_TYPE_MISMATCH(AuthErrorCode.AUTH11, HttpStatus.BAD_REQUEST, "잘못된 서비스 타입입니다.", LogLevel.WARN),
+    UNSUPPORTED_OAUTH_PROVIDER(AuthErrorCode.AUTH12, HttpStatus.BAD_REQUEST, "지원하지 않는 OAuth 제공자입니다.", LogLevel.WARN),
     ;
 
     private final AuthErrorCode authErrorCode;
