@@ -1,5 +1,7 @@
 package com.medicall.storage.db.core.doctor;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,4 +15,5 @@ public interface DoctorJpaRepository extends JpaRepository<DoctorEntity, Long> {
     @Query("SELECT d FROM DoctorEntity d LEFT JOIN FETCH d.hospital WHERE d.id = :doctorId")
     DoctorEntity findByIdWithOptionalHospital(@Param("doctorId") Long doctorId);
 
+    Optional<DoctorEntity> findByOauthIdAndOauthProvider(String oauthId, String oauthProvider);
 }

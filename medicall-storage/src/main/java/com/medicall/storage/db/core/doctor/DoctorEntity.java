@@ -28,19 +28,26 @@ public class DoctorEntity extends BaseEntity {
     private HospitalEntity hospital;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id", nullable = false)
+    @JoinColumn(name = "department_id")
     private DepartmentEntity department;
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppointmentEntity> appointments;
 
+    private String oauthId;
+
+    private String oauthProvider;
+
     protected DoctorEntity() {}
 
-    public DoctorEntity(String name, String imageUrl, String introduction, DepartmentEntity department) {
+    public DoctorEntity(String name, String imageUrl, String introduction, DepartmentEntity department
+    , String oauthId, String oauthProvider) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.introduction = introduction;
         this.department = department;
+        this.oauthId = oauthId;
+        this.oauthProvider = oauthProvider;
     }
 
     public String getName() {
@@ -67,6 +74,14 @@ public class DoctorEntity extends BaseEntity {
         return appointments;
     }
 
+    public String getOauthId() {
+        return oauthId;
+    }
+
+    public String getOauthProvider() {
+        return oauthProvider;
+    }
+
     public Doctor toDomainModel(){
         return new Doctor(
                 this.id,
@@ -74,7 +89,9 @@ public class DoctorEntity extends BaseEntity {
                 this.hospital != null ? this.hospital.toDomainModel() : null,
                 this.introduction,
                 this.imageUrl,
-                this.department.toDomainModel()
+                this.department.toDomainModel(),
+                this.oauthId,
+                this.oauthProvider
         );
     }
 

@@ -7,8 +7,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DoctorRepository {
-    Long save(Doctor newDoctor);
+    Doctor save(Doctor newDoctor);
     List<Appointment> getAppointmentsByDoctor(Doctor doctor);
     Optional<Doctor> findById(Long id);
     boolean isDoctorBelongsToHospital(Long doctorId);
+    Optional<Doctor> findByOAuthInfo(String oauthId, String provider);
 }

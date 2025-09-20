@@ -21,13 +21,13 @@ public class DoctorCoreRepository implements DoctorRepository {
         this.departmentJpaRepository = departmentJpaRepository;
     }
 
-    public Long save(Doctor newDoctor) {
+    public Doctor save(Doctor newDoctor) {
         DepartmentEntity department = departmentJpaRepository.getReferenceById(newDoctor.department()
                 .id());
         DoctorEntity savedDoctor = doctorJpaRepository.save(new DoctorEntity(newDoctor.name(), newDoctor.imageUrl(),
-                newDoctor.introduction(), department));
+                newDoctor.introduction(), department, newDoctor.oauthId(), newDoctor.provider()));
 
-        return savedDoctor.getId();
+        return savedDoctor.toDomainModel();
     }
 
     public List<Appointment> getAppointmentsByDoctor(Doctor doctor) {
@@ -50,5 +50,9 @@ public class DoctorCoreRepository implements DoctorRepository {
         DoctorEntity doctorEntity = doctorJpaRepository.findByIdWithOptionalHospital(doctorId);
 
         return doctorEntity.getHospital() != null;
+    }
+
+    public Optional<Doctor> findByOAuthInfo(String oauthId, String provider){
+        return doctorJpaRepository.findByOauthIdAndOauthProvider(oauthId, provider).map(DoctorEntity::toDomainModel);
     }
 }

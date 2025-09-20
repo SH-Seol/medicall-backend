@@ -11,7 +11,7 @@ public class DoctorWriter {
         this.doctorRepository = doctorRepository;
     }
 
-    public Long createDoctor(Doctor newDoctor) {
+    public Doctor createDoctor(Doctor newDoctor) {
         return doctorRepository.save(newDoctor);
     }
 }

@@ -21,9 +21,9 @@ public class DoctorService {
         this.departmentReader = departmentReader;
     }
 
-    public Long createDoctor(NewDoctor newDoctor){
+    public Doctor registerDepartment(NewDoctor newDoctor){
         Department department = departmentReader.findById(newDoctor.departmentId());
-        Doctor doctorToCreate = new Doctor(newDoctor.name(), newDoctor.introduction(), null, newDoctor.imageUrl(), department);
+        Doctor doctorToCreate = new Doctor(newDoctor.name(), newDoctor.introduction(), null, newDoctor.imageUrl(), department, null, null);
         return doctorWriter.createDoctor(doctorToCreate);
     }
 
