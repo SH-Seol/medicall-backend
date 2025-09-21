@@ -8,6 +8,8 @@ public record NewHospital(
         String telephoneNumber,
         Address address,
         String imageUrl,
-        List<Long> departments
+        List<Long> departments,
+        String oauthId,
+        String provider
 ) {
 }

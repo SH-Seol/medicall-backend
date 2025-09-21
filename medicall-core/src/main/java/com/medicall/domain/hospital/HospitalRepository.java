@@ -14,4 +14,5 @@ public interface HospitalRepository {
     void updateOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes);
     Optional<Hospital> findById(Long hospitalId);
     List<Hospital> findAllByKeyword(String keyword);
+    Optional<Hospital> findByOAuthInfo(String oauthId, String provider);
 }

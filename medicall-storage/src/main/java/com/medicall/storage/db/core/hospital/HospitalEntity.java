@@ -55,18 +55,20 @@ public class HospitalEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private BusinessStatus businessStatus;
 
+    private String oauthId;
+
+    private String oauthProvider;
+
     protected HospitalEntity() {}
 
-    public List<AppointmentEntity> getAppointments() {
-        return appointments;
-    }
-
-    public HospitalEntity(String name, String telephoneNumber, AddressEntity address, String imageUrl) {
+    public HospitalEntity(String name, String telephoneNumber, AddressEntity address, String imageUrl, String oauthId, String oauthProvider) {
         this.name = name;
         this.telephoneNumber = telephoneNumber;
         this.address = address;
         this.imageUrl = imageUrl;
         this.registrationStatus = RegistrationStatus.PENDING;
+        this.oauthId = oauthId;
+        this.oauthProvider = oauthProvider;
     }
 
     public String getName() {
@@ -103,6 +105,18 @@ public class HospitalEntity extends BaseEntity {
 
     public BusinessStatus getBusinessStatus() {
         return businessStatus;
+    }
+
+    public List<AppointmentEntity> getAppointments() {
+        return appointments;
+    }
+
+    public String getOauthId() {
+        return oauthId;
+    }
+
+    public String getOauthProvider() {
+        return oauthProvider;
     }
 
     public void addDepartments(List<DepartmentEntity> departments) {

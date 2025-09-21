@@ -4,6 +4,8 @@ import com.medicall.domain.appointment.Appointment;
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,5 +27,9 @@ public class HospitalReader {
 
     public List<Hospital> findAllByKeyword(String keyword) {
         return hospitalRepository.findAllByKeyword(keyword);
+    }
+
+    public Optional<Hospital> findByOAuthInfo(String oauthId, String provider) {
+        return hospitalRepository.findByOAuthInfo(oauthId, provider);
     }
 }

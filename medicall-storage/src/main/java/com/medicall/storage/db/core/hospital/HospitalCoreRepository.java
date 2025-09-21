@@ -58,7 +58,9 @@ public class HospitalCoreRepository implements HospitalRepository {
                 newHospital.name(),
                 newHospital.telephoneNumber(),
                 addressEntity,
-                newHospital.imageUrl());
+                newHospital.imageUrl(),
+                newHospital.oauthId(),
+                newHospital.provider());
 
         savedHospitalEntity.addDepartments(departmentEntities);
 
@@ -161,5 +163,9 @@ public class HospitalCoreRepository implements HospitalRepository {
                 .fetchOne();
 
         return Optional.ofNullable(result);
+    }
+
+    public Optional<Hospital> findByOAuthInfo(String oauthId, String provider){
+        return hospitalJpaRepository.findByOauthIdAndOauthProvider(oauthId, provider).map(HospitalEntity::toDomainModel);
     }
 }
