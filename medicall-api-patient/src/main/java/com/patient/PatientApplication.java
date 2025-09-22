@@ -2,6 +2,7 @@ package com.patient;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
@@ -12,6 +13,7 @@ import com.medicall.common.config.HealthCheckConfig;
         "com.medicall.domain",
         "com.medicall.common"
 })
+@ConfigurationPropertiesScan("com.patient.config")
 public class PatientApplication {
     public static void main(String[] args) {
         SpringApplication.run(PatientApplication.class, args);
