@@ -13,8 +13,8 @@ import com.medicall.common.security.CustomUserDetails;
 import com.medicall.common.security.error.AuthErrorType;
 import com.medicall.common.security.error.AuthException;
 import com.medicall.common.support.CurrentUser;
-import com.medicall.domain.Patient.Patient;
-import com.medicall.domain.Patient.PatientReader;
+import com.medicall.domain.patient.Patient;
+import com.medicall.domain.patient.PatientReader;
 
 @Component
 public class PatientArgumentResolver implements HandlerMethodArgumentResolver {

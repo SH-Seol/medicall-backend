@@ -1,7 +1,7 @@
 package com.medicall.storage.db.core.patient;
 
-import com.medicall.domain.Patient.Patient;
-import com.medicall.domain.Patient.PatientRepository;
+import com.medicall.domain.patient.Patient;
+import com.medicall.domain.patient.PatientRepository;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 

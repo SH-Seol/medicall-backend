@@ -1,6 +1,6 @@
 package com.medicall.domain.treatment.dto;
 
-import com.medicall.domain.Patient.Patient;
+import com.medicall.domain.patient.Patient;
 import com.medicall.domain.doctor.Doctor;
 
 public record ReadTreatmentResponse(

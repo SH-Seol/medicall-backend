@@ -1,4 +1,4 @@
-package com.medicall.domain.Patient;
+package com.medicall.domain.patient;
 
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;

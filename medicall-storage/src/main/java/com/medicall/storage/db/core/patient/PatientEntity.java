@@ -1,6 +1,6 @@
 package com.medicall.storage.db.core.patient;
 
-import com.medicall.domain.Patient.Patient;
+import com.medicall.domain.patient.Patient;
 import com.medicall.storage.db.core.address.AddressEntity;
 import com.medicall.storage.db.core.common.domain.BaseEntity;
 import com.medicall.storage.db.core.common.enums.Gender;
