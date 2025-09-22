@@ -1,6 +1,6 @@
 package com.medicall.storage.db.core.hospital;
 
-
+import com.medicall.domain.address.Address;
 import com.medicall.domain.appointment.Appointment;
 import com.medicall.domain.hospital.Hospital;
 import com.medicall.domain.hospital.HospitalRepository;
@@ -43,41 +43,15 @@ public class HospitalCoreRepository implements HospitalRepository {
         this.doctorJpaRepository = doctorJpaRepository;
         this.queryFactory = queryFactory;
     }
-    public Long save(NewHospital newHospital, List<OperatingTime> operatingTimes){
-        AddressEntity addressEntity = new AddressEntity(newHospital.address().zoneCode(),
-                newHospital.address().roadAddress(),
-                newHospital.address().jibunAddress(),
-                newHospital.address().detailAddress(),
-                newHospital.address().buildingName(),
-                newHospital.address().longitude(),
-                newHospital.address().latitude());
-
-        List<DepartmentEntity> departmentEntities = departmentJpaRepository.findAllById(newHospital.departments());
-
+    public Hospital save(NewHospital newHospital, List<OperatingTime> operatingTimes){
         HospitalEntity savedHospitalEntity = new HospitalEntity(
                 newHospital.name(),
-                newHospital.telephoneNumber(),
-                addressEntity,
                 newHospital.imageUrl(),
                 newHospital.oauthId(),
-                newHospital.provider());
+                newHospital.provider(),
+                newHospital.email());
 
-        savedHospitalEntity.addDepartments(departmentEntities);
-
-        for(OperatingTime operatingTime : operatingTimes){
-            OperatingTimeEntity operatingTimesEntity = new OperatingTimeEntity(
-                    savedHospitalEntity,
-                    operatingTime.dayOfWeek(),
-                    operatingTime.openingTime(),
-                    operatingTime.closingTime(),
-                    operatingTime.breakStartTime(),
-                    operatingTime.breakFinishTime()
-                    );
-
-            savedHospitalEntity.addOperatingTime(operatingTimesEntity);
-        }
-
-        return hospitalJpaRepository.save(savedHospitalEntity).getId();
+        return hospitalJpaRepository.save(savedHospitalEntity).toDomainModel();
     }
 
     public List<Appointment> findAppointmentsByHospitalId(Long hospitalId){
@@ -90,11 +64,18 @@ public class HospitalCoreRepository implements HospitalRepository {
         return appointmentEntities.stream().map(AppointmentEntity::toDomainModel).toList();
     }
 
-    public void rejectAppointmentById(Long hospitalId, Long appointmentId){
-        AppointmentEntity appointmentEntity = appointmentJpaRepository.findById(appointmentId).orElseThrow();
+    public boolean rejectAppointmentById(Long hospitalId, Long appointmentId){
+        Optional<AppointmentEntity> appointmentOptional = appointmentJpaRepository.findById(appointmentId);
+        if(appointmentOptional.isEmpty()){
+            return false;
+        }
+
+        AppointmentEntity appointmentEntity = appointmentOptional.get();
+
         if(appointmentEntity.getHospital().getId().equals(hospitalId)){
             appointmentEntity.rejectAppointment();
         }
+        return true;
     }
 
     public Long addDoctorOnAppointment(Long doctorId, Long appointmentId){
@@ -103,6 +84,23 @@ public class HospitalCoreRepository implements HospitalRepository {
         appointmentEntity.addDoctor(doctorEntity);
 
         return appointmentId;
+    }
+
+    public void addOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes){
+        HospitalEntity hospitalEntity = hospitalJpaRepository.findById(hospitalId).get();
+
+        for(OperatingTime operatingTime : operatingTimes){
+            OperatingTimeEntity operatingTimesEntity = new OperatingTimeEntity(
+                    hospitalEntity,
+                    operatingTime.dayOfWeek(),
+                    operatingTime.openingTime(),
+                    operatingTime.closingTime(),
+                    operatingTime.breakStartTime(),
+                    operatingTime.breakFinishTime()
+            );
+
+            hospitalEntity.addOperatingTime(operatingTimesEntity);
+        }
     }
 
     public void updateOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes){
@@ -168,4 +166,29 @@ public class HospitalCoreRepository implements HospitalRepository {
     public Optional<Hospital> findByOAuthInfo(String oauthId, String provider){
         return hospitalJpaRepository.findByOauthIdAndOauthProvider(oauthId, provider).map(HospitalEntity::toDomainModel);
     }
+
+    public void addAddress(Long hospitalId, Address address){
+        Optional<HospitalEntity> hospitalEntity = hospitalJpaRepository.findById(hospitalId);
+
+        hospitalEntity.ifPresent(hospital -> {
+            AddressEntity addressEntity = new AddressEntity(
+                    address.zoneCode(),
+                    address.roadAddress(),
+                    address.jibunAddress(),
+                    address.detailAddress(),
+                    address.buildingName(),
+                    address.longitude(),
+                    address.latitude());
+
+            hospital.addAddress(addressEntity);
+        });
+    }
+
+    public void addDepartments(Long hospitalId, List<Long> departments){
+        List<DepartmentEntity> departmentEntities = departmentJpaRepository.findAllById(departments);
+        Optional<HospitalEntity> hospitalEntity = hospitalJpaRepository.findById(hospitalId);
+
+        hospitalEntity.ifPresent(hospital -> hospital.addDepartments(departmentEntities));
+    }
+
 }

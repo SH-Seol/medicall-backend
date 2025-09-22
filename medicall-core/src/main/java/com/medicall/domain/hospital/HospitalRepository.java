@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HospitalRepository {
-    Long save(NewHospital newHospital, List<OperatingTime> operatingTimes);
+    Hospital save(NewHospital newHospital, List<OperatingTime> operatingTimes);
     List<Appointment> findAppointmentsByHospitalId(Long id);
-    void rejectAppointmentById(Long hospitalId, Long appointmentId);
+    boolean rejectAppointmentById(Long hospitalId, Long appointmentId);
     Long addDoctorOnAppointment(Long doctorId, Long appointmentId);
     void updateOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes);
     Optional<Hospital> findById(Long hospitalId);

@@ -12,12 +12,12 @@ public class HospitalWriter {
         this.hospitalRepository = hospitalRepository;
     }
 
-    public Long create(NewHospital newHospital , List<OperatingTime> operatingTimes) {
+    public Hospital create(NewHospital newHospital , List<OperatingTime> operatingTimes) {
         return hospitalRepository.save(newHospital, operatingTimes);
     }
 
     public void rejectAppointment(Long hospitalId, Long appointmentId) {
-        hospitalRepository.rejectAppointmentById(hospitalId, appointmentId);
+        boolean result = hospitalRepository.rejectAppointmentById(hospitalId, appointmentId);
     }
 
     public Long addDoctorOnAppointment(Long doctorId, Long appointmentId) {
