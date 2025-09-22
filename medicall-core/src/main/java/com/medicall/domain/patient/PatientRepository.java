@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 public interface PatientRepository {
     Optional<Patient> findById(Long patientId);
     Patient create(NewPatient newPatient);
+    Optional<Patient> findByOAuthInfo(String oauthId, String provider);
 }

@@ -28,4 +28,8 @@ public class PatientCoreRepository implements PatientRepository {
                 newPatient.provider()
         )).toDomainModel();
     }
+
+    public Optional<Patient> findByOAuthInfo(String oauthId, String provider){
+        return patientJpaRepository.findByOauthIdAndOauthProvider(oauthId, provider).map(PatientEntity::toDomainModel);
+    }
 }

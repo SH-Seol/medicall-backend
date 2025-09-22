@@ -1,5 +1,7 @@
 package com.medicall.domain.patient;
 
+import java.util.Optional;
+
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
 import org.springframework.stereotype.Component;
@@ -15,5 +17,9 @@ public class PatientReader {
 
     public Patient findById(Long patientId){
         return patientRepository.findById(patientId).orElseThrow(() -> new CoreException(CoreErrorType.PATIENT_NOT_FOUND));
+    }
+
+    public Optional<Patient> findByOAuthInfo(String oauthId, String provider){
+        return patientRepository.findByOAuthInfo(oauthId, provider);
     }
 }

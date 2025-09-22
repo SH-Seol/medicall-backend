@@ -12,4 +12,8 @@ public record Patient(
         int age,
         List<String> chronicDiseases
 ) {
+    public boolean isProfileComplete(){
+        return gender != null && bloodType != null && height != null && weight != null
+                && age >= 0;
+    }
 }
