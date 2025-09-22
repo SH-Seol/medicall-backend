@@ -10,6 +10,8 @@ import com.medicall.domain.hospital.dto.ReadHospitalRequest;
 import com.medicall.domain.hospital.dto.ReadHospitalResponse;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,13 +39,8 @@ public class HospitalService {
         this.doctorValidator = doctorValidator;
     }
 
-    //병원 생성
-    public Long create(NewHospital newHospital, List<OperatingTime> operatingTimes) {
-        return hospitalWriter.create(newHospital, operatingTimes);
-    }
-
     //예약 조회
-    public List<Appointment> getAppointments(Long hospitalId) {
+    public Optional<List<Appointment>> getAppointments(Long hospitalId) {
         return hospitalReader.getAppointments(hospitalId);
     }
 

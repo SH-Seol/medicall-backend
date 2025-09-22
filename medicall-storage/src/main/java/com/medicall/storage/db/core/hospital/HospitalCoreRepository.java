@@ -6,8 +6,6 @@ import com.medicall.domain.hospital.Hospital;
 import com.medicall.domain.hospital.HospitalRepository;
 import com.medicall.domain.hospital.NewHospital;
 import com.medicall.domain.hospital.OperatingTime;
-import com.medicall.error.CoreErrorType;
-import com.medicall.error.CoreException;
 import com.medicall.storage.db.core.address.AddressEntity;
 import com.medicall.storage.db.core.appointment.AppointmentEntity;
 import com.medicall.storage.db.core.appointment.AppointmentJpaRepository;
@@ -43,7 +41,7 @@ public class HospitalCoreRepository implements HospitalRepository {
         this.doctorJpaRepository = doctorJpaRepository;
         this.queryFactory = queryFactory;
     }
-    public Hospital save(NewHospital newHospital, List<OperatingTime> operatingTimes){
+    public Hospital save(NewHospital newHospital){
         HospitalEntity savedHospitalEntity = new HospitalEntity(
                 newHospital.name(),
                 newHospital.imageUrl(),
@@ -54,14 +52,16 @@ public class HospitalCoreRepository implements HospitalRepository {
         return hospitalJpaRepository.save(savedHospitalEntity).toDomainModel();
     }
 
-    public List<Appointment> findAppointmentsByHospitalId(Long hospitalId){
-        List<AppointmentEntity> appointmentEntities = hospitalJpaRepository.findById(hospitalId).get().getAppointments();
+    public Optional<List<Appointment>> findAppointmentsByHospitalId(Long hospitalId){
+        return hospitalJpaRepository.findById(hospitalId).map(hospital -> {
+            List<AppointmentEntity> appointmentEntities = hospital.getAppointments();
 
-        if(appointmentEntities == null){
-            return List.of();
-        }
+            if(appointmentEntities.isEmpty() || appointmentEntities == null){
+                return List.of();
+            }
 
-        return appointmentEntities.stream().map(AppointmentEntity::toDomainModel).toList();
+            return appointmentEntities.stream().map(AppointmentEntity::toDomainModel).toList();
+        });
     }
 
     public boolean rejectAppointmentById(Long hospitalId, Long appointmentId){
@@ -78,34 +78,44 @@ public class HospitalCoreRepository implements HospitalRepository {
         return true;
     }
 
-    public Long addDoctorOnAppointment(Long doctorId, Long appointmentId){
-        AppointmentEntity appointmentEntity = appointmentJpaRepository.findById(appointmentId).orElseThrow();
-        DoctorEntity doctorEntity = doctorJpaRepository.findById(doctorId).orElseThrow();
-        appointmentEntity.addDoctor(doctorEntity);
+    public boolean addDoctorOnAppointment(Long doctorId, Long appointmentId){
+        Optional<AppointmentEntity> appointmentOptional = appointmentJpaRepository.findById(appointmentId);
+        Optional<DoctorEntity> doctorOptional = doctorJpaRepository.findById(doctorId);
 
-        return appointmentId;
-    }
-
-    public void addOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes){
-        HospitalEntity hospitalEntity = hospitalJpaRepository.findById(hospitalId).get();
-
-        for(OperatingTime operatingTime : operatingTimes){
-            OperatingTimeEntity operatingTimesEntity = new OperatingTimeEntity(
-                    hospitalEntity,
-                    operatingTime.dayOfWeek(),
-                    operatingTime.openingTime(),
-                    operatingTime.closingTime(),
-                    operatingTime.breakStartTime(),
-                    operatingTime.breakFinishTime()
-            );
-
-            hospitalEntity.addOperatingTime(operatingTimesEntity);
+        if(appointmentOptional.isEmpty() || doctorOptional.isEmpty()){
+            return false;
         }
+
+        appointmentOptional.get().addDoctor(doctorOptional.get());
+        return true;
     }
 
-    public void updateOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes){
-        HospitalEntity hospitalEntity = findWithOperationTimesById(hospitalId).orElseThrow(
-                () -> new CoreException(CoreErrorType.HOSPITAL_NOT_FOUND));
+    public boolean addOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes){
+        return hospitalJpaRepository.findById(hospitalId).map(hospital -> {
+            for(OperatingTime operatingTime : operatingTimes){
+                OperatingTimeEntity operatingTimesEntity = new OperatingTimeEntity(
+                        hospital,
+                        operatingTime.dayOfWeek(),
+                        operatingTime.openingTime(),
+                        operatingTime.closingTime(),
+                        operatingTime.breakStartTime(),
+                        operatingTime.breakFinishTime()
+                );
+
+                hospital.addOperatingTime(operatingTimesEntity);
+            }
+            return true;
+        }).orElse(false);
+    }
+
+    public boolean updateOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes){
+        Optional<HospitalEntity> hospitalOptional = findWithOperationTimesById(hospitalId);
+
+        if(hospitalOptional.isEmpty()){
+            return false;
+        }
+
+        HospitalEntity hospitalEntity = hospitalOptional.get();
 
         Map<DayOfWeek, OperatingTimeEntity> existingTimesMap = hospitalEntity.getOperatingTimes()
                 .stream().collect(Collectors.toMap(OperatingTimeEntity::getDayOfWeek, operatingTimeEntity -> operatingTimeEntity));
@@ -136,7 +146,7 @@ public class HospitalCoreRepository implements HospitalRepository {
 
         hospitalEntity.getOperatingTimes().removeIf(entity -> toRemove.contains(entity.getDayOfWeek()));
 
-        hospitalJpaRepository.save(hospitalEntity);
+        return true;
     }
 
     public Optional<Hospital> findById(Long hospitalId){
@@ -167,28 +177,30 @@ public class HospitalCoreRepository implements HospitalRepository {
         return hospitalJpaRepository.findByOauthIdAndOauthProvider(oauthId, provider).map(HospitalEntity::toDomainModel);
     }
 
-    public void addAddress(Long hospitalId, Address address){
-        Optional<HospitalEntity> hospitalEntity = hospitalJpaRepository.findById(hospitalId);
+    public boolean addAddress(Long hospitalId, Address address){
+        Optional<HospitalEntity> hospitalOptional = hospitalJpaRepository.findById(hospitalId);
+        AddressEntity addressEntity = new AddressEntity(
+                address.zoneCode(),
+                address.roadAddress(),
+                address.jibunAddress(),
+                address.detailAddress(),
+                address.buildingName(),
+                address.longitude(),
+                address.latitude());
 
-        hospitalEntity.ifPresent(hospital -> {
-            AddressEntity addressEntity = new AddressEntity(
-                    address.zoneCode(),
-                    address.roadAddress(),
-                    address.jibunAddress(),
-                    address.detailAddress(),
-                    address.buildingName(),
-                    address.longitude(),
-                    address.latitude());
-
+        return hospitalOptional.map(hospital -> {
             hospital.addAddress(addressEntity);
-        });
+            return true;
+        }).orElse(false);
     }
 
-    public void addDepartments(Long hospitalId, List<Long> departments){
+    public boolean addDepartments(Long hospitalId, List<Long> departments){
         List<DepartmentEntity> departmentEntities = departmentJpaRepository.findAllById(departments);
-        Optional<HospitalEntity> hospitalEntity = hospitalJpaRepository.findById(hospitalId);
+        Optional<HospitalEntity> hospitalOptional = hospitalJpaRepository.findById(hospitalId);
 
-        hospitalEntity.ifPresent(hospital -> hospital.addDepartments(departmentEntities));
+        return hospitalOptional.map(hospital -> {
+            hospital.addDepartments(departmentEntities);
+            return true;
+        }).orElse(false);
     }
-
 }

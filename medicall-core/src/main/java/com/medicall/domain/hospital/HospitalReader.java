@@ -17,7 +17,7 @@ public class HospitalReader {
         this.hospitalRepository = hospitalRepository;
     }
 
-    public List<Appointment> getAppointments(Long hospitalId) {
+    public Optional<List<Appointment>> getAppointments(Long hospitalId) {
         return hospitalRepository.findAppointmentsByHospitalId(hospitalId);
     }
 
