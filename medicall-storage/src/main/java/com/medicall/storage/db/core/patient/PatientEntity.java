@@ -20,18 +20,15 @@ public class PatientEntity extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private int age;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Gender gender;
 
     private String bloodType;
     private Double height;
     private Double weight;
 
-    @Column(nullable = false)
     private LocalDate dateOfBirth;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -39,6 +36,11 @@ public class PatientEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PatientChronicDiseaseEntity> chronicDiseaseEntities = new ArrayList<>();
+
+    private String imageUrl;
+    private String email;
+    private String oauthId;
+    private String oauthProvider;
 
     private String emergencyContactName;
     private String emergencyContactRelationship;
@@ -50,11 +52,12 @@ public class PatientEntity extends BaseEntity {
 
     protected PatientEntity() {}
 
-    public PatientEntity(String name, int age, Gender gender, LocalDate dateOfBirth) {
+    public PatientEntity(String name, String imageUrl, String email, String oauthId, String oauthProvider) {
         this.name = name;
-        this.age = age;
-        this.gender = gender;
-        this.dateOfBirth = dateOfBirth;
+        this.imageUrl = imageUrl;
+        this.email = email;
+        this.oauthId = oauthId;
+        this.oauthProvider = oauthProvider;
     }
 
     public int getAge() {
@@ -115,6 +118,22 @@ public class PatientEntity extends BaseEntity {
 
     public List<AddressEntity> getAddresses() {
         return addresses;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getOauthId() {
+        return oauthId;
+    }
+
+    public String getOauthProvider() {
+        return oauthProvider;
     }
 
     public Patient toDomainModel(){

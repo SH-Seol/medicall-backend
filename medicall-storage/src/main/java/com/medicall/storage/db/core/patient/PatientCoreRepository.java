@@ -1,5 +1,6 @@
 package com.medicall.storage.db.core.patient;
 
+import com.medicall.domain.patient.NewPatient;
 import com.medicall.domain.patient.Patient;
 import com.medicall.domain.patient.PatientRepository;
 import java.util.Optional;
@@ -16,5 +17,15 @@ public class PatientCoreRepository implements PatientRepository {
 
     public Optional<Patient> findById(Long patientId){
         return patientJpaRepository.findById(patientId).map(PatientEntity::toDomainModel);
+    }
+
+    public Patient create(NewPatient newPatient) {
+        return patientJpaRepository.save(new PatientEntity(
+                newPatient.name(),
+                newPatient.imageUrl(),
+                newPatient.email(),
+                newPatient.oauthId(),
+                newPatient.provider()
+        )).toDomainModel();
     }
 }
