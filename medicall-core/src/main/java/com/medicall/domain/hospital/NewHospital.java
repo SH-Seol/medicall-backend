@@ -5,11 +5,9 @@ import java.util.List;
 
 public record NewHospital(
         String name,
-        String telephoneNumber,
-        Address address,
         String imageUrl,
-        List<Long> departments,
         String oauthId,
-        String provider
+        String provider,
+        String email
 ) {
 }

@@ -15,4 +15,9 @@ public record Hospital(
         List<OperatingTime> weeklySchedule,
         BusinessStatus businessStatus
 ) {
+    public boolean isSetUpComplete(){
+        return address != null &&
+                departments != null &&
+                weeklySchedule != null;
+    }
 }

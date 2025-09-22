@@ -27,13 +27,12 @@ public class HospitalEntity extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private String telephoneNumber;
 
     private String imageUrl;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "address_id", nullable = false)
+    @JoinColumn(name = "address_id")
     private AddressEntity address;
 
     @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -59,16 +58,17 @@ public class HospitalEntity extends BaseEntity {
 
     private String oauthProvider;
 
+    private String email;
+
     protected HospitalEntity() {}
 
-    public HospitalEntity(String name, String telephoneNumber, AddressEntity address, String imageUrl, String oauthId, String oauthProvider) {
+    public HospitalEntity(String name, String imageUrl, String oauthId, String oauthProvider, String email) {
         this.name = name;
-        this.telephoneNumber = telephoneNumber;
-        this.address = address;
         this.imageUrl = imageUrl;
         this.registrationStatus = RegistrationStatus.PENDING;
         this.oauthId = oauthId;
         this.oauthProvider = oauthProvider;
+        this.email = email;
     }
 
     public String getName() {
@@ -119,6 +119,14 @@ public class HospitalEntity extends BaseEntity {
         return oauthProvider;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void addTelephoneNumber(String telephoneNumber) {
+        this.telephoneNumber = telephoneNumber;
+    }
+
     public void addDepartments(List<DepartmentEntity> departments) {
         departments.forEach(this::addDepartment);
     }
@@ -134,6 +142,10 @@ public class HospitalEntity extends BaseEntity {
 
     public void addOperatingTime(OperatingTimeEntity operatingTime) {
         operatingTimes.add(operatingTime);
+    }
+
+    public void addAddress(AddressEntity address) {
+        this.address = address;
     }
 
     public Hospital toDomainModel(){
