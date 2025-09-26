@@ -92,7 +92,8 @@ public class AppointmentEntity extends BaseEntity {
                 this.symptom,
                 this.reservationTime,
                 this.hospital.toDomainModel(),
-                this.doctor.toDomainModel()
+                this.doctor.toDomainModel(),
+                this.status.toString()
                 );
     }
 

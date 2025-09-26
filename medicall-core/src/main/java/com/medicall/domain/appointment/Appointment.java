@@ -12,7 +12,8 @@ public record Appointment(
         String symptom,
         LocalDateTime reservationTime,
         Hospital hospital,
-        Doctor doctor
+        Doctor doctor,
+        String status
 ) {
     public Appointment assignDoctor(Doctor doctor) {
         return new Appointment(
@@ -22,7 +23,8 @@ public record Appointment(
                 this.symptom,
                 this.reservationTime,
                 this.hospital,
-                doctor
+                doctor,
+                this.status
         );
     }
 }
