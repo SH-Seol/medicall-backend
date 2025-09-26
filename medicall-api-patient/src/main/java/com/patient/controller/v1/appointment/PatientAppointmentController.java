@@ -1,4 +1,4 @@
-package com.patient.controller;
+package com.patient.controller.v1.appointment;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,8 +20,8 @@ import com.medicall.domain.appointment.Appointment;
 import com.medicall.domain.appointment.AppointmentService;
 import com.medicall.domain.appointment.dto.PatientAppointmentListCriteria;
 import com.medicall.support.CursorPageResult;
-import com.patient.controller.dto.PatientAppointmentListRequest;
-import com.patient.controller.dto.PatientAppointmentListResponse;
+import com.patient.controller.v1.appointment.dto.request.PatientAppointmentListRequest;
+import com.patient.controller.v1.appointment.dto.response.PatientAppointmentListResponse;
 
 @RestController
 @RequestMapping("/api/v1/patient/appointments")

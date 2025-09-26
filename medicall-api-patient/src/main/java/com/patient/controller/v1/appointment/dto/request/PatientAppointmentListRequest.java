@@ -1,4 +1,4 @@
-package com.patient.controller.dto;
+package com.patient.controller.v1.appointment.dto.request;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
