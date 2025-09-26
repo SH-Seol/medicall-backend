@@ -1,4 +1,4 @@
-package com.doctor.support.pagination;
+package com.medicall.common.support.pagination;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
