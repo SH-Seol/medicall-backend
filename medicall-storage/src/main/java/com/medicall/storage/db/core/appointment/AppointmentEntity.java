@@ -87,7 +87,7 @@ public class AppointmentEntity extends BaseEntity {
     public Appointment toDomainModel(){
         return new Appointment(
                 this.id,
-                this.patient.getName(),
+                this.patient.toDomainModel(),
                 this.patientAddress.toDomainModel(),
                 this.symptom,
                 this.reservationTime,

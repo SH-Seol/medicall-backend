@@ -3,11 +3,13 @@ package com.medicall.domain.appointment;
 import com.medicall.domain.address.Address;
 import com.medicall.domain.doctor.Doctor;
 import com.medicall.domain.hospital.Hospital;
+import com.medicall.domain.patient.Patient;
+
 import java.time.LocalDateTime;
 
 public record Appointment(
         Long id,
-        String patientName,
+        Patient patient,
         Address address,
         String symptom,
         LocalDateTime reservationTime,
@@ -18,7 +20,7 @@ public record Appointment(
     public Appointment assignDoctor(Doctor doctor) {
         return new Appointment(
                 this.id,
-                this.patientName,
+                this.patient,
                 this.address,
                 this.symptom,
                 this.reservationTime,
