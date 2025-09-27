@@ -17,7 +17,7 @@ public record PatientAppointmentListResponse(
         @Schema(description = "예약 병원", example = "메디콜정형외과")
         String hospitalName,
 
-        @Schema(description = "예약 시간", example = "09.26 14:30")
+        @Schema(description = "예약 시간", example = "2025-9-27T15:00:00")
         LocalDateTime reservationTime,
 
         @Schema(description = "예약 상태", example = "ASSIGNED")
