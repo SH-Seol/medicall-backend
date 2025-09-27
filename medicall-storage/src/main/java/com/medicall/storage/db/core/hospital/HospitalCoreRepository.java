@@ -203,4 +203,8 @@ public class HospitalCoreRepository implements HospitalRepository {
             return true;
         }).orElse(false);
     }
+
+    public boolean isHospitalExist(Long hospitalId){
+        return hospitalJpaRepository.existsById(hospitalId);
+    }
 }

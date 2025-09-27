@@ -55,4 +55,8 @@ public class DoctorCoreRepository implements DoctorRepository {
     public Optional<Doctor> findByOAuthInfo(String oauthId, String provider){
         return doctorJpaRepository.findByOauthIdAndOauthProvider(oauthId, provider).map(DoctorEntity::toDomainModel);
     }
+
+    public boolean isDoctorExist(Long doctorId) {
+        return doctorJpaRepository.existsById(doctorId);
+    }
 }

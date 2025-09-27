@@ -12,4 +12,5 @@ public interface DoctorRepository {
     Optional<Doctor> findById(Long id);
     boolean isDoctorBelongsToHospital(Long doctorId);
     Optional<Doctor> findByOAuthInfo(String oauthId, String provider);
+    boolean isDoctorExist(Long doctorId);
 }

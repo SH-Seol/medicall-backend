@@ -19,4 +19,5 @@ public interface HospitalRepository {
     boolean addOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes);
     boolean addAddress(Long hospitalId, Address address);
     boolean addDepartments(Long hospitalId, List<Long> departments);
+    boolean isHospitalExist(Long hospitalId);
 }

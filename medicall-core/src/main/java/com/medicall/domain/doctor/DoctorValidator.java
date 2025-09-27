@@ -18,4 +18,12 @@ public class DoctorValidator {
             throw new CoreException(CoreErrorType.DOCTOR_BELONGS_TO_HOSPITAL);
         }
     }
+
+    public void validateDoctor(Long doctorId){
+        boolean result = doctorRepository.isDoctorExist(doctorId);
+
+        if(!result){
+            throw new CoreException(CoreErrorType.DOCTOR_NOT_FOUND);
+        }
+    }
 }
