@@ -9,11 +9,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.medicall.common.support.CurrentUser;
 import com.medicall.common.support.pagination.CursorPageResponse;
+import com.patient.controller.v1.appointment.dto.request.CreatePatientAppointmentRequest;
 import com.patient.controller.v1.appointment.dto.request.PatientAppointmentListRequest;
+import com.patient.controller.v1.appointment.dto.response.CreatePatientAppointmentResponse;
 import com.patient.controller.v1.appointment.dto.response.PatientAppointmentListResponse;
 import com.patient.controller.v1.appointment.dto.response.PatientAppointmentResponse;
 
@@ -35,7 +39,7 @@ public interface PatientAppointmentApiDocs {
 
     @Operation(
             summary = "환자 예약 조회",
-            description = "환자 본인의 예약을 선택하여 id를 통해 조회합니다"
+            description = "환자 본인의 예약을 선택하여 id를 통해 조회합니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -47,4 +51,17 @@ public interface PatientAppointmentApiDocs {
     PatientAppointmentResponse getAppointmentById(
             @PathVariable("appointmentId") Long appointmentId,
             @Parameter(hidden = true) CurrentUser currentUser);
+
+    @Operation(
+            summary = "환자 예약 요청",
+            description = "환자가 예약을 병원에 요청합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "예약 생성 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")
+    })
+    ResponseEntity<CreatePatientAppointmentResponse> createAppointment(
+            @RequestBody CreatePatientAppointmentRequest request,
+            @Parameter(hidden = true) CurrentUser currentUser
+    );
 }

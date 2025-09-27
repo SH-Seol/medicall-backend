@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.medicall.domain.appointment.dto.CreateAppointmentResult;
 import com.medicall.domain.appointment.dto.PatientAppointmentListCriteria;
 import com.medicall.support.CursorPageResult;
 
@@ -27,9 +28,16 @@ public class AppointmentService {
 
     public Appointment findByAppointmentId(Long patientId, Long appointmentId) {
         Appointment appointment = appointmentReader.findById(appointmentId);
-        appointmentValidator.validatePatient(appointment, patientId);
+        appointmentValidator.validatePatientAccess(appointment, patientId);
 
         return appointment;
+    }
+
+    public CreateAppointmentResult createAppointment(Long patientId, NewAppointment newAppointment){
+        appointmentValidator.validateAppointmentCreation(patientId, newAppointment);
+        Appointment appointment = appointmentWriter.create(patientId, newAppointment);
+
+        return CreateAppointmentResult.from(appointment);
     }
 
 }

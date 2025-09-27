@@ -49,11 +49,16 @@ public class AppointmentEntity extends BaseEntity {
 
     protected AppointmentEntity() {}
 
-    public AppointmentEntity(PatientEntity patient, DoctorEntity doctor, String symptom, LocalDateTime reservationTime) {
+    public AppointmentEntity(PatientEntity patient, DoctorEntity doctor,
+                             HospitalEntity hospital, String symptom,
+                             AddressEntity address, LocalDateTime reservationTime) {
         this.patient = patient;
         this.doctor = doctor;
+        this.hospital = hospital;
         this.symptom = symptom;
+        this.patientAddress = address;
         this.reservationTime = reservationTime;
+        this.status = AppointmentStatus.REQUESTED;
     }
 
     public PatientEntity getPatient() {
