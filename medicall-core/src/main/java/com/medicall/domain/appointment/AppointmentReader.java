@@ -16,7 +16,7 @@ public class AppointmentReader {
         this.appointmentRepository = appointmentRepository;
     }
 
-    public Appointment getAppointmentById(Long appointmentId) {
+    public Appointment findById(Long appointmentId) {
         return appointmentRepository.findById(appointmentId).orElseThrow(() -> new CoreException(CoreErrorType.APPOINTMENT_NOT_FOUND));
     }
 

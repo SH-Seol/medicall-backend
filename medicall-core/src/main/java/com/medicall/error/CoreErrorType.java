@@ -9,6 +9,7 @@ public enum CoreErrorType {
     DEPARTMENT_NOT_FOUND(CoreErrorCode.DEPARTMENT001, CoreErrorKind.NOT_FOUND, "존재하지 않는 전공입니다.", CoreErrorLevel.WARN),
     APPOINTMENT_NOT_FOUND(CoreErrorCode.APPOINTMENT001, CoreErrorKind.NOT_FOUND, "존재하지 않는 예약입니다.", CoreErrorLevel.WARN),
     APPOINTMENT_ADD_DOCTOR_FAILED(CoreErrorCode.APPOINTMENT002, CoreErrorKind.BAD_REQUEST, "해당 예약에 의사 추가를 실패하였습니다.", CoreErrorLevel.WARN),
+    APPOINTMENT_EXCESS_REJECTED(CoreErrorCode.APPOINTMENT003, CoreErrorKind.FORBIDDEN, "해당 예약에 접근할 수 없습니다", CoreErrorLevel.WARN),
     TREATMENT_NOT_FOUND(CoreErrorCode.TREATMENT001, CoreErrorKind.NOT_FOUND, "존재하지 않는 진료 내역입니다.", CoreErrorLevel.WARN),
     TREATMENT_ALREADY_HAS_PRESCRIPTION(CoreErrorCode.TREATMENT002, CoreErrorKind.FORBIDDEN, "해당 진료에 처방이 이미 이루어졌습니다.", CoreErrorLevel.WARN),
     MEDICINE_NOT_FOUND(CoreErrorCode.MEDICINE001, CoreErrorKind.NOT_FOUND, "의약품을 찾을 수 없습니다.", CoreErrorLevel.WARN),

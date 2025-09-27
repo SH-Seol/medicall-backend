@@ -13,14 +13,23 @@ public class AppointmentService {
 
     private final AppointmentReader appointmentReader;
     private final AppointmentWriter appointmentWriter;
+    private final AppointmentValidator appointmentValidator;
 
-    public AppointmentService(AppointmentReader appointmentReader, AppointmentWriter appointmentWriter) {
+    public AppointmentService(AppointmentReader appointmentReader, AppointmentWriter appointmentWriter, AppointmentValidator appointmentValidator) {
         this.appointmentReader = appointmentReader;
         this.appointmentWriter = appointmentWriter;
+        this.appointmentValidator = appointmentValidator;
     }
 
     public CursorPageResult<Appointment> getAppointmentList(PatientAppointmentListCriteria criteria) {
         return appointmentReader.findByPatientId(criteria);
+    }
+
+    public Appointment findByAppointmentId(Long patientId, Long appointmentId) {
+        Appointment appointment = appointmentReader.findById(appointmentId);
+        appointmentValidator.validatePatient(appointment, patientId);
+
+        return appointment;
     }
 
 }
