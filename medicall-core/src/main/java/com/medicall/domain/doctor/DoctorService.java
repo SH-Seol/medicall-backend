@@ -3,6 +3,8 @@ package com.medicall.domain.doctor;
 import com.medicall.domain.appointment.Appointment;
 import com.medicall.domain.department.Department;
 import com.medicall.domain.department.DepartmentReader;
+import com.medicall.domain.doctor.dto.DoctorResult;
+
 import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,9 @@ public class DoctorService {
         return doctorReader.getDoctorAppointments(doctor);
     }
 
-    public Doctor findById(Long doctorId){
-        return doctorReader.findById(doctorId);
+    public DoctorResult findById(Long doctorId){
+        Doctor doctor =  doctorReader.findById(doctorId);
+
+        return DoctorResult.from(doctor);
     }
 }
