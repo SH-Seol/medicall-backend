@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.medicall.domain.appointment.Appointment;
 
-public record PatientAppointmentResponse(
+public record PatientAppointmentDetailResponse(
         String doctorName,
         Long doctorId,
         String hospitalName,
@@ -12,8 +12,8 @@ public record PatientAppointmentResponse(
         String status,
         LocalDateTime reservationTime
 ) {
-    public static PatientAppointmentResponse from(Appointment appointment) {
-        return new PatientAppointmentResponse(
+    public static PatientAppointmentDetailResponse from(Appointment appointment) {
+        return new PatientAppointmentDetailResponse(
                 appointment.doctor()
                         .name(),
                 appointment.doctor()

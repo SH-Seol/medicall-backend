@@ -1,9 +1,6 @@
 package com.patient.controller.v1.appointment;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
@@ -30,7 +27,7 @@ import com.patient.controller.v1.appointment.dto.request.CreatePatientAppointmen
 import com.patient.controller.v1.appointment.dto.request.PatientAppointmentListRequest;
 import com.patient.controller.v1.appointment.dto.response.CreatePatientAppointmentResponse;
 import com.patient.controller.v1.appointment.dto.response.PatientAppointmentListResponse;
-import com.patient.controller.v1.appointment.dto.response.PatientAppointmentResponse;
+import com.patient.controller.v1.appointment.dto.response.PatientAppointmentDetailResponse;
 
 @RestController
 @RequestMapping("/api/v1/patient/appointments")
@@ -62,12 +59,12 @@ public class PatientAppointmentController implements PatientAppointmentApiDocs {
     }
 
     @GetMapping("/{appointmentId}")
-    public PatientAppointmentResponse getAppointmentById(
+    public PatientAppointmentDetailResponse getAppointmentById(
             @PathVariable("appointmentId") Long appointmentId,
             @Parameter(hidden = true) CurrentUser currentUser)
     {
         Appointment result = appointmentService.findByAppointmentId(currentUser.userId(), appointmentId);
-        return PatientAppointmentResponse.from(result);
+        return PatientAppointmentDetailResponse.from(result);
     }
 
     @PostMapping

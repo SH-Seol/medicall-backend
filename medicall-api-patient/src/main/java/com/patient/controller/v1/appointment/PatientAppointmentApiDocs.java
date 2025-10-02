@@ -19,7 +19,7 @@ import com.patient.controller.v1.appointment.dto.request.CreatePatientAppointmen
 import com.patient.controller.v1.appointment.dto.request.PatientAppointmentListRequest;
 import com.patient.controller.v1.appointment.dto.response.CreatePatientAppointmentResponse;
 import com.patient.controller.v1.appointment.dto.response.PatientAppointmentListResponse;
-import com.patient.controller.v1.appointment.dto.response.PatientAppointmentResponse;
+import com.patient.controller.v1.appointment.dto.response.PatientAppointmentDetailResponse;
 
 @Tag(name = "Patient Prescription API", description = "Patient Prescription Endpoints")
 public interface PatientAppointmentApiDocs {
@@ -48,7 +48,7 @@ public interface PatientAppointmentApiDocs {
             @ApiResponse(responseCode = "403", description = "조회 권한 없음"),
             @ApiResponse(responseCode = "404", description = "예약을 찾을 수 없음")
     })
-    PatientAppointmentResponse getAppointmentById(
+    PatientAppointmentDetailResponse getAppointmentById(
             @PathVariable("appointmentId") Long appointmentId,
             @Parameter(hidden = true) CurrentUser currentUser);
 

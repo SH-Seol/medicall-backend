@@ -7,6 +7,7 @@ public record Address(
     String detailAddress,
     String buildingName,
     Double longitude,
-    Double latitude
+    Double latitude,
+    boolean isDefault
 ) {
 }

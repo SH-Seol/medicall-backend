@@ -43,6 +43,8 @@ public class AddressEntity extends BaseEntity {
     @Column(nullable = false)
     private Double latitude;
 
+    private boolean isDefault;
+
     protected AddressEntity() {}
 
     public AddressEntity(String zoneCode, String roadAddress, String jibunAddress,
@@ -54,6 +56,7 @@ public class AddressEntity extends BaseEntity {
         this.buildingName = buildingName;
         this.longitude = Objects.requireNonNull(longitude, "경도(longitude)는 필수입니다.");
         this.latitude = Objects.requireNonNull(latitude, "위도(latitude)는 필수입니다.");
+        this.isDefault = false;
     }
 
     public String getZoneCode() {
@@ -84,6 +87,10 @@ public class AddressEntity extends BaseEntity {
         return latitude;
     }
 
+    public boolean isDefault() {
+        return isDefault;
+    }
+
     public Address toDomainModel(){
         return new Address(
                 this.zoneCode,
@@ -92,7 +99,8 @@ public class AddressEntity extends BaseEntity {
                 this.detailAddress,
                 this.buildingName,
                 this.longitude,
-                this.latitude
+                this.latitude,
+                this.isDefault
         );
     }
 }
