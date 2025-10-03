@@ -14,7 +14,7 @@ public record HospitalSearchResult(
                 hospital.id(),
                 hospital.name(),
                 hospital.imageUrl(),
-                distance,
+                Math.round(distance * 100.0) / 100.0,
                 hospital.businessStatus().toString()
         );
     }
