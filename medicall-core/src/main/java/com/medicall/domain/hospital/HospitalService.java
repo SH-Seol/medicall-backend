@@ -5,9 +5,10 @@ import com.medicall.domain.appointment.AppointmentReader;
 import com.medicall.domain.appointment.AppointmentWriter;
 import com.medicall.domain.doctor.Doctor;
 import com.medicall.domain.doctor.DoctorReader;
-import com.medicall.domain.doctor.DoctorValidator;
-import com.medicall.domain.hospital.dto.ReadHospitalRequest;
-import com.medicall.domain.hospital.dto.ReadHospitalResponse;
+import com.medicall.domain.hospital.dto.HospitalSearchByNameCriteria;
+import com.medicall.domain.hospital.dto.HospitalSearchResult;
+import com.medicall.support.CursorPageResult;
+
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -23,20 +24,17 @@ public class HospitalService {
     private final DoctorReader doctorReader;
     private final AppointmentReader appointmentReader;
     private final AppointmentWriter appointmentWriter;
-    private final DoctorValidator doctorValidator;
 
-    HospitalService(HospitalReader reader,
+    public HospitalService(HospitalReader reader,
                     HospitalWriter writer,
                     DoctorReader doctorReader,
                     AppointmentReader appointmentReader,
-                    AppointmentWriter appointmentWriter,
-                    DoctorValidator doctorValidator) {
+                    AppointmentWriter appointmentWriter) {
         this.hospitalReader = reader;
         this.hospitalWriter = writer;
         this.doctorReader = doctorReader;
         this.appointmentReader = appointmentReader;
         this.appointmentWriter = appointmentWriter;
-        this.doctorValidator = doctorValidator;
     }
 
     //예약 조회
@@ -52,7 +50,7 @@ public class HospitalService {
     //의사 없는 요청 의사 배정
     public Long designateDoctorToAppointment(Long hospitalId, Long doctorId, Long appointmentId) {
         Doctor doctor = doctorReader.findById(doctorId);
-        Appointment appointment = appointmentReader.getAppointmentById(appointmentId);
+        Appointment appointment = appointmentReader.findById(appointmentId);
         if(!appointment.hospital().id().equals(hospitalId)){
             throw new IllegalArgumentException("병원의 예약이 아닙니다.");
         }
@@ -71,17 +69,10 @@ public class HospitalService {
         hospitalWriter.updaterOperatingTimes(hospitalId, operatingTimes);
     }
 
-    public List<ReadHospitalResponse> readHospitalsByKeyword(ReadHospitalRequest request, Long doctorId) {
-        doctorValidator.validateDoctorBelongsToHospital(doctorId);
-        return hospitalReader.findAllByKeyword(request.keyword()).stream()
-                .map(hospital ->
-                        new ReadHospitalResponse(
-                                hospital.name(),
-                                hospital.telephoneNumber(),
-                                hospital.address(),
-                                hospital.imageUrl(),
-                                hospital.departments(),
-                                hospital.weeklySchedule()))
-                .toList();
+    /**
+     * 병원 이름으로 목록 조회
+     */
+    public CursorPageResult<HospitalSearchResult> getHospitalsByName(HospitalSearchByNameCriteria criteria) {
+        return hospitalReader.searchNearbyByKeyword(criteria);
     }
 }

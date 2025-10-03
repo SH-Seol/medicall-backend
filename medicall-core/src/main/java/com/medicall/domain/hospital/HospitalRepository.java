@@ -2,6 +2,7 @@ package com.medicall.domain.hospital;
 
 import com.medicall.domain.address.Address;
 import com.medicall.domain.appointment.Appointment;
+
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ public interface HospitalRepository {
     boolean addDoctorOnAppointment(Long doctorId, Long appointmentId);
     boolean updateOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes);
     Optional<Hospital> findById(Long hospitalId);
-    List<Hospital> findAllByKeyword(String keyword);
+    List<Hospital> findAllByKeywordWithinBoundingBox(BoundingBox boundingBox, String keyword, Long cursorId, int size);
     Optional<Hospital> findByOAuthInfo(String oauthId, String provider);
     boolean addOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes);
     boolean addAddress(Long hospitalId, Address address);

@@ -1,8 +1,13 @@
 package com.medicall.domain.hospital;
 
 import com.medicall.domain.appointment.Appointment;
+import com.medicall.domain.hospital.dto.HospitalSearchByNameCriteria;
+import com.medicall.domain.hospital.dto.HospitalSearchResult;
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
+import com.medicall.support.CursorPageResult;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,10 +16,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class HospitalReader {
 
-    private final HospitalRepository hospitalRepository;
+    private static final double DEFAULT_RADIUS_KM = 10.0;
 
-    public HospitalReader(HospitalRepository hospitalRepository) {
+    private final HospitalRepository hospitalRepository;
+    private final DistanceCalculator distanceCalculator;
+
+    public HospitalReader(HospitalRepository hospitalRepository, DistanceCalculator distanceCalculator) {
         this.hospitalRepository = hospitalRepository;
+        this.distanceCalculator = distanceCalculator;
     }
 
     public Optional<List<Appointment>> getAppointments(Long hospitalId) {
@@ -25,11 +34,50 @@ public class HospitalReader {
         return hospitalRepository.findById(hospitalId).orElseThrow(() -> new CoreException(CoreErrorType.HOSPITAL_NOT_FOUND));
     }
 
-    public List<Hospital> findAllByKeyword(String keyword) {
-        return hospitalRepository.findAllByKeyword(keyword);
+    /**
+     * 사용자 주소 기반 주변 병원 조회
+     */
+    public CursorPageResult<HospitalSearchResult> searchNearbyByKeyword(HospitalSearchByNameCriteria criteria) {
+        BoundingBox boundingBox = distanceCalculator.calculateBoundingBox(
+                criteria.lat(),
+                criteria.lng(),
+                DEFAULT_RADIUS_KM
+        );
+
+        List<Hospital> candidates = hospitalRepository.findAllByKeywordWithinBoundingBox(
+                boundingBox,
+                criteria.keyword(),
+                criteria.cursorId(),
+                criteria.size() + 1);
+
+        List<HospitalSearchResult> filtered = candidates.stream()
+                .map(hospital -> {
+                    double distance = distanceCalculator.calculateDistance(
+                            criteria.lat(), criteria.lng(),
+                            hospital.address().latitude(), hospital.address().longitude()
+                    );
+                    return HospitalSearchResult.of(hospital, distance);
+                }).filter(hwd -> hwd.distance() <= 10.0)
+                .sorted(Comparator.comparingDouble(HospitalSearchResult::distance))
+                .toList();
+
+        return buildCursorPageResult(filtered, criteria.size());
     }
 
     public Optional<Hospital> findByOAuthInfo(String oauthId, String provider) {
         return hospitalRepository.findByOAuthInfo(oauthId, provider);
+    }
+
+    /**
+     * cursor형 페이지로 병원 목록 전환
+     */
+    private CursorPageResult<HospitalSearchResult> buildCursorPageResult(List<HospitalSearchResult> cursorPageResult, int size) {
+        boolean hasNextPage = cursorPageResult.size() > size;
+
+        List<HospitalSearchResult> content = hasNextPage ? cursorPageResult.subList(0, size) : cursorPageResult;
+
+        Long nextCursorId = hasNextPage && !content.isEmpty() ? content.get(content.size() - 1).id(): null;
+
+        return CursorPageResult.of(content, nextCursorId);
     }
 }
