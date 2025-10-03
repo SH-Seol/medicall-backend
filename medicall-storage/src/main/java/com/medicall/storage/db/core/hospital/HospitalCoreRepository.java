@@ -153,7 +153,7 @@ public class HospitalCoreRepository implements HospitalRepository {
     }
 
     public Optional<Hospital> findById(Long hospitalId){
-        return hospitalJpaRepository.findById(hospitalId).map(HospitalEntity::toDomainModel);
+        return hospitalJpaRepository.findByIdWithDetails(hospitalId).map(HospitalEntity::toDomainModel);
     }
 
     /**

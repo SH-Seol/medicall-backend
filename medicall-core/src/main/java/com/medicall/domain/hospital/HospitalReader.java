@@ -1,6 +1,7 @@
 package com.medicall.domain.hospital;
 
 import com.medicall.domain.appointment.Appointment;
+import com.medicall.domain.hospital.dto.HospitalDetailResult;
 import com.medicall.domain.hospital.dto.HospitalSearchCriteria;
 import com.medicall.domain.hospital.dto.HospitalSearchResult;
 import com.medicall.error.CoreErrorType;
@@ -30,8 +31,11 @@ public class HospitalReader {
         return hospitalRepository.findAppointmentsByHospitalId(hospitalId);
     }
 
-    public Hospital findById(Long hospitalId) {
-        return hospitalRepository.findById(hospitalId).orElseThrow(() -> new CoreException(CoreErrorType.HOSPITAL_NOT_FOUND));
+    public HospitalDetailResult findById(Long hospitalId, double lat, double lng) {
+        Hospital hospital = hospitalRepository.findById(hospitalId).orElseThrow(() -> new CoreException(CoreErrorType.HOSPITAL_NOT_FOUND));
+        double distance = distanceCalculator.calculateDistance(lat, lng, hospital.address().latitude(), hospital.address().longitude());
+
+        return HospitalDetailResult.of(hospital, distance);
     }
 
     /**
