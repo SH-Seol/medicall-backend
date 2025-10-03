@@ -2,9 +2,10 @@ package com.medicall.domain.hospital.dto;
 
 import com.medicall.support.CorePageUtils;
 
-public record HospitalSearchByNameCriteria(
+public record HospitalSearchCriteria(
         Long userId,
         String keyword,
+        Long departmentId,
         Long cursorId,
         int size,
         double lat,

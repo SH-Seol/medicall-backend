@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,10 +14,10 @@ import com.medicall.common.support.pagination.CursorPageResponse;
 import com.medicall.domain.hospital.HospitalService;
 import com.medicall.domain.hospital.dto.HospitalSearchResult;
 import com.medicall.support.CursorPageResult;
-import com.patient.controller.v1.hospital.dto.request.PatientHospitalSearchByNameRequest;
+import com.patient.controller.v1.hospital.dto.request.PatientHospitalSearchRequest;
 import com.patient.controller.v1.hospital.dto.response.PatientHospitalListResponse;
 
-@RestController
+@RestController("api/v1/patient/hospitals")
 public class PatientHospitalController {
 
     private final HospitalService hospitalService;
@@ -24,10 +26,10 @@ public class PatientHospitalController {
         this.hospitalService = hospitalService;
     }
 
-    @GetMapping("/hospitals/search")
+    @GetMapping("/nearby")
     public CursorPageResponse<PatientHospitalListResponse> findByHospitalName(@Parameter(hidden = true) CurrentUser currentUser,
-                                                                              PatientHospitalSearchByNameRequest request) {
-        CursorPageResult<HospitalSearchResult> result = hospitalService.getHospitalsByName(request.toCriteria(currentUser.userId()));
+                                                                              @Valid PatientHospitalSearchRequest request) {
+        CursorPageResult<HospitalSearchResult> result = hospitalService.getHospitalsNearby(request.toCriteria(currentUser.userId()));
 
         List<PatientHospitalListResponse> hospitalListResponses = result.data().stream().map(PatientHospitalListResponse::from).toList();
 

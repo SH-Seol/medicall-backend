@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import com.medicall.common.support.CurrentUser;
 import com.medicall.common.support.pagination.CursorPageResponse;
-import com.patient.controller.v1.hospital.dto.request.PatientHospitalSearchByNameRequest;
+import com.patient.controller.v1.hospital.dto.request.PatientHospitalSearchRequest;
 import com.patient.controller.v1.hospital.dto.response.PatientHospitalListResponse;
 
 public interface PatientHospitalApiDocs {
@@ -21,5 +21,5 @@ public interface PatientHospitalApiDocs {
             @ApiResponse(responseCode = "404", description = "병원을 찾을 수 없음")
     })
     CursorPageResponse<PatientHospitalListResponse> findByHospitalName(@Parameter(hidden = true) CurrentUser currentUser,
-                                                                       PatientHospitalSearchByNameRequest request);
+                                                                       PatientHospitalSearchRequest request);
 }

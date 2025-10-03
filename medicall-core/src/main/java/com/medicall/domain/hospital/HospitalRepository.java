@@ -15,7 +15,7 @@ public interface HospitalRepository {
     boolean addDoctorOnAppointment(Long doctorId, Long appointmentId);
     boolean updateOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes);
     Optional<Hospital> findById(Long hospitalId);
-    List<Hospital> findAllByKeywordWithinBoundingBox(BoundingBox boundingBox, String keyword, Long cursorId, int size);
+    List<Hospital> findAllWithinBoundingBox(BoundingBox boundingBox, String keyword, Long departmentId, Long cursorId, int size);
     Optional<Hospital> findByOAuthInfo(String oauthId, String provider);
     boolean addOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes);
     boolean addAddress(Long hospitalId, Address address);

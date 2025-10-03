@@ -1,7 +1,7 @@
 package com.medicall.domain.hospital;
 
 import com.medicall.domain.appointment.Appointment;
-import com.medicall.domain.hospital.dto.HospitalSearchByNameCriteria;
+import com.medicall.domain.hospital.dto.HospitalSearchCriteria;
 import com.medicall.domain.hospital.dto.HospitalSearchResult;
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
@@ -37,16 +37,17 @@ public class HospitalReader {
     /**
      * 사용자 주소 기반 주변 병원 조회
      */
-    public CursorPageResult<HospitalSearchResult> searchNearbyByKeyword(HospitalSearchByNameCriteria criteria) {
+    public CursorPageResult<HospitalSearchResult> searchNearby(HospitalSearchCriteria criteria) {
         BoundingBox boundingBox = distanceCalculator.calculateBoundingBox(
                 criteria.lat(),
                 criteria.lng(),
                 DEFAULT_RADIUS_KM
         );
 
-        List<Hospital> candidates = hospitalRepository.findAllByKeywordWithinBoundingBox(
+        List<Hospital> candidates = hospitalRepository.findAllWithinBoundingBox(
                 boundingBox,
                 criteria.keyword(),
+                criteria.departmentId(),
                 criteria.cursorId(),
                 criteria.size() + 1);
 

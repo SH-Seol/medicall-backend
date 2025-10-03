@@ -8,6 +8,7 @@ import com.medicall.domain.hospital.HospitalRepository;
 import com.medicall.domain.hospital.NewHospital;
 import com.medicall.domain.hospital.OperatingTime;
 import com.medicall.storage.db.core.address.AddressEntity;
+import com.medicall.storage.db.core.address.QAddressEntity;
 import com.medicall.storage.db.core.appointment.AppointmentEntity;
 import com.medicall.storage.db.core.appointment.AppointmentJpaRepository;
 import com.medicall.storage.db.core.department.DepartmentEntity;
@@ -156,22 +157,20 @@ public class HospitalCoreRepository implements HospitalRepository {
     }
 
     /**
-     *
-     * @param boundingBox
-     * @param keyword 검색어
-     * @param cursorId 커서 ID
-     * @param size 페이지 크기
-     * @return
+     * 검색 조건에 맞는 모든 병원 조회
+     * (keyword, departmentId 둘 중 하나는 null)
      */
-    public List<Hospital> findAllByKeywordWithinBoundingBox(BoundingBox boundingBox, String keyword, Long cursorId, int size){
+    public List<Hospital> findAllWithinBoundingBox(BoundingBox boundingBox, String keyword, Long departmentId, Long cursorId, int size){
         QHospitalEntity hospital = QHospitalEntity.hospitalEntity;
 
         return queryFactory
                 .selectFrom(hospital)
+                .distinct()
                 .where(
                         withinBox(boundingBox),
                         keywordContains(keyword),
-                        cursorIdGt(cursorId)
+                        cursorIdGt(cursorId),
+                        hasDepartment(departmentId)
                 ).orderBy(hospital.id.asc())
                 .limit(size)
                 .fetch()
@@ -226,6 +225,17 @@ public class HospitalCoreRepository implements HospitalRepository {
 
     public boolean isHospitalExist(Long hospitalId){
         return hospitalJpaRepository.existsById(hospitalId);
+    }
+
+    /**
+     * 병원 진료 과목에 departmentId에 해당하는 진료과목이 존재하는지 조회
+     */
+    public BooleanExpression hasDepartment(Long departmentId){
+        if(departmentId == null){
+            return null;
+        }
+        QHospitalEntity hospital = QHospitalEntity.hospitalEntity;
+        return hospital.departments.any().department.id.eq(departmentId);
     }
 
     /**

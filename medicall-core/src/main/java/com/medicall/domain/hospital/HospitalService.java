@@ -5,7 +5,7 @@ import com.medicall.domain.appointment.AppointmentReader;
 import com.medicall.domain.appointment.AppointmentWriter;
 import com.medicall.domain.doctor.Doctor;
 import com.medicall.domain.doctor.DoctorReader;
-import com.medicall.domain.hospital.dto.HospitalSearchByNameCriteria;
+import com.medicall.domain.hospital.dto.HospitalSearchCriteria;
 import com.medicall.domain.hospital.dto.HospitalSearchResult;
 import com.medicall.support.CursorPageResult;
 
@@ -70,9 +70,9 @@ public class HospitalService {
     }
 
     /**
-     * 병원 이름으로 목록 조회
+     * 주변 병원 목록 조회 (이름 or 진료 과목)
      */
-    public CursorPageResult<HospitalSearchResult> getHospitalsByName(HospitalSearchByNameCriteria criteria) {
-        return hospitalReader.searchNearbyByKeyword(criteria);
+    public CursorPageResult<HospitalSearchResult> getHospitalsNearby(HospitalSearchCriteria criteria) {
+        return hospitalReader.searchNearby(criteria);
     }
 }
