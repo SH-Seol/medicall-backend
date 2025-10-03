@@ -2,6 +2,7 @@ package com.medicall.storage.db.core.hospital;
 
 import com.medicall.domain.address.Address;
 import com.medicall.domain.appointment.Appointment;
+import com.medicall.domain.hospital.BoundingBox;
 import com.medicall.domain.hospital.Hospital;
 import com.medicall.domain.hospital.HospitalRepository;
 import com.medicall.domain.hospital.NewHospital;
@@ -13,6 +14,7 @@ import com.medicall.storage.db.core.department.DepartmentEntity;
 import com.medicall.storage.db.core.department.DepartmentJpaRepository;
 import com.medicall.storage.db.core.doctor.DoctorEntity;
 import com.medicall.storage.db.core.doctor.DoctorJpaRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.DayOfWeek;
 import java.util.List;
@@ -153,8 +155,26 @@ public class HospitalCoreRepository implements HospitalRepository {
         return hospitalJpaRepository.findById(hospitalId).map(HospitalEntity::toDomainModel);
     }
 
-    public List<Hospital> findAllByKeyword(String keyword){
-        return hospitalJpaRepository.findByNameIgnoreCase(keyword.trim())
+    /**
+     *
+     * @param boundingBox
+     * @param keyword 검색어
+     * @param cursorId 커서 ID
+     * @param size 페이지 크기
+     * @return
+     */
+    public List<Hospital> findAllByKeywordWithinBoundingBox(BoundingBox boundingBox, String keyword, Long cursorId, int size){
+        QHospitalEntity hospital = QHospitalEntity.hospitalEntity;
+
+        return queryFactory
+                .selectFrom(hospital)
+                .where(
+                        withinBox(boundingBox),
+                        keywordContains(keyword),
+                        cursorIdGt(cursorId)
+                ).orderBy(hospital.id.asc())
+                .limit(size)
+                .fetch()
                 .stream()
                 .map(HospitalEntity::toDomainModel)
                 .toList();
@@ -206,5 +226,36 @@ public class HospitalCoreRepository implements HospitalRepository {
 
     public boolean isHospitalExist(Long hospitalId){
         return hospitalJpaRepository.existsById(hospitalId);
+    }
+
+    /**
+     * BoundingBox 내에 존재하는지 검증
+     */
+    private BooleanExpression withinBox(BoundingBox boundingBox){
+        QHospitalEntity hospital = QHospitalEntity.hospitalEntity;
+        return hospital.address.latitude.between(boundingBox.minLat(), boundingBox.maxLat())
+                .and(hospital.address.longitude.between(boundingBox.minLon(), boundingBox.maxLon()));
+    }
+
+    /**
+     * 검색어를 포함하는지 검증
+     */
+    private BooleanExpression keywordContains(String keyword){
+        QHospitalEntity hospital = QHospitalEntity.hospitalEntity;
+
+        if(keyword == null || keyword.isEmpty()){
+            return null;
+        }
+        return hospital.name.containsIgnoreCase(keyword);
+    }
+
+    /**
+     * 커서 ID 이후의 데이터만 조회하도록 조건 생성
+     * (cursorId가 null이면 조건 무시)
+     */
+    private BooleanExpression cursorIdGt(Long cursorId){
+        QHospitalEntity hospital = QHospitalEntity.hospitalEntity;
+
+        return cursorId != null ? hospital.id.gt(cursorId) : null;
     }
 }
