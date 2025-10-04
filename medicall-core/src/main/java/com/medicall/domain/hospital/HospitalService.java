@@ -3,11 +3,11 @@ package com.medicall.domain.hospital;
 import com.medicall.domain.appointment.Appointment;
 import com.medicall.domain.appointment.AppointmentReader;
 import com.medicall.domain.appointment.AppointmentWriter;
-import com.medicall.domain.doctor.Doctor;
-import com.medicall.domain.doctor.DoctorReader;
 import com.medicall.domain.hospital.dto.HospitalDetailResult;
 import com.medicall.domain.hospital.dto.HospitalSearchCriteria;
 import com.medicall.domain.hospital.dto.HospitalSearchResult;
+import com.medicall.domain.doctor.Doctor;
+import com.medicall.domain.doctor.DoctorReader;
 import com.medicall.support.CursorPageResult;
 
 import jakarta.transaction.Transactional;
@@ -78,6 +78,6 @@ public class HospitalService {
     }
 
     public HospitalDetailResult findById(Long hospitalId, double lat, double lng) {
-        return hospitalReader.findById(hospitalId, lat, lng);
+        return hospitalReader.findByIdWithLocation(hospitalId, lat, lng);
     }
 }

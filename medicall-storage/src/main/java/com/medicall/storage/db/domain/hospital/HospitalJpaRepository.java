@@ -1,4 +1,4 @@
-package com.medicall.storage.db.core.hospital;
+package com.medicall.storage.db.domain.hospital;
 
 import java.util.List;
 import java.util.Optional;

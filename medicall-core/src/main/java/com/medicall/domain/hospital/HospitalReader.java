@@ -31,7 +31,11 @@ public class HospitalReader {
         return hospitalRepository.findAppointmentsByHospitalId(hospitalId);
     }
 
-    public HospitalDetailResult findById(Long hospitalId, double lat, double lng) {
+    public Hospital findById(Long hospitalId) {
+        return hospitalRepository.findById(hospitalId).orElseThrow(() -> new CoreException(CoreErrorType.HOSPITAL_NOT_FOUND));
+    }
+
+    public HospitalDetailResult findByIdWithLocation(Long hospitalId, double lat, double lng) {
         Hospital hospital = hospitalRepository.findById(hospitalId).orElseThrow(() -> new CoreException(CoreErrorType.HOSPITAL_NOT_FOUND));
         double distance = distanceCalculator.calculateDistance(lat, lng, hospital.address().latitude(), hospital.address().longitude());
 
