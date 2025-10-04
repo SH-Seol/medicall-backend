@@ -16,11 +16,10 @@ public class PatientSecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize.requestMatchers(
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
-                        "swagger-resources/**",
+                        "/swagger-resources/**",
                         "/swagger-ui.html"
                 ).permitAll().anyRequest().authenticated()
         ).formLogin(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable);
-
         return http.build();
     }
 }
