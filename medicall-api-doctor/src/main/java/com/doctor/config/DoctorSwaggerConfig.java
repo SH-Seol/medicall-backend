@@ -7,10 +7,12 @@ import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import com.medicall.common.config.BaseSwaggerConfig;
 
 @Configuration
+@EnableWebSecurity
 public class DoctorSwaggerConfig extends BaseSwaggerConfig {
 
     @Bean
