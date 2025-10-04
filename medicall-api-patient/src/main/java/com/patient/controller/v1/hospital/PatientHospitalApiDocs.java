@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 
@@ -16,6 +17,7 @@ import com.patient.controller.v1.hospital.dto.request.PatientHospitalSearchReque
 import com.patient.controller.v1.hospital.dto.response.PatientHospitalDetailResponse;
 import com.patient.controller.v1.hospital.dto.response.PatientHospitalListResponse;
 
+@Tag(name = "Hospital", description = "환자 병원 관련 API")
 public interface PatientHospitalApiDocs {
     @Operation(
             summary = "환자 병원 목록 조회",
@@ -38,7 +40,7 @@ public interface PatientHospitalApiDocs {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터"),
             @ApiResponse(responseCode = "404", description = "병원을 찾을 수 없음")
     })
-    PatientHospitalDetailResponse readHospitalDetail(@PathVariable("hospitalId") Long hospitalId,
+    PatientHospitalDetailResponse getHospitalDetail(@PathVariable("hospitalId") Long hospitalId,
                                                      @Valid PatientHospitalDetailRequest request,
                                                      @Parameter(hidden = true) CurrentUser currentUser);
 }

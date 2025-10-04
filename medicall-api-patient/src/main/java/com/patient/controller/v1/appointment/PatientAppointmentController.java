@@ -31,7 +31,6 @@ import com.patient.controller.v1.appointment.dto.response.PatientAppointmentDeta
 
 @RestController
 @RequestMapping("/api/v1/patient/appointments")
-@Tag(name = "Patient Appointments API", description = "환자 예약 관리 API")
 public class PatientAppointmentController implements PatientAppointmentApiDocs {
 
     private final AppointmentService appointmentService;

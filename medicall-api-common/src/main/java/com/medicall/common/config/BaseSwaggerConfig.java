@@ -8,11 +8,8 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class BaseSwaggerConfig {
+public abstract class BaseSwaggerConfig {
 
     @Value("${spring.application.name}")
     private String applicationName;
@@ -20,8 +17,7 @@ public class BaseSwaggerConfig {
     @Value("${spring.application.version}")
     private String apiVersion;
 
-    @Bean
-    public OpenAPI customOpenAPI() {
+    protected OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
                         .title(applicationName + "API")

@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medicall.common.support.CurrentUser;
@@ -21,8 +22,9 @@ import com.patient.controller.v1.hospital.dto.request.PatientHospitalSearchReque
 import com.patient.controller.v1.hospital.dto.response.PatientHospitalDetailResponse;
 import com.patient.controller.v1.hospital.dto.response.PatientHospitalListResponse;
 
-@RestController("api/v1/patient/hospitals")
-public class PatientHospitalController {
+@RestController
+@RequestMapping("api/v1/patient/hospitals")
+public class PatientHospitalController implements PatientHospitalApiDocs{
 
     private final HospitalService hospitalService;
 

@@ -4,12 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.medicall.common.support.CurrentUser;
 import com.patient.controller.v1.doctor.dto.response.PatientDoctorResponse;
 
+@Tag(name = "Doctor", description = "환자 의사 관련 API")
 public interface PatientDoctorApiDocs {
 
     @Operation(

@@ -21,7 +21,7 @@ import com.patient.controller.v1.appointment.dto.response.CreatePatientAppointme
 import com.patient.controller.v1.appointment.dto.response.PatientAppointmentListResponse;
 import com.patient.controller.v1.appointment.dto.response.PatientAppointmentDetailResponse;
 
-@Tag(name = "Patient Prescription API", description = "Patient Prescription Endpoints")
+@Tag(name = "Appointment", description = "환자 예약 관련 API")
 public interface PatientAppointmentApiDocs {
 
     @Operation(

@@ -1,15 +1,13 @@
 package com.medicall.common.config;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 public abstract class BaseWebConfig implements WebMvcConfigurer {
 
-    protected void configureBasicCors(CorsRegistry registry, String allowedOrigins, long maxAge) {
+    protected void configureBasicCors(CorsRegistry registry, String allowedOrigin, long maxAge) {
         registry.addMapping("/**")
-                .allowedOrigins(allowedOrigins)
+                .allowedOrigins(allowedOrigin)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
                 .allowCredentials(true)
