@@ -3,6 +3,7 @@ package com.medicall.domain.hospital;
 import com.medicall.domain.address.Address;
 import com.medicall.domain.common.enums.BusinessStatus;
 import com.medicall.domain.department.Department;
+
 import java.util.List;
 
 public record Hospital(

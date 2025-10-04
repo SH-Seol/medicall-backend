@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-import com.medicall.domain.doctor.DoctorValidator;
 import com.medicall.domain.hospital.HospitalValidator;
+import com.medicall.domain.doctor.DoctorValidator;
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
 

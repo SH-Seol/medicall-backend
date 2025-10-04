@@ -2,6 +2,7 @@ package com.medicall.domain.treatment;
 
 import com.medicall.domain.treatment.dto.CreatePrescriptionRequest;
 import com.medicall.domain.treatment.dto.ReadTreatmentResponse;
+
 import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.stereotype.Service;

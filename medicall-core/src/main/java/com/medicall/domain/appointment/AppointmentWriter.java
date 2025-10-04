@@ -1,6 +1,7 @@
 package com.medicall.domain.appointment;
 
 import com.medicall.domain.doctor.Doctor;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -8,7 +9,7 @@ public class AppointmentWriter {
 
     private final AppointmentRepository appointmentRepository;
 
-    public AppointmentWriter(AppointmentRepository appointmentRepository, AppointmentService appointmentService) {
+    public AppointmentWriter(AppointmentRepository appointmentRepository) {
         this.appointmentRepository = appointmentRepository;
     }
 

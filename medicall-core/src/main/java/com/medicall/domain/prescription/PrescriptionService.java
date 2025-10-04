@@ -1,11 +1,12 @@
 package com.medicall.domain.prescription;
 
+import com.medicall.domain.prescription.dto.CreatePrescriptionCommand;
+import com.medicall.domain.prescription.dto.PrescriptionDetailResponse;
 import com.medicall.domain.medicine.MedicineValidator;
-import com.medicall.domain.prescription.dto.CreatePrescriptionRequest;
-import com.medicall.domain.prescription.dto.ReadPrescriptionResponse;
 import com.medicall.domain.treatment.Treatment;
 import com.medicall.domain.treatment.TreatmentReader;
 import com.medicall.domain.treatment.TreatmentValidator;
+
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
@@ -33,7 +34,7 @@ public class PrescriptionService {
         this.medicineValidator = medicineValidator;
     }
 
-    public Long save(Long doctorId, CreatePrescriptionRequest request) {
+    public Long save(Long doctorId, CreatePrescriptionCommand request) {
         Treatment treatment = treatmentReader.findById(request.treatmentId());
 
         List<Long> medicinesId = request.medicines().stream()
@@ -55,9 +56,9 @@ public class PrescriptionService {
         return prescriptionWriter.save(newPrescription);
     }
 
-    public List<ReadPrescriptionResponse> getPrescriptionsByPatientIdAndDoctorId(Long patientId, Long doctorId) {
+    public List<PrescriptionDetailResponse> getPrescriptionsByPatientIdAndDoctorId(Long patientId, Long doctorId) {
         List<Prescription> prescriptions = prescriptionReader.getAllPrescriptionsByPatientIdAndDoctorId(patientId, doctorId);
-        return prescriptions.stream().map(pd -> new ReadPrescriptionResponse(
+        return prescriptions.stream().map(pd -> new PrescriptionDetailResponse(
                 pd.id(),
                 pd.patient(),
                 pd.medicines(),
@@ -68,10 +69,10 @@ public class PrescriptionService {
         )).toList();
     }
 
-    public ReadPrescriptionResponse getPrescriptionById(Long prescriptionId) {
+    public PrescriptionDetailResponse getPrescriptionById(Long prescriptionId) {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
 
-        return new ReadPrescriptionResponse(
+        return new PrescriptionDetailResponse(
                 prescription.id(),
                 prescription.patient(),
                 prescription.medicines(),
