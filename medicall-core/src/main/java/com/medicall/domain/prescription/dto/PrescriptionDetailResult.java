@@ -9,7 +9,7 @@ import com.medicall.domain.treatment.Treatment;
 import java.time.LocalDate;
 import java.util.List;
 
-public record PrescriptionDetailResponse(
+public record PrescriptionDetailResult(
         Long id,
         Patient patient,
         List<PrescriptionMedicine> medicines,

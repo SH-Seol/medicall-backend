@@ -1,7 +1,7 @@
 package com.medicall.domain.prescription;
 
 import com.medicall.domain.prescription.dto.CreatePrescriptionCommand;
-import com.medicall.domain.prescription.dto.PrescriptionDetailResponse;
+import com.medicall.domain.prescription.dto.PrescriptionDetailResult;
 import com.medicall.domain.medicine.MedicineValidator;
 import com.medicall.domain.treatment.Treatment;
 import com.medicall.domain.treatment.TreatmentReader;
@@ -56,9 +56,9 @@ public class PrescriptionService {
         return prescriptionWriter.save(newPrescription);
     }
 
-    public List<PrescriptionDetailResponse> getPrescriptionsByPatientIdAndDoctorId(Long patientId, Long doctorId) {
+    public List<PrescriptionDetailResult> getPrescriptionsByPatientIdAndDoctorId(Long patientId, Long doctorId) {
         List<Prescription> prescriptions = prescriptionReader.getAllPrescriptionsByPatientIdAndDoctorId(patientId, doctorId);
-        return prescriptions.stream().map(pd -> new PrescriptionDetailResponse(
+        return prescriptions.stream().map(pd -> new PrescriptionDetailResult(
                 pd.id(),
                 pd.patient(),
                 pd.medicines(),
@@ -69,10 +69,10 @@ public class PrescriptionService {
         )).toList();
     }
 
-    public PrescriptionDetailResponse getPrescriptionById(Long prescriptionId) {
+    public PrescriptionDetailResult getPrescriptionById(Long prescriptionId) {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
 
-        return new PrescriptionDetailResponse(
+        return new PrescriptionDetailResult(
                 prescription.id(),
                 prescription.patient(),
                 prescription.medicines(),
