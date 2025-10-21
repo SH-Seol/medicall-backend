@@ -14,7 +14,7 @@ import com.patient.controller.v1.treatment.dto.request.PatientTreatmentListReque
 import com.patient.controller.v1.treatment.dto.response.PatientTreatmentListResponse;
 
 
-@Tag(name = "Prescription", description = "환자 처방 관련 API")
+@Tag(name = "Treatment", description = "환자 처방 관련 API")
 public interface PatientTreatmentApiDocs {
 
     @Operation(
