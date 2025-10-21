@@ -1,11 +1,14 @@
 package com.medicall.domain.prescription;
 
 import com.medicall.domain.prescription.dto.CreatePrescriptionCommand;
+import com.medicall.domain.prescription.dto.PatientPrescriptionListCriteria;
 import com.medicall.domain.prescription.dto.PrescriptionDetailResult;
 import com.medicall.domain.medicine.MedicineValidator;
+import com.medicall.domain.prescription.dto.PrescriptionListResult;
 import com.medicall.domain.treatment.Treatment;
 import com.medicall.domain.treatment.TreatmentReader;
 import com.medicall.domain.treatment.TreatmentValidator;
+import com.medicall.support.CursorPageResult;
 
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
@@ -21,17 +24,20 @@ public class PrescriptionService {
     private final TreatmentReader treatmentReader;
     private final TreatmentValidator treatmentValidator;
     private final MedicineValidator medicineValidator;
+    private final PrescriptionValidator prescriptionValidator;
 
     public PrescriptionService(PrescriptionReader prescriptionReader,
                                PrescriptionWriter prescriptionWriter,
                                TreatmentReader treatmentReader,
                                TreatmentValidator treatmentValidator,
-                               MedicineValidator medicineValidator) {
+                               MedicineValidator medicineValidator,
+                               PrescriptionValidator prescriptionValidator) {
         this.prescriptionReader = prescriptionReader;
         this.prescriptionWriter = prescriptionWriter;
         this.treatmentReader = treatmentReader;
         this.treatmentValidator = treatmentValidator;
         this.medicineValidator = medicineValidator;
+        this.prescriptionValidator = prescriptionValidator;
     }
 
     public Long save(Long doctorId, CreatePrescriptionCommand request) {
@@ -69,8 +75,9 @@ public class PrescriptionService {
         )).toList();
     }
 
-    public PrescriptionDetailResult getPrescriptionById(Long prescriptionId) {
+    public PrescriptionDetailResult getPrescriptionByHospital(Long prescriptionId, Long hospitalId) {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
+        prescriptionValidator.validateHospitalPrescription(prescription, hospitalId);
 
         return new PrescriptionDetailResult(
                 prescription.id(),
@@ -81,5 +88,28 @@ public class PrescriptionService {
                 prescription.treatment(),
                 prescription.date()
         );
+    }
+
+    public PrescriptionDetailResult getPrescriptionByPatient(Long prescriptionId, Long patientId) {
+        Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
+        prescriptionValidator.validatePatientPrescription(prescription, patientId);
+
+        return new PrescriptionDetailResult(
+                prescription.id(),
+                prescription.patient(),
+                prescription.medicines(),
+                prescription.hospital(),
+                prescription.doctor(),
+                prescription.treatment(),
+                prescription.date()
+        );
+    }
+
+    public String generatePrescriptionQrToken(Long prescriptionId, Long patientId) {
+        Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
+
+        prescriptionValidator.validatePatientPrescription(prescription, patientId);
+
+        return null;
     }
 }

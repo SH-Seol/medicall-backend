@@ -16,7 +16,8 @@ public enum CoreErrorType {
     TREATMENT_NOT_FOUND(CoreErrorCode.TREATMENT001, CoreErrorKind.NOT_FOUND, "존재하지 않는 진료 내역입니다.", CoreErrorLevel.WARN),
     TREATMENT_ALREADY_HAS_PRESCRIPTION(CoreErrorCode.TREATMENT002, CoreErrorKind.FORBIDDEN, "해당 진료에 처방이 이미 이루어졌습니다.", CoreErrorLevel.WARN),
     MEDICINE_NOT_FOUND(CoreErrorCode.MEDICINE001, CoreErrorKind.NOT_FOUND, "의약품을 찾을 수 없습니다.", CoreErrorLevel.WARN),
-    PRESCRIPTION_NOT_FOUND(CoreErrorCode.PRESENTATION001, CoreErrorKind.NOT_FOUND, "처방전을 찾을 수 없습니다", CoreErrorLevel.WARN),
+    PRESCRIPTION_NOT_FOUND(CoreErrorCode.PRESCRIPTION001, CoreErrorKind.NOT_FOUND, "처방전을 찾을 수 없습니다", CoreErrorLevel.WARN),
+    PRESCRIPTION_NOT_ACCESSIBLE(CoreErrorCode.PRESCRIPTION002, CoreErrorKind.FORBIDDEN, "해당 처방전을 조회할 수 없습니다.", CoreErrorLevel.WARN),
     ;
     private final CoreErrorCode errorCode;
     private final CoreErrorKind errorKind;
