@@ -1,7 +1,11 @@
 package com.medicall.domain.treatment;
 
 import com.medicall.domain.treatment.dto.CreatePrescriptionRequest;
-import com.medicall.domain.treatment.dto.ReadTreatmentResponse;
+import com.medicall.domain.treatment.dto.HospitalTreatmentListCriteria;
+import com.medicall.domain.treatment.dto.PatientTreatmentListCriteria;
+import com.medicall.domain.treatment.dto.TreatmentDetailResult;
+import com.medicall.domain.treatment.dto.TreatmentListResult;
+import com.medicall.support.CursorPageResult;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -13,10 +17,13 @@ public class TreatmentService {
 
     private final TreatmentReader treatmentReader;
     private final TreatmentWriter treatmentWriter;
+    private final TreatmentValidator treatmentValidator;
 
-    public TreatmentService(TreatmentReader treatmentReader, TreatmentWriter treatmentWriter) {
+    public TreatmentService(TreatmentReader treatmentReader, TreatmentWriter treatmentWriter,
+                            TreatmentValidator treatmentValidator) {
         this.treatmentReader = treatmentReader;
         this.treatmentWriter = treatmentWriter;
+        this.treatmentValidator = treatmentValidator;
     }
 
     //진료 기록 작성
@@ -30,18 +37,28 @@ public class TreatmentService {
         return treatmentWriter.addTreatment(treatment);
     }
 
-    //진단 기록 불러오기
-    public List<ReadTreatmentResponse> getTreatments(Long patientId, Long doctorId) {
-        List<Treatment> treatments = treatmentReader.getTreatmentsByPatientId(patientId, doctorId);
+    /**
+     * 진료 기록 상세 조회(병원, 의사만 가능)
+     */
+    public TreatmentDetailResult getTreatmentByHospital(Long hospitalId, Long treatmentId) {
+        Treatment treatment = treatmentReader.findById(treatmentId);
+        treatmentValidator.validateHospitalTreatment(treatment, hospitalId);
 
-        return treatments.stream().map(treatment ->
-                new ReadTreatmentResponse(
-                        treatment.patient(),
-                        treatment.doctor(),
-                        treatment.symptoms(),
-                        treatment.treatment(),
-                        treatment.detailedTreatment(),
-                        treatment.prescription().id()
-                        )).toList();
+        return TreatmentDetailResult.from(treatment);
+    }
+
+    public TreatmentDetailResult getTreatmentByDoctor(Long doctorId, Long treatmentId) {
+        Treatment treatment = treatmentReader.findById(treatmentId);
+        treatmentValidator.validateDoctorTreatment(treatment, doctorId);
+
+        return TreatmentDetailResult.from(treatment);
+    }
+
+    public CursorPageResult<TreatmentListResult> getTreatmentListByPatient(PatientTreatmentListCriteria criteria){
+        return treatmentReader.getTreatmentListByPatient(criteria);
+    }
+
+    public CursorPageResult<TreatmentListResult> getTreatmentListByHospitalAndPatient(HospitalTreatmentListCriteria criteria){
+        return null;
     }
 }
