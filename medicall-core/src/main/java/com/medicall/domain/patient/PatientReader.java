@@ -2,6 +2,7 @@ package com.medicall.domain.patient;
 
 import java.util.Optional;
 
+import com.medicall.domain.patient.dto.PatientDetailResult;
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
 import org.springframework.stereotype.Component;
@@ -15,8 +16,10 @@ public class PatientReader {
         this.patientRepository = patientRepository;
     }
 
-    public Patient findById(Long patientId){
-        return patientRepository.findById(patientId).orElseThrow(() -> new CoreException(CoreErrorType.PATIENT_NOT_FOUND));
+    public PatientDetailResult findById(Long patientId){
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new CoreException(CoreErrorType.PATIENT_NOT_FOUND));
+
+        return PatientDetailResult.from(patient);
     }
 
     public Optional<Patient> findByOAuthInfo(String oauthId, String provider){

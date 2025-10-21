@@ -2,6 +2,8 @@ package com.medicall.domain.patient;
 
 import org.springframework.stereotype.Service;
 
+import com.medicall.domain.patient.dto.PatientDetailResult;
+
 @Service
 public class PatientService {
 
@@ -11,7 +13,7 @@ public class PatientService {
         this.patientReader = patientReader;
     }
 
-    public Patient findById(Long patientId){
+    public PatientDetailResult findById(Long patientId){
         return patientReader.findById(patientId);
     }
 }
