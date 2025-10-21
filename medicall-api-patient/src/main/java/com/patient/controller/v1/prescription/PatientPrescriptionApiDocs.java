@@ -6,14 +6,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import jakarta.validation.Valid;
-
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.medicall.common.support.CurrentUser;
-import com.patient.controller.v1.prescription.dto.request.PatientPrescriptionListRequest;
 import com.patient.controller.v1.prescription.dto.response.PatientPrescriptionDetailResponse;
-import com.patient.controller.v1.prescription.dto.response.PatientPrescriptionListResponse;
 import com.patient.controller.v1.prescription.dto.response.PatientPrescriptionQrResponse;
 
 @Tag(name = "Prescription", description = "환자 처방 관련 API")
