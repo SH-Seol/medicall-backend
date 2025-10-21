@@ -59,4 +59,9 @@ public class TreatmentCoreRepository implements TreatmentRepository {
     public Optional<Treatment> findById(Long treatmentId){
         return treatmentJpaRepository.findById(treatmentId).map(TreatmentEntity::toDomainModel);
     }
+
+    public List<Treatment> findAllByPatientId(Long patientId, Long cursorId, int size){
+        List<TreatmentEntity> treatmentEntities = treatmentJpaRepository.findAllByPatientId(patientId);
+        return treatmentEntities.stream().map(TreatmentEntity::toDomainModel).toList();
+    }
 }

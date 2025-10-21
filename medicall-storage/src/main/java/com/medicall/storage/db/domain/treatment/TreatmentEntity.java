@@ -3,6 +3,7 @@ package com.medicall.storage.db.domain.treatment;
 import com.medicall.domain.treatment.Treatment;
 import com.medicall.storage.db.domain.common.domain.BaseEntity;
 import com.medicall.storage.db.domain.doctor.DoctorEntity;
+import com.medicall.storage.db.domain.hospital.HospitalEntity;
 import com.medicall.storage.db.domain.patient.PatientEntity;
 import com.medicall.storage.db.domain.prescription.PrescriptionEntity;
 
@@ -23,6 +24,10 @@ public class TreatmentEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
     private DoctorEntity doctor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hospital_id", nullable = false)
+    private HospitalEntity hospital;
 
     @Column(nullable = false)
     private String symptom;
@@ -71,10 +76,12 @@ public class TreatmentEntity extends BaseEntity {
                 this.id,
                 this.patient.toDomainModel(),
                 this.doctor.toDomainModel(),
+                this.hospital.toDomainModel(),
                 this.symptom,
                 this.treatment,
                 this.detailTreatment,
-                this.prescription.toDomainModel()
+                this.prescription.toDomainModel(),
+                this.getCreatedAt()
         );
     }
 }
