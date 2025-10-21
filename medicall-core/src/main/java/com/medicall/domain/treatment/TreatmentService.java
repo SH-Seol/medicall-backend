@@ -8,7 +8,7 @@ import com.medicall.domain.treatment.dto.TreatmentListResult;
 import com.medicall.support.CursorPageResult;
 
 import jakarta.transaction.Transactional;
-import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -58,7 +58,7 @@ public class TreatmentService {
         return treatmentReader.getTreatmentListByPatient(criteria);
     }
 
-    public CursorPageResult<TreatmentListResult> getTreatmentListByHospitalAndPatient(HospitalTreatmentListCriteria criteria){
+    public CursorPageResult<TreatmentListResult> getTreatmentListByHospital(HospitalTreatmentListCriteria criteria){
         return null;
     }
 }
