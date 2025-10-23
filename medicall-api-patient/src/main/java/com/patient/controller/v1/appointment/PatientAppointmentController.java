@@ -1,7 +1,6 @@
 package com.patient.controller.v1.appointment;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class PatientAppointmentController implements PatientAppointmentApiDocs {
             @Parameter(hidden = true) CurrentUser currentUser
     ) {
         PatientAppointmentListCriteria criteria = request.toCriteria(currentUser.userId());
-        CursorPageResult<Appointment> result = appointmentService.getAppointmentList(criteria);
+        CursorPageResult<Appointment> result = appointmentService.getAppointmentListByPatient(criteria);
 
         List<PatientAppointmentListResponse> appointmentResponseList = result.data().stream().map(
                 PatientAppointmentListResponse::from).toList();
@@ -62,7 +61,7 @@ public class PatientAppointmentController implements PatientAppointmentApiDocs {
             @PathVariable("appointmentId") Long appointmentId,
             @Parameter(hidden = true) CurrentUser currentUser)
     {
-        Appointment result = appointmentService.findByAppointmentId(currentUser.userId(), appointmentId);
+        Appointment result = appointmentService.findAppointmentByPatient(currentUser.userId(), appointmentId);
         return PatientAppointmentDetailResponse.from(result);
     }
 
