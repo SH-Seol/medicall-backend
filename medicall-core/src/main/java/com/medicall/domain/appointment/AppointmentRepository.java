@@ -1,6 +1,7 @@
 package com.medicall.domain.appointment;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -16,4 +17,5 @@ public interface AppointmentRepository {
     Appointment create(Long patientId, NewAppointment newAppointment);
     boolean existsByDoctorIdAndReservationTime(Long doctorId, LocalDateTime reservationTime);
     boolean existsByPatientIdAndReservationTime(Long patientId, LocalDateTime reservationTime);
+    List<Appointment> findAllByDoctorId(Long doctorId, Long cursorId, int size);
 }

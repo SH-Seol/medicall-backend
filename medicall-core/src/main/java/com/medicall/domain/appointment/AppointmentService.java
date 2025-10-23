@@ -4,7 +4,10 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.medicall.domain.appointment.dto.AppointmentDetailResult;
+import com.medicall.domain.appointment.dto.AppointmentListResult;
 import com.medicall.domain.appointment.dto.CreateAppointmentResult;
+import com.medicall.domain.appointment.dto.DoctorAppointmentListCriteria;
 import com.medicall.domain.appointment.dto.PatientAppointmentListCriteria;
 import com.medicall.support.CursorPageResult;
 
@@ -22,11 +25,11 @@ public class AppointmentService {
         this.appointmentValidator = appointmentValidator;
     }
 
-    public CursorPageResult<Appointment> getAppointmentList(PatientAppointmentListCriteria criteria) {
+    public CursorPageResult<Appointment> getAppointmentListByPatient(PatientAppointmentListCriteria criteria) {
         return appointmentReader.findByPatientId(criteria);
     }
 
-    public Appointment findByAppointmentId(Long patientId, Long appointmentId) {
+    public Appointment findAppointmentByPatient(Long patientId, Long appointmentId) {
         Appointment appointment = appointmentReader.findById(appointmentId);
         appointmentValidator.validatePatientAccess(appointment, patientId);
 
@@ -38,6 +41,17 @@ public class AppointmentService {
         Appointment appointment = appointmentWriter.create(patientId, newAppointment);
 
         return CreateAppointmentResult.from(appointment);
+    }
+
+    public AppointmentDetailResult findAppointmentByDoctor(Long doctorId, Long appointmentId) {
+        Appointment appointment = appointmentReader.findById(appointmentId);
+        appointmentValidator.validateDoctorAccess(appointment, doctorId);
+
+        return AppointmentDetailResult.from(appointment);
+    }
+
+    public CursorPageResult<AppointmentListResult> getAppointmentListByDoctor(DoctorAppointmentListCriteria criteria) {
+        return appointmentReader.getAppointmentListByDoctor(criteria);
     }
 
 }

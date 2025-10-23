@@ -14,6 +14,8 @@ import com.medicall.storage.db.domain.patient.PatientEntity;
 import com.medicall.storage.db.domain.patient.PatientJpaRepository;
 import com.medicall.support.CorePageUtils;
 import com.medicall.support.CursorPageResult;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,15 +29,18 @@ public class AppointmentCoreRepository implements AppointmentRepository {
     private final DoctorJpaRepository doctorJpaRepository;
     private final PatientJpaRepository patientJpaRepository;
     private final HospitalJpaRepository hospitalJpaRepository;
+    private final JPAQueryFactory queryFactory;
 
     public AppointmentCoreRepository(AppointmentJpaRepository appointmentJpaRepository,
                                      DoctorJpaRepository doctorJpaRepository,
                                      PatientJpaRepository patientJpaRepository,
-                                     HospitalJpaRepository hospitalJpaRepository) {
+                                     HospitalJpaRepository hospitalJpaRepository,
+                                     JPAQueryFactory queryFactory) {
         this.appointmentJpaRepository = appointmentJpaRepository;
         this.doctorJpaRepository = doctorJpaRepository;
         this.patientJpaRepository = patientJpaRepository;
         this.hospitalJpaRepository = hospitalJpaRepository;
+        this.queryFactory = queryFactory;
     }
 
     public Optional<Appointment> findById(Long appointmentId){
@@ -98,8 +103,23 @@ public class AppointmentCoreRepository implements AppointmentRepository {
         return null;
     }
 
-    public List<Appointment> getAppointmentsByDoctorId(Long doctorId){
-        return null;
+    public List<Appointment> findAllByDoctorId(Long doctorId, Long cursorId, int size){
+        QAppointmentEntity appointmentEntity = QAppointmentEntity.appointmentEntity;
+
+        return queryFactory.selectFrom(appointmentEntity)
+                .where(appointmentEntity.doctor.id.eq(doctorId),
+                        cursorIdGt(cursorId))
+                .orderBy(appointmentEntity.id.desc())
+                .limit(size)
+                .fetch()
+                .stream()
+                .map(AppointmentEntity::toDomainModel)
+                .toList();
     }
 
+    private BooleanExpression cursorIdGt(Long cursorId){
+        QAppointmentEntity appointment = QAppointmentEntity.appointmentEntity;
+
+        return cursorId != null ? appointment.id.gt(cursorId) : null;
+    }
 }

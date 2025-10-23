@@ -1,8 +1,14 @@
 package com.medicall.domain.appointment;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.medicall.domain.appointment.dto.AppointmentListResult;
+import com.medicall.domain.appointment.dto.DoctorAppointmentListCriteria;
 import com.medicall.domain.appointment.dto.PatientAppointmentListCriteria;
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
+import com.medicall.support.CorePageUtils;
 import com.medicall.support.CursorPageResult;
 
 import org.springframework.stereotype.Component;
@@ -22,5 +28,14 @@ public class AppointmentReader {
 
     public CursorPageResult<Appointment> findByPatientId(PatientAppointmentListCriteria criteria) {
         return appointmentRepository.findByPatientId(criteria);
+    }
+
+    public CursorPageResult<AppointmentListResult> getAppointmentListByDoctor(DoctorAppointmentListCriteria criteria) {
+        List<Appointment> appointmentList = appointmentRepository.findAllByDoctorId(criteria.doctorId(),
+                criteria.cursorId(), criteria.size());
+
+        List<AppointmentListResult> result = appointmentList.stream().map(AppointmentListResult::from).toList();
+
+        return CorePageUtils.buildCursorResult(result, criteria.size(), AppointmentListResult::appointmentId);
     }
 }
