@@ -9,7 +9,8 @@ public record AppointmentListResult(
         String patient,
         String doctor,
         String hospital,
-        LocalDateTime reservationTime
+        LocalDateTime reservationTime,
+        String status
 ) {
     public static AppointmentListResult from(Appointment appointment){
         return new AppointmentListResult(
@@ -17,7 +18,8 @@ public record AppointmentListResult(
                 appointment.patient().name(),
                 appointment.doctor().name(),
                 appointment.hospital().name(),
-                appointment.reservationTime()
+                appointment.reservationTime(),
+                appointment.status()
         );
     }
 }

@@ -117,6 +117,20 @@ public class AppointmentCoreRepository implements AppointmentRepository {
                 .toList();
     }
 
+    public List<Appointment> findAllByHospitalId(Long hospitalId, Long cursorId, int size){
+        QAppointmentEntity appointmentEntity = QAppointmentEntity.appointmentEntity;
+
+        return queryFactory.selectFrom(appointmentEntity)
+                .where(appointmentEntity.hospital.id.eq(hospitalId),
+                        cursorIdGt(cursorId))
+                .orderBy(appointmentEntity.id.desc())
+                .limit(size)
+                .fetch()
+                .stream()
+                .map(AppointmentEntity::toDomainModel)
+                .toList();
+    }
+
     private BooleanExpression cursorIdGt(Long cursorId){
         QAppointmentEntity appointment = QAppointmentEntity.appointmentEntity;
 

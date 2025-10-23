@@ -8,6 +8,7 @@ import com.medicall.domain.appointment.dto.AppointmentDetailResult;
 import com.medicall.domain.appointment.dto.AppointmentListResult;
 import com.medicall.domain.appointment.dto.CreateAppointmentResult;
 import com.medicall.domain.appointment.dto.DoctorAppointmentListCriteria;
+import com.medicall.domain.appointment.dto.HospitalAppointmentListCriteria;
 import com.medicall.domain.appointment.dto.PatientAppointmentListCriteria;
 import com.medicall.support.CursorPageResult;
 
@@ -52,6 +53,17 @@ public class AppointmentService {
 
     public CursorPageResult<AppointmentListResult> getAppointmentListByDoctor(DoctorAppointmentListCriteria criteria) {
         return appointmentReader.getAppointmentListByDoctor(criteria);
+    }
+
+    public AppointmentDetailResult findAppointmentByHospital(Long hospitalId, Long appointmentId) {
+        Appointment appointment = appointmentReader.findById(appointmentId);
+        appointmentValidator.validateHospitalAccess(appointment, hospitalId);
+
+        return AppointmentDetailResult.from(appointment);
+    }
+
+    public CursorPageResult<AppointmentListResult> getAppointmentListByHospital(HospitalAppointmentListCriteria criteria) {
+        return appointmentReader.getAppointmentListByHospital(criteria);
     }
 
 }

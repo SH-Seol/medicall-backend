@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.medicall.domain.appointment.dto.AppointmentListResult;
 import com.medicall.domain.appointment.dto.DoctorAppointmentListCriteria;
+import com.medicall.domain.appointment.dto.HospitalAppointmentListCriteria;
 import com.medicall.domain.appointment.dto.PatientAppointmentListCriteria;
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
@@ -32,6 +33,15 @@ public class AppointmentReader {
 
     public CursorPageResult<AppointmentListResult> getAppointmentListByDoctor(DoctorAppointmentListCriteria criteria) {
         List<Appointment> appointmentList = appointmentRepository.findAllByDoctorId(criteria.doctorId(),
+                criteria.cursorId(), criteria.size());
+
+        List<AppointmentListResult> result = appointmentList.stream().map(AppointmentListResult::from).toList();
+
+        return CorePageUtils.buildCursorResult(result, criteria.size(), AppointmentListResult::appointmentId);
+    }
+
+    public CursorPageResult<AppointmentListResult> getAppointmentListByHospital(HospitalAppointmentListCriteria criteria) {
+        List<Appointment> appointmentList = appointmentRepository.findAllByHospitalId(criteria.hospitalId(),
                 criteria.cursorId(), criteria.size());
 
         List<AppointmentListResult> result = appointmentList.stream().map(AppointmentListResult::from).toList();
