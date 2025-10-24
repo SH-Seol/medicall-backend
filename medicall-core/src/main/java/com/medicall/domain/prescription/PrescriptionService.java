@@ -105,6 +105,21 @@ public class PrescriptionService {
         );
     }
 
+    public PrescriptionDetailResult getPrescriptionByDoctor(Long prescriptionId, Long doctorId) {
+        Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
+        prescriptionValidator.validateDoctorPrescription(prescription, doctorId);
+
+        return new PrescriptionDetailResult(
+                prescription.id(),
+                prescription.patient(),
+                prescription.medicines(),
+                prescription.hospital(),
+                prescription.doctor(),
+                prescription.treatment(),
+                prescription.date()
+        );
+    }
+
     public String generatePrescriptionQrToken(Long prescriptionId, Long patientId) {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
 
