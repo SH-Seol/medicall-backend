@@ -1,6 +1,7 @@
 package com.medicall.domain.treatment;
 
 import com.medicall.domain.treatment.dto.CreatePrescriptionRequest;
+import com.medicall.domain.treatment.dto.DoctorTreatmentListCriteria;
 import com.medicall.domain.treatment.dto.HospitalTreatmentListCriteria;
 import com.medicall.domain.treatment.dto.PatientTreatmentListCriteria;
 import com.medicall.domain.treatment.dto.TreatmentDetailResult;
@@ -60,5 +61,9 @@ public class TreatmentService {
 
     public CursorPageResult<TreatmentListResult> getTreatmentListByHospital(HospitalTreatmentListCriteria criteria){
         return null;
+    }
+
+    public CursorPageResult<TreatmentListResult> getTreatmentListByDoctorAndPatient(DoctorTreatmentListCriteria criteria){
+        return treatmentReader.getTreatmentsByDoctorIdAndPatientId(criteria);
     }
 }

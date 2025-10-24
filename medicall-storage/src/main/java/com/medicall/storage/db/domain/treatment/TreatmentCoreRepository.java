@@ -9,6 +9,7 @@ import com.medicall.storage.db.domain.doctor.DoctorEntity;
 import com.medicall.storage.db.domain.doctor.DoctorJpaRepository;
 import com.medicall.storage.db.domain.patient.PatientEntity;
 import com.medicall.storage.db.domain.patient.PatientJpaRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -32,12 +33,15 @@ public class TreatmentCoreRepository implements TreatmentRepository {
         this.queryFactory = queryFactory;
     }
 
-    public List<Treatment> getTreatmentsByPatientId(Long patientId, Long doctorId) {
+    public List<Treatment> getTreatmentsByPatientId(Long patientId, Long doctorId, Long cursorId, int size) {
         List<TreatmentEntity> entities = queryFactory
                 .selectFrom(treatmentEntity)
                 .where(treatmentEntity.patient.id.eq(patientId),
-                        treatmentEntity.doctor.id.eq(doctorId)
-                ).fetch();
+                        treatmentEntity.doctor.id.eq(doctorId),
+                        cursorIdGt(cursorId)
+                ).orderBy(treatmentEntity.id.desc())
+                .limit(size)
+                .fetch();
 
         return entities.stream().map(TreatmentEntity::toDomainModel).toList();
     }
@@ -63,5 +67,11 @@ public class TreatmentCoreRepository implements TreatmentRepository {
     public List<Treatment> findAllByPatientId(Long patientId, Long cursorId, int size){
         List<TreatmentEntity> treatmentEntities = treatmentJpaRepository.findAllByPatientId(patientId);
         return treatmentEntities.stream().map(TreatmentEntity::toDomainModel).toList();
+    }
+
+    private BooleanExpression cursorIdGt(Long cursorId){
+        QTreatmentEntity treatment = QTreatmentEntity.treatmentEntity;
+
+        return cursorId != null ? treatment.id.gt(cursorId) : null;
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TreatmentRepository {
-    List<Treatment> getTreatmentsByPatientId(Long patientId, Long doctorId);
+    List<Treatment> getTreatmentsByPatientId(Long patientId, Long doctorId, Long cursorId, int size);
     Long save(NewTreatment treatment);
     Optional<Treatment> findById(Long treatmentId);
     List<Treatment> findAllByPatientId(Long patientId, Long cursorId, int size);

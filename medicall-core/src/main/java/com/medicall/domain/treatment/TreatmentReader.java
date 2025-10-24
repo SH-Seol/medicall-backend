@@ -1,5 +1,6 @@
 package com.medicall.domain.treatment;
 
+import com.medicall.domain.treatment.dto.DoctorTreatmentListCriteria;
 import com.medicall.domain.treatment.dto.PatientTreatmentListCriteria;
 import com.medicall.domain.treatment.dto.TreatmentListResult;
 import com.medicall.error.CoreErrorType;
@@ -20,8 +21,22 @@ public class TreatmentReader {
     }
 
     //환자 id 로 진료 기록 불러오기
-    public List<Treatment> getTreatmentsByPatientId(Long patientId, Long doctorId) {
-        return treatmentRepository.getTreatmentsByPatientId(patientId, doctorId);
+    public CursorPageResult<TreatmentListResult> getTreatmentsByDoctorIdAndPatientId(DoctorTreatmentListCriteria criteria) {
+        List<Treatment> treatments = treatmentRepository.getTreatmentsByPatientId(criteria.patientId(),
+                criteria.doctorId(), criteria.cursorId(), criteria.size());
+        List<TreatmentListResult> result = treatments
+                .stream()
+                .map(treatment ->
+                        new TreatmentListResult(
+                                treatment.id(),
+                                treatment.patient(),
+                                treatment.hospital(),
+                                treatment.doctor(),
+                                treatment.createdAt(),
+                                treatment.prescription().id()
+                        )
+                ).toList();
+        return CorePageUtils.buildCursorResult(result, criteria.size(), TreatmentListResult::treatmentId);
     }
 
     public Treatment findById(Long treatmentId){
