@@ -1,6 +1,6 @@
 package com.medicall.domain.treatment;
 
-import com.medicall.domain.treatment.dto.CreatePrescriptionRequest;
+import com.medicall.domain.treatment.dto.CreateTreatmentCommand;
 import com.medicall.domain.treatment.dto.DoctorTreatmentListCriteria;
 import com.medicall.domain.treatment.dto.HospitalTreatmentListCriteria;
 import com.medicall.domain.treatment.dto.PatientTreatmentListCriteria;
@@ -28,7 +28,7 @@ public class TreatmentService {
     }
 
     //진료 기록 작성
-    public Long addTreatment(Long doctorId, CreatePrescriptionRequest request) {
+    public Long addTreatment(Long doctorId, CreateTreatmentCommand request) {
         NewTreatment treatment = new NewTreatment(
                 request.patientId(),
                 doctorId,

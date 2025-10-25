@@ -1,6 +1,6 @@
 package com.medicall.domain.treatment.dto;
 
-public record CreatePrescriptionRequest(
+public record CreateTreatmentCommand(
         Long patientId,
         String symptoms,
         String treatment,
