@@ -5,10 +5,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.doctor.controller.v1.treatment.dto.request.CreateDoctorTreatmentRequest;
 import com.doctor.controller.v1.treatment.dto.request.DoctorTreatmentListRequest;
@@ -21,10 +20,10 @@ import com.medicall.common.support.pagination.CursorPageResponse;
 @Tag(name = "Treatment", description = "의사 진료 관련 API")
 public interface DoctorTreatmentApiDocs {
 
-    ResponseEntity<CreateDoctorTreatmentResponse> createTreatment(@Valid @RequestBody CreateDoctorTreatmentRequest createDoctorTreatmentRequest,
-                                                                  @Parameter(hidden = true) CurrentUser currentUser);
+    public CreateDoctorTreatmentResponse createTreatment(@RequestBody CreateDoctorTreatmentRequest request,
+                                                         @Parameter(hidden = true) CurrentUser currentUser);
 
-    CursorPageResponse<DoctorTreatmentListResponse> getPatientTreatmentList (@PathVariable Long patientId,
+    CursorPageResponse<DoctorTreatmentListResponse> getPatientTreatmentList (@RequestParam Long patientId,
                                                                              @Valid DoctorTreatmentListRequest request,
                                                                              @Parameter(hidden = true) CurrentUser currentUser);
 

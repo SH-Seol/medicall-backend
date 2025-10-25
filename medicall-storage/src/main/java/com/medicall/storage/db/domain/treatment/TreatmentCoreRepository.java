@@ -46,7 +46,7 @@ public class TreatmentCoreRepository implements TreatmentRepository {
         return entities.stream().map(TreatmentEntity::toDomainModel).toList();
     }
 
-    public Long save(NewTreatment treatment) {
+    public Treatment save(NewTreatment treatment) {
         PatientEntity patientEntity = patientJpaRepository.getReferenceById(treatment.patientId());
         DoctorEntity doctorEntity = doctorJpaRepository.getReferenceById(treatment.doctorId());
 
@@ -57,7 +57,7 @@ public class TreatmentCoreRepository implements TreatmentRepository {
                 treatment.treatment(),
                 treatment.detailedTreatment());
 
-        return treatmentJpaRepository.save(treatmentEntity).getId();
+        return treatmentJpaRepository.save(treatmentEntity).toDomainModel();
     }
 
     public Optional<Treatment> findById(Long treatmentId){

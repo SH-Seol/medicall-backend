@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.doctor.controller.v1.treatment.dto.request.CreateDoctorTreatmentRequest;
@@ -22,6 +23,7 @@ import com.doctor.controller.v1.treatment.dto.response.DoctorTreatmentListRespon
 import com.medicall.common.support.CurrentUser;
 import com.medicall.common.support.pagination.CursorPageResponse;
 import com.medicall.domain.treatment.TreatmentService;
+import com.medicall.domain.treatment.dto.CreateTreatmentResult;
 import com.medicall.domain.treatment.dto.TreatmentDetailResult;
 import com.medicall.domain.treatment.dto.TreatmentListResult;
 import com.medicall.support.CursorPageResult;
@@ -39,16 +41,18 @@ public class DoctorTreatmentController implements DoctorTreatmentApiDocs{
      * 진료 기록 생성
      */
     @PostMapping
-    public ResponseEntity<CreateDoctorTreatmentResponse> createTreatment(@RequestBody CreateDoctorTreatmentRequest createDoctorTreatmentRequest,
+    public CreateDoctorTreatmentResponse createTreatment(@RequestBody CreateDoctorTreatmentRequest request,
                                                                          @Parameter(hidden = true) CurrentUser currentUser){
-        return null;
+        CreateTreatmentResult result = treatmentService.addTreatment(currentUser.userId(), request.toCommand());
+
+        return CreateDoctorTreatmentResponse.from(result);
     }
 
     /**
      * 환자 진료 목록 조회
      */
-    @GetMapping("{/patients/{patientId}")
-    public CursorPageResponse<DoctorTreatmentListResponse> getPatientTreatmentList (@PathVariable Long patientId,
+    @GetMapping
+    public CursorPageResponse<DoctorTreatmentListResponse> getPatientTreatmentList (@RequestParam Long patientId,
                                                                                     @Valid DoctorTreatmentListRequest request,
                                                                                     @Parameter(hidden = true) CurrentUser currentUser) {
         CursorPageResult<TreatmentListResult> result = treatmentService.getTreatmentListByDoctorAndPatient(request.toCriteria(
