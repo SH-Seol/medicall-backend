@@ -28,8 +28,8 @@ public interface DoctorPrescriptionApiDocs {
             @ApiResponse(responseCode = "401", description = "인증 문제"),
             @ApiResponse(responseCode = "403", description = "생성 권한 없음")
     })
-    ResponseEntity<CreateDoctorPrescriptionResponse> createPrescription(@RequestBody CreateDoctorPrescriptionRequest request,
-                                                                        @Parameter(hidden = true) CurrentUser currentUser);
+    CreateDoctorPrescriptionResponse createPrescription(@RequestBody CreateDoctorPrescriptionRequest request,
+                                                        @Parameter(hidden = true) CurrentUser currentUser);
     @Operation(
             summary = "처방 상세 조회",
             description = "의사 진료 내역 중 하나를 선택하여 id를 통해 처방전을 조회합니다."

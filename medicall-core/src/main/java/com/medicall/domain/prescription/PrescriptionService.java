@@ -1,6 +1,7 @@
 package com.medicall.domain.prescription;
 
 import com.medicall.domain.prescription.dto.CreatePrescriptionCommand;
+import com.medicall.domain.prescription.dto.CreatePrescriptionResult;
 import com.medicall.domain.prescription.dto.PatientPrescriptionListCriteria;
 import com.medicall.domain.prescription.dto.PrescriptionDetailResult;
 import com.medicall.domain.medicine.MedicineValidator;
@@ -40,7 +41,7 @@ public class PrescriptionService {
         this.prescriptionValidator = prescriptionValidator;
     }
 
-    public Long save(Long doctorId, CreatePrescriptionCommand request) {
+    public CreatePrescriptionResult save(Long doctorId, CreatePrescriptionCommand request) {
         Treatment treatment = treatmentReader.findById(request.treatmentId());
 
         List<Long> medicinesId = request.medicines().stream()

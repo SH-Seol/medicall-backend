@@ -2,6 +2,8 @@ package com.medicall.domain.prescription;
 
 import org.springframework.stereotype.Component;
 
+import com.medicall.domain.prescription.dto.CreatePrescriptionResult;
+
 @Component
 public class PrescriptionWriter {
 
@@ -11,7 +13,9 @@ public class PrescriptionWriter {
         this.prescriptionRepository = prescriptionRepository;
     }
 
-    public Long save(NewPrescription newPrescription) {
-        return prescriptionRepository.save(newPrescription);
+    public CreatePrescriptionResult save(NewPrescription newPrescription) {
+        Prescription prescription = prescriptionRepository.save(newPrescription);
+
+        return new CreatePrescriptionResult(prescription.id(), prescription.patient().name(), prescription.date());
     }
 }

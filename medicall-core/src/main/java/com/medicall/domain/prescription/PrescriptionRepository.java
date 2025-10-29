@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PrescriptionRepository {
     List<Prescription> getPrescriptionByPatientIdAndDoctorId(Long patientId, Long doctorId);
-    Long save(NewPrescription newPrescription);
+    Prescription save(NewPrescription newPrescription);
     Optional<Prescription> getPrescriptionById(Long prescriptionId);
 }

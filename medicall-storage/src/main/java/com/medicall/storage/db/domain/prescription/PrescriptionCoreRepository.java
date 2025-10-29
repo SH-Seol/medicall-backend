@@ -68,7 +68,7 @@ public class PrescriptionCoreRepository implements PrescriptionRepository {
         return prescriptionEntityList.stream().map(PrescriptionEntity::toDomainModel).toList();
     }
 
-    public Long save(NewPrescription newPrescription) {
+    public Prescription save(NewPrescription newPrescription) {
         PatientEntity patientEntity = patientJpaRepository.getReferenceById(newPrescription.patientId());
         DoctorEntity doctorEntity = doctorJpaRepository.findByIdWithHospital(newPrescription.doctorId());
         TreatmentEntity treatmentEntity = treatmentJpaRepository.getReferenceById(newPrescription.treatmentId());
@@ -86,7 +86,7 @@ public class PrescriptionCoreRepository implements PrescriptionRepository {
         addMedicinesToPrescription(prescriptionEntity, newPrescription.medicines());
 
         PrescriptionEntity savedPrescriptionEntity = prescriptionJpaRepository.save(prescriptionEntity);
-        return savedPrescriptionEntity.getId();
+        return savedPrescriptionEntity.toDomainModel();
     }
 
     private void addMedicinesToPrescription(PrescriptionEntity prescriptionEntity, List<PrescriptionMedicine> medicines){

@@ -15,6 +15,7 @@ import com.doctor.controller.v1.prescription.dto.response.CreateDoctorPrescripti
 import com.doctor.controller.v1.prescription.dto.response.DoctorPrescriptionDetailResponse;
 import com.medicall.common.support.CurrentUser;
 import com.medicall.domain.prescription.PrescriptionService;
+import com.medicall.domain.prescription.dto.CreatePrescriptionResult;
 import com.medicall.domain.prescription.dto.PrescriptionDetailResult;
 
 @RestController
@@ -26,13 +27,16 @@ public class DoctorPrescriptionController {
     public DoctorPrescriptionController(PrescriptionService prescriptionService) {
         this.prescriptionService = prescriptionService;
     }
+
     /**
      * 처방전 발행
      */
     @PostMapping
-    public ResponseEntity<CreateDoctorPrescriptionResponse> createPrescription(@RequestBody CreateDoctorPrescriptionRequest request,
-                                                                               @Parameter(hidden = true) CurrentUser currentUser) {
-        return null;
+    public CreateDoctorPrescriptionResponse createPrescription(@RequestBody CreateDoctorPrescriptionRequest request,
+                                                               @Parameter(hidden = true) CurrentUser currentUser) {
+        CreatePrescriptionResult result = prescriptionService.save(currentUser.userId(), request.toCommand());
+
+        return CreateDoctorPrescriptionResponse.from(result);
     }
 
     /**
