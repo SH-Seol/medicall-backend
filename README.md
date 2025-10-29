@@ -66,7 +66,7 @@
 
 ## 아키텍처
 
-![](docs/images/medicall-arch-dg.png)
+![](docs/images/medicall-arch-logical.png)
 
 ### 설계 철학
 
@@ -80,7 +80,6 @@
 ---
 
 ## 모듈 구조
-![](docs/images/medicall-arch-dg.png)
 
 #### 모노레포 멀티모듈 구조
 
