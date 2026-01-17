@@ -20,6 +20,7 @@ import java.util.List;
 
 @Entity
 @Table(
+        name = "patients",
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_patient_oauth",

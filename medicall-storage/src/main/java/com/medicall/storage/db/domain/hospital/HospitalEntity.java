@@ -27,6 +27,7 @@ import java.util.List;
 
 @Entity
 @Table(
+        name = "hospitals",
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_hospital_oauth",
@@ -64,6 +65,7 @@ public class HospitalEntity extends BaseEntity {
     private final List<HolidayOperatingTimeEntity> holidaysOperatingTimes = new ArrayList<>();
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private RegistrationStatus registrationStatus;
 
     @Transient
