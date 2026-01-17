@@ -18,11 +18,26 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_hospital_oauth",
+                        columnNames = {"oauth_provider", "oauth_id"}
+                ),
+                @UniqueConstraint(
+                        name = "uk_hospital_email",
+                        columnNames = {"email"}
+                )
+        }
+)
 public class HospitalEntity extends BaseEntity {
 
     @Column(nullable = false)

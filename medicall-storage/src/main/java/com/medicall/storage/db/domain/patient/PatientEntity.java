@@ -11,11 +11,26 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_patient_oauth",
+                        columnNames = {"oauth_provider", "oauth_id"}
+                ),
+                @UniqueConstraint(
+                        name = "uk_patient_email",
+                        columnNames = {"email"}
+                )
+        }
+)
 public class PatientEntity extends BaseEntity {
 
     @Column(nullable = false)

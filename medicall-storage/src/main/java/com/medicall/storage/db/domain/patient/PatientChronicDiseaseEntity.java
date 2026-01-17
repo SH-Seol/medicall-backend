@@ -6,8 +6,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "patient_chronic_diseases")
 public class PatientChronicDiseaseEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

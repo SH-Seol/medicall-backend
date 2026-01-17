@@ -7,8 +7,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
+@Table(name = "hospital_departments",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_hospital_department",
+                        columnNames = {"hospital_id", "department_id"}
+                )
+        }
+)
 public class HospitalDepartmentEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

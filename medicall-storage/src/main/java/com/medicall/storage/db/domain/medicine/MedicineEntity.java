@@ -5,8 +5,10 @@ import com.medicall.storage.db.domain.common.domain.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "medicines")
 public class MedicineEntity extends BaseEntity {
     @Column(nullable = false)
     private String name;

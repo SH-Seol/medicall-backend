@@ -9,9 +9,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 import java.util.Objects;
 
 @Entity
+@Table(name = "addresses")
 public class AddressEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

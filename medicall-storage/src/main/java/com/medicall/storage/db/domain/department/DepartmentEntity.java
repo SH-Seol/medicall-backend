@@ -12,7 +12,7 @@ public class DepartmentEntity extends BaseEntity {
     전공명
     ex. 외과, 내과 등
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     protected DepartmentEntity() {}

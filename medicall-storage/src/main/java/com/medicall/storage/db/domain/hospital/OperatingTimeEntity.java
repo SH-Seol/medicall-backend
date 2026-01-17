@@ -10,10 +10,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Entity
+@Table(name = "operating_times")
 public class OperatingTimeEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

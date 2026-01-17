@@ -9,8 +9,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "chat_messages")
 public class ChatMessage extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
