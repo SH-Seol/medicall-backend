@@ -17,10 +17,6 @@ import java.util.Objects;
 @Table(name = "addresses")
 public class AddressEntity extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id")
-    private PatientEntity patient;
-
     // 카카오 API의 우편번호 (5자리)
     @Column(nullable = false, length = 5)
     private String zoneCode;
