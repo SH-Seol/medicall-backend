@@ -19,7 +19,7 @@ FROM base-builder AS doctor-builder
 RUN gradle :medicall-api-doctor:bootJar --no-daemon --info
 
 # Doctor API 실행 스테이지
-FROM openjdk:17-jdk-slim AS doctor-runtime
+FROM eclipse-temurin:17-jdk-jammy AS doctor-runtime
 WORKDIR /app
 
 RUN addgroup --system medicall && adduser --system doctor --ingroup medicall
@@ -39,7 +39,7 @@ FROM base-builder AS patient-builder
 RUN gradle :medicall-api-patient:bootJar --no-daemon --info
 
 # Patient API 실행 스테이지
-FROM openjdk:17-jdk-slim AS patient-runtime
+FROM eclipse-temurin:17-jdk-jammy AS patient-runtime
 WORKDIR /app
 
 RUN addgroup --system medicall && adduser --system patient --ingroup medicall
@@ -58,7 +58,7 @@ FROM base-builder AS hospital-builder
 RUN gradle :medicall-api-hospital:bootJar --no-daemon --info
 
 # Hospital API 실행 스테이지
-FROM openjdk:17-jdk-slim AS hospital-runtime
+FROM eclipse-temurin:17-jdk-jammy AS hospital-runtime
 WORKDIR /app
 
 RUN addgroup --system medicall && adduser --system hospital --ingroup medicall
