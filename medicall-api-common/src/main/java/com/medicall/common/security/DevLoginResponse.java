@@ -1,7 +1,7 @@
-package com.doctor.security;
+package com.medicall.common.security;
 
 public record DevLoginResponse(
-        Long doctorId,
+        Long id,
         String name,
         String accessToken
 ) {

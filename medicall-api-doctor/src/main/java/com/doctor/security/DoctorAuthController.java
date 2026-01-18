@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.medicall.common.security.DevLoginResponse;
 import com.medicall.common.security.JwtTokenProvider;
 import com.medicall.domain.doctor.DoctorService;
 import com.medicall.domain.doctor.dto.DoctorResult;
