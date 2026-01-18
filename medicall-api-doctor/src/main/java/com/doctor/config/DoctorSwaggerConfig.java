@@ -20,6 +20,9 @@ public class DoctorSwaggerConfig extends BaseSwaggerConfig {
     public OpenAPI doctorOpenAPI() {
         return super.customOpenAPI()
                 .addTagsItem(new Tag()
+                        .name("Auth")
+                        .description("로그인 페이지 API"))
+                .addTagsItem(new Tag()
                         .name("MyPage")
                         .description("마이 페이지 API"))
                 .addTagsItem(new Tag()
@@ -44,7 +47,7 @@ public class DoctorSwaggerConfig extends BaseSwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("1-doctor")
                 .displayName("doctor API")
-                .pathsToMatch("api/v1/doctor/**")
+                .pathsToMatch("/api/v1/doctor/**")
                 .build();
     }
 }

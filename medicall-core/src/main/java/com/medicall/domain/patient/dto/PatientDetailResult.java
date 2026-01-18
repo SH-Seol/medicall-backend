@@ -5,6 +5,7 @@ import java.util.List;
 import com.medicall.domain.patient.Patient;
 
 public record PatientDetailResult(
+        Long id,
         String name,
         String gender,
         String bloodType,
@@ -15,6 +16,7 @@ public record PatientDetailResult(
 ) {
     public static PatientDetailResult from(Patient patient) {
         return new PatientDetailResult(
+                patient.id(),
                 patient.name(),
                 patient.gender(),
                 patient.bloodType(),

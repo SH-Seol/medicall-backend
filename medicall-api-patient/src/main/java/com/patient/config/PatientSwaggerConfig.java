@@ -43,7 +43,7 @@ public class PatientSwaggerConfig extends BaseSwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("3-patient")
                 .displayName("patient API")
-                .pathsToMatch("/**")
+                .pathsToMatch("/api/v1/patient/**")
                 .build();
     }
 }

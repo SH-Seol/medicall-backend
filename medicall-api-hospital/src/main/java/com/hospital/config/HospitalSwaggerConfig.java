@@ -46,7 +46,7 @@ public class HospitalSwaggerConfig extends BaseSwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("2-hospital")
                 .displayName("hospital API")
-                .pathsToMatch("api/v1/hospital/**")
+                .pathsToMatch("/api/v1/hospital/**")
                 .build();
     }
 }

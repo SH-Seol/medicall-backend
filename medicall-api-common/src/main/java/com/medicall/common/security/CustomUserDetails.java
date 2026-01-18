@@ -31,14 +31,14 @@ public record CustomUserDetails(
     }
 
     public boolean isDoctor(){
-        return serviceType.equals("Doctor");
+        return serviceType.equals("doctor");
     }
 
     public boolean isPatient(){
-        return serviceType.equals("Patient");
+        return serviceType.equals("patient");
     }
 
     public boolean isHospital(){
-        return serviceType.equals("Hospital");
+        return serviceType.equals("hospital");
     }
 }

@@ -13,8 +13,8 @@ import com.medicall.common.security.CustomUserDetails;
 import com.medicall.common.security.error.AuthErrorType;
 import com.medicall.common.security.error.AuthException;
 import com.medicall.common.support.CurrentUser;
-import com.medicall.domain.patient.Patient;
 import com.medicall.domain.patient.PatientReader;
+import com.medicall.domain.patient.dto.PatientDetailResult;
 
 @Component
 public class PatientArgumentResolver implements HandlerMethodArgumentResolver {
@@ -45,7 +45,7 @@ public class PatientArgumentResolver implements HandlerMethodArgumentResolver {
             throw new AuthException(AuthErrorType.SERVICE_TYPE_MISMATCH);
         }
 
-        Patient patient = patientReader.findById(userDetails.userId());
+        PatientDetailResult patient = patientReader.findById(userDetails.userId());
 
         return new CurrentUser(
                 patient.id(),
