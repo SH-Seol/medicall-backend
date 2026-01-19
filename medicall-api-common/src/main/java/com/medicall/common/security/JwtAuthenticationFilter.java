@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/auth/login",
             "/swagger-ui",
             "/v3/api-docs",
-            "/api/v1/doctor/auth/dev-login"
+            "/api/v1/**/auth/dev-login"
     );
 
     @Override
