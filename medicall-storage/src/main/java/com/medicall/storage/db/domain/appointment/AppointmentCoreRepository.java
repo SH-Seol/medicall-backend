@@ -131,6 +131,11 @@ public class AppointmentCoreRepository implements AppointmentRepository {
                 .toList();
     }
 
+    public void acceptAppointment(Appointment appointment){
+        AppointmentEntity appointmentEntity = appointmentJpaRepository.getReferenceById(appointment.id());
+        appointmentEntity.acceptAppointment();
+    }
+
     private BooleanExpression cursorIdGt(Long cursorId){
         QAppointmentEntity appointment = QAppointmentEntity.appointmentEntity;
 

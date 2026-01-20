@@ -66,4 +66,9 @@ public class AppointmentService {
         return appointmentReader.getAppointmentListByHospital(criteria);
     }
 
+    public AppointmentDetailResult acceptAppointmentByHospital(Long appointmentId, Long hospitalId) {
+        Appointment appointment = appointmentReader.findById(appointmentId);
+        appointmentValidator.validateHospitalAccess(appointment, hospitalId);
+        return appointmentWriter.acceptAppointment(appointment);
+    }
 }

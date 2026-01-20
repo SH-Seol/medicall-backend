@@ -19,4 +19,5 @@ public interface AppointmentRepository {
     boolean existsByPatientIdAndReservationTime(Long patientId, LocalDateTime reservationTime);
     List<Appointment> findAllByDoctorId(Long doctorId, Long cursorId, int size);
     List<Appointment> findAllByHospitalId(Long hospitalId, Long cursorId, int size);
+    void acceptAppointment(Appointment appointment);
 }

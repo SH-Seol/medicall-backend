@@ -3,7 +3,7 @@ package com.medicall.storage.db.domain.appointment;
 import com.medicall.domain.appointment.Appointment;
 import com.medicall.storage.db.domain.address.AddressEntity;
 import com.medicall.storage.db.domain.common.domain.BaseEntity;
-import com.medicall.storage.db.domain.common.enums.AppointmentStatus;
+import com.medicall.domain.common.enums.AppointmentStatus;
 import com.medicall.storage.db.domain.doctor.DoctorEntity;
 import com.medicall.storage.db.domain.hospital.HospitalEntity;
 import com.medicall.storage.db.domain.patient.PatientEntity;
@@ -102,19 +102,20 @@ public class AppointmentEntity extends BaseEntity {
                 this.reservationTime,
                 this.hospital.toDomainModel(),
                 this.doctor.toDomainModel(),
-                this.status.toString()
+                this.status
                 );
     }
 
     public void rejectAppointment(){
-        if(this.status.equals(AppointmentStatus.REQUESTED)){
-            this.status = AppointmentStatus.REJECTED;
-        }
-        throw new IllegalArgumentException("거절할 수 없는 예약입니다.");
+        this.status = AppointmentStatus.REJECTED;
     }
 
     public void addDoctor(DoctorEntity doctor){
         this.doctor = doctor;
         doctor.getAppointments().add(this);
+    }
+
+    public void acceptAppointment(){
+        this.status = AppointmentStatus.ASSIGNED;
     }
 }

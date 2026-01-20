@@ -13,6 +13,7 @@ public enum CoreErrorType {
     APPOINTMENT_RESERVATION_TIME_IS_PAST(CoreErrorCode.APPOINTMENT004, CoreErrorKind.BAD_REQUEST, "과거 시간으로 예약할 수 없습니다.", CoreErrorLevel.WARN),
     APPOINTMENT_ALREADY_EXIST_FOR_PATIENT(CoreErrorCode.APPOINTMENT005, CoreErrorKind.CONFLICT, "예약 요청 시간에 이미 환자의 예약이 존재합니다.", CoreErrorLevel.WARN),
     APPOINTMENT_ALREADY_EXIST_FOR_DOCTOR(CoreErrorCode.APPOINTMENT006, CoreErrorKind.CONFLICT, "에약 요청 시간에 이미 의사의 예약이 존재합니다.", CoreErrorLevel.WARN),
+    APPOINTMENT_NOT_ACCEPTABLE(CoreErrorCode.APPOINTMENT007, CoreErrorKind.CONFLICT, "예약을 수락할 수 없습니다.", CoreErrorLevel.WARN),
     TREATMENT_NOT_FOUND(CoreErrorCode.TREATMENT001, CoreErrorKind.NOT_FOUND, "존재하지 않는 진료 내역입니다.", CoreErrorLevel.WARN),
     TREATMENT_ALREADY_HAS_PRESCRIPTION(CoreErrorCode.TREATMENT002, CoreErrorKind.FORBIDDEN, "해당 진료에 처방이 이미 이루어졌습니다.", CoreErrorLevel.WARN),
     TREATMENT_NOT_ACCESSIBLE(CoreErrorCode.TREATMENT003, CoreErrorKind.FORBIDDEN, "해당 진료에 접근할 수 없습니다.", CoreErrorLevel.WARN),

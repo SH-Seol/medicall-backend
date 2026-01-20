@@ -2,6 +2,7 @@ package com.hospital.controller.appointment;
 
 import io.swagger.v3.oas.annotations.Parameter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hospital.controller.appointment.dto.request.HospitalAppointmentListRequest;
+import com.hospital.controller.appointment.dto.response.HospitalAppointmentAcceptResponse;
 import com.hospital.controller.appointment.dto.response.HospitalAppointmentDetailResponse;
 import com.hospital.controller.appointment.dto.response.HospitalAppointmentListResponse;
 import com.medicall.common.support.CurrentUser;
@@ -61,7 +63,9 @@ public class HospitalAppointmentController {
      * 예약 수락
      */
     @PatchMapping("/{appointmentId}")
-    public void acceptAppointmentById(@PathVariable Long appointmentId, @Parameter(hidden = true) CurrentUser currentUser) {
+    public HospitalAppointmentAcceptResponse acceptAppointmentById(@PathVariable Long appointmentId, @Parameter(hidden = true) CurrentUser currentUser) {
+        appointmentService.acceptAppointmentByHospital(appointmentId, currentUser.userId());
+        return new HospitalAppointmentAcceptResponse(appointmentId, LocalDateTime.now());
     }
 
 }
