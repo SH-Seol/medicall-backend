@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
 import com.medicall.domain.appointment.Appointment;
+import com.medicall.domain.common.enums.AppointmentStatus;
 
 @Schema(description = "환자 예약 응답")
 public record PatientAppointmentListResponse(
@@ -21,7 +22,7 @@ public record PatientAppointmentListResponse(
         LocalDateTime reservationTime,
 
         @Schema(description = "예약 상태", example = "ASSIGNED")
-        String status
+        AppointmentStatus status
 ) {
     /**
      * Appointment 도메인 모델에서 Response로 변환

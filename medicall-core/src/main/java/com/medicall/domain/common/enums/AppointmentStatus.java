@@ -1,4 +1,4 @@
-package com.medicall.storage.db.domain.common.enums;
+package com.medicall.domain.common.enums;
 
 public enum AppointmentStatus {
     REQUESTED, ASSIGNED, CANCELLED, REJECTED, COMPLETED

@@ -1,6 +1,7 @@
 package com.medicall.domain.appointment;
 
 import com.medicall.domain.address.Address;
+import com.medicall.domain.common.enums.AppointmentStatus;
 import com.medicall.domain.doctor.Doctor;
 import com.medicall.domain.hospital.Hospital;
 import com.medicall.domain.patient.Patient;
@@ -15,7 +16,7 @@ public record Appointment(
         LocalDateTime reservationTime,
         Hospital hospital,
         Doctor doctor,
-        String status
+        AppointmentStatus status
 ) {
     public Appointment assignDoctor(Doctor doctor) {
         return new Appointment(
