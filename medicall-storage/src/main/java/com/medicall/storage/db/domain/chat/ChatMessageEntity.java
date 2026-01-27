@@ -1,7 +1,8 @@
 package com.medicall.storage.db.domain.chat;
 
+import com.medicall.domain.chat.ChatMessage;
 import com.medicall.storage.db.domain.common.domain.BaseEntity;
-import com.medicall.storage.db.domain.common.enums.SenderType;
+import com.medicall.domain.common.enums.SenderType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,11 +14,11 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "chat_messages")
-public class ChatMessage extends BaseEntity {
+public class ChatMessageEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id", nullable = false)
-    private ChatRoom chatRoom;
+    private ChatRoomEntity chatRoomEntity;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
@@ -31,18 +32,18 @@ public class ChatMessage extends BaseEntity {
 
     private boolean isRead;
 
-    protected ChatMessage() {}
+    protected ChatMessageEntity() {}
 
-    public ChatMessage(ChatRoom chatRoom, SenderType senderType, Long senderId, String content, boolean isRead) {
-        this.chatRoom = chatRoom;
+    public ChatMessageEntity(ChatRoomEntity chatRoomEntity, SenderType senderType, Long senderId, String content, boolean isRead) {
+        this.chatRoomEntity = chatRoomEntity;
         this.senderType = senderType;
         this.senderId = senderId;
         this.content = content;
         this.isRead = isRead;
     }
 
-    public ChatRoom getChatRoom() {
-        return chatRoom;
+    public ChatRoomEntity getChatRoom() {
+        return chatRoomEntity;
     }
 
     public SenderType getSenderType() {
@@ -59,5 +60,17 @@ public class ChatMessage extends BaseEntity {
 
     public boolean isRead() {
         return isRead;
+    }
+
+    public ChatMessage toDomainModel() {
+        return new ChatMessage(
+                this.id,
+                chatRoomEntity.getId(),
+                senderType,
+                senderId,
+                content,
+                isRead,
+                getCreatedAt()
+        );
     }
 }
