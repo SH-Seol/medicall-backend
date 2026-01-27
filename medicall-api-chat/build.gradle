@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+    id 'io.spring.dependency-management'
+    id 'org.springframework.boot'
+}
+
+dependencies {
+    implementation project(':medicall-core')
+    implementation project(':medicall-api-common')
+    implementation project(':medicall-storage')
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.11'
+}
+
+tasks.register("prepareKotlinBuildScriptModel"){}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
