@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.medicall.domain.address.Address;
 import com.medicall.domain.appointment.dto.AppointmentDetailResult;
+import com.medicall.domain.common.enums.AppointmentStatus;
 import com.medicall.domain.hospital.Hospital;
 import com.medicall.domain.patient.Patient;
 
@@ -13,7 +14,7 @@ public record DoctorAppointmentDetailResponse(
         String symptom,
         LocalDateTime reservationTime,
         Hospital hospital,
-        String status
+        AppointmentStatus status
 ) {
     public static DoctorAppointmentDetailResponse from(AppointmentDetailResult result){
         return new DoctorAppointmentDetailResponse(
