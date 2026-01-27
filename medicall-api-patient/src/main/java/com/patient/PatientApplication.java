@@ -12,7 +12,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         "com.patient",
         "com.medicall.domain",
         "com.medicall.common",
-        "com.medicall.storage"
+        "com.medicall.storage",
+        "com.medicall.chat"
 })
 @ConfigurationPropertiesScan("com.patient.config")
 @EnableJpaRepositories(basePackages = "com.medicall.storage.db.domain")
