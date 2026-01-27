@@ -7,12 +7,10 @@ import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import com.medicall.common.config.BaseSwaggerConfig;
 
 @Configuration
-@EnableWebSecurity
 public class DoctorSwaggerConfig extends BaseSwaggerConfig {
 
     @Bean
@@ -48,6 +46,15 @@ public class DoctorSwaggerConfig extends BaseSwaggerConfig {
                 .group("1-doctor")
                 .displayName("doctor API")
                 .pathsToMatch("/api/v1/doctor/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi chatApi() {
+        return GroupedOpenApi.builder()
+                .group("Chat API")
+                .packagesToScan("com.medicall.chat")
+                .pathsToMatch("/api/v1/chats/**")
                 .build();
     }
 }
