@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
+import com.medicall.domain.common.enums.SenderType;
 import com.medicall.domain.hospital.HospitalValidator;
 import com.medicall.domain.doctor.DoctorValidator;
 import com.medicall.error.CoreErrorType;
@@ -88,6 +89,18 @@ public class AppointmentValidator {
     private void validateReservationTime(LocalDateTime reservationTime) {
         if(reservationTime.isBefore(LocalDateTime.now())) {
             throw new CoreException(CoreErrorType.APPOINTMENT_RESERVATION_TIME_IS_PAST);
+        }
+    }
+
+    public void validateParticipant(Appointment appointment, Long userId, SenderType senderType){
+        Long targetId = switch (senderType) {
+            case PATIENT -> appointment.patient().id();
+            case DOCTOR -> appointment.doctor().id();
+            case HOSPITAL -> appointment.hospital().id();
+        };
+
+        if (!targetId.equals(userId)) {
+            throw new CoreException(CoreErrorType.APPOINTMENT_EXCESS_REJECTED);
         }
     }
 }
