@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.medicall.domain.address.Address;
 import com.medicall.domain.appointment.NewAppointment;
 
-@ParameterObject
 @Schema(description = "환자 예약 요청")
 public record CreatePatientAppointmentRequest(
         @Parameter(description = "의사 ID", example = "10")

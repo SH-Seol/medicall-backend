@@ -68,7 +68,7 @@ public class AppointmentValidator {
      */
     public void validatePatientDuplicateReservation(Long patientId, LocalDateTime reservationTime) {
         boolean result = appointmentRepository.existsByPatientIdAndReservationTime(patientId, reservationTime);
-        if(!result){
+        if(result){
             throw new CoreException(CoreErrorType.APPOINTMENT_ALREADY_EXIST_FOR_PATIENT);
         }
     }
@@ -78,7 +78,7 @@ public class AppointmentValidator {
      */
     public void validateDoctorAvailability(Long doctorId, LocalDateTime reservationTime) {
         boolean result = appointmentRepository.existsByDoctorIdAndReservationTime(doctorId, reservationTime);
-        if(!result){
+        if(result){
             throw new CoreException(CoreErrorType.APPOINTMENT_ALREADY_EXIST_FOR_DOCTOR);
         }
     }
