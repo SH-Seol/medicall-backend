@@ -29,7 +29,7 @@ public class PatientSecurityConfig {
 
     @Bean
     @Order(1)
-    public SecurityFilterChain oauthFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain patientOauthFilterChain(HttpSecurity http) throws Exception {
         http.
                 securityMatcher(
                         "oauth2/**",
@@ -45,9 +45,9 @@ public class PatientSecurityConfig {
 
     @Bean
     @Order(2)
-    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain patientApiFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/**")
+                .securityMatcher("/api/v1/patient/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
