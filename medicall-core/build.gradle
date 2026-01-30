@@ -3,7 +3,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     compileOnly 'org.springframework:spring-context'
     compileOnly 'jakarta.transaction:jakarta.transaction-api'
-
+    implementation 'org.springframework:spring-tx'
 }
 
 test {
