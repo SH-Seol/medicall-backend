@@ -2,14 +2,17 @@ package com.medicall.chat.facade;
 
 import org.springframework.stereotype.Component;
 
+import com.medicall.chat.controller.v1.chat.dto.ChatMessageListRequest;
 import com.medicall.common.support.CurrentUser;
 import com.medicall.domain.appointment.Appointment;
 import com.medicall.domain.appointment.AppointmentReader;
 import com.medicall.domain.appointment.AppointmentValidator;
+import com.medicall.domain.chat.ChatMessage;
 import com.medicall.domain.chat.ChatRoom;
 import com.medicall.domain.chat.ChatService;
 import com.medicall.domain.common.enums.ChatRoomType;
 import com.medicall.domain.common.enums.SenderType;
+import com.medicall.support.CursorPageResult;
 
 @Component
 public class ChatFacade {
@@ -41,6 +44,11 @@ public class ChatFacade {
                 user.userId(),
                 content
         );
+    }
+
+    public CursorPageResult<ChatMessage> getChatMessages(Long chatRoomId, ChatMessageListRequest request, CurrentUser user) {
+        // 도메인 모델 리스트 반환
+        return chatService.getChatMessages(request.toCriteria(chatRoomId), user.userId(), toSenderType(user));
     }
 
     private SenderType toSenderType(CurrentUser user) {

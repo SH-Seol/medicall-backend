@@ -1,11 +1,10 @@
 package com.medicall.domain.chat;
 
-import java.awt.Cursor;
 import java.util.List;
 
-import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.medicall.domain.appointment.Appointment;
 import com.medicall.domain.common.enums.ChatRoomType;
@@ -19,17 +18,20 @@ public class ChatService {
     private final ChatMessageReader chatMessageReader;
     private final ChatRoomReader chatRoomReader;
     private final ChatRoomWriter chatRoomWriter;
+    private final ChatValidator chatValidator;
 
     public ChatService(
             ChatMessageWriter chatMessageWriter,
             ChatMessageReader chatMessageReader,
             ChatRoomReader chatRoomReader,
-            ChatRoomWriter chatRoomWriter
+            ChatRoomWriter chatRoomWriter,
+            ChatValidator chatValidator
     ) {
         this.chatMessageWriter = chatMessageWriter;
         this.chatMessageReader = chatMessageReader;
         this.chatRoomReader = chatRoomReader;
         this.chatRoomWriter = chatRoomWriter;
+        this.chatValidator = chatValidator;
     }
 
     @Transactional
@@ -58,10 +60,13 @@ public class ChatService {
                 .orElseGet(() -> chatRoomWriter.create(appointment, chatRoomType));
     }
 
-    public CursorPageResult<ChatMessage> getChatMessages(Long chatRoomId, Long cursorId, int size) {
-        return chatMessageReader.read(chatRoomId, cursorId, size);
+    @Transactional(readOnly = true)
+    public CursorPageResult<ChatMessage> getChatMessages(ChatMessageListCriteria criteria, Long userId, SenderType senderType) {
+        chatValidator.validateChatRoomAccess(criteria.chatRoomId(), userId, senderType);
+        return chatMessageReader.read(criteria.chatRoomId(), criteria.cursorId(), criteria.size());
     }
 
+    @Transactional(readOnly = true)
     public List<ChatRoom> getChatRooms(Long userId, SenderType senderType) {
         return chatRoomReader.getChatRoomList(userId, senderType);
     }

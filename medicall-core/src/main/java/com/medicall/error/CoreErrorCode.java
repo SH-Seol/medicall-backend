@@ -20,6 +20,8 @@ public enum CoreErrorCode {
     MEDICINE001("MEDICINE-001"),
     PRESCRIPTION001("PRESCRIPTION-001"),
     PRESCRIPTION002("PRESCRIPTION-002"),
+    CHAT001("CHAT-001"),
+    CHAT002("CHAT-002"),
     ;
     private final String code;
 

@@ -20,6 +20,8 @@ public enum CoreErrorType {
     MEDICINE_NOT_FOUND(CoreErrorCode.MEDICINE001, CoreErrorKind.NOT_FOUND, "의약품을 찾을 수 없습니다.", CoreErrorLevel.WARN),
     PRESCRIPTION_NOT_FOUND(CoreErrorCode.PRESCRIPTION001, CoreErrorKind.NOT_FOUND, "처방전을 찾을 수 없습니다", CoreErrorLevel.WARN),
     PRESCRIPTION_NOT_ACCESSIBLE(CoreErrorCode.PRESCRIPTION002, CoreErrorKind.FORBIDDEN, "해당 처방전을 조회할 수 없습니다.", CoreErrorLevel.WARN),
+    CHATROOM_NOT_FOUND(CoreErrorCode.CHAT001, CoreErrorKind.NOT_FOUND, "존재하지 않는 채팅방입니다", CoreErrorLevel.WARN),
+    CHATROOM_MOT_ACCESSIBLE(CoreErrorCode.CHAT002, CoreErrorKind.FORBIDDEN, "해당 채팅에 접근할 수 없습니다.", CoreErrorLevel.WARN),
     ;
     private final CoreErrorCode errorCode;
     private final CoreErrorKind errorKind;

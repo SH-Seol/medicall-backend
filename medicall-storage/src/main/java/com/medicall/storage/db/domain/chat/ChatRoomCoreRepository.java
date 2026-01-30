@@ -72,4 +72,7 @@ public class ChatRoomCoreRepository implements ChatRoomRepository {
         return chatRoomEntities.stream().map(ChatRoomEntity::toDomainModel).toList();
     }
 
+    public Optional<ChatRoom> findById(Long chatRoomId){
+        return chatRoomJpaRepository.findById(chatRoomId).map(ChatRoomEntity::toDomainModel);
+    }
 }

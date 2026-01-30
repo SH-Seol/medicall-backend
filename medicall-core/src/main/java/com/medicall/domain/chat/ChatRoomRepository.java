@@ -13,4 +13,5 @@ public interface ChatRoomRepository {
     ChatRoom save(ChatRoom chatRoom);
     Optional<ChatRoom> findByAppointmentId(Long appointmentId, ChatRoomType type);
     List<ChatRoom> findByUserIdAndType(Long userId, SenderType type);
+    Optional<ChatRoom> findById(Long chatRoomId);
 }
