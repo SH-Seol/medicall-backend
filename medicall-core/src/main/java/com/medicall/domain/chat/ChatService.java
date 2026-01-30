@@ -67,7 +67,9 @@ public class ChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatRoom> getChatRooms(Long userId, SenderType senderType) {
-        return chatRoomReader.getChatRoomList(userId, senderType);
+    public CursorPageResult<ChatRoom> getChatRooms(ChatRoomListCriteria criteria) {
+        List<ChatRoom> chatRooms =  chatRoomReader.getChatRoomList(criteria.userId(), criteria.senderType());
+
+        return CursorPageResult.of(chatRooms, criteria.cursorId());
     }
 }

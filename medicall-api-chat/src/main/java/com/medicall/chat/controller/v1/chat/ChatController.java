@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medicall.chat.controller.v1.chat.dto.ChatMessageListRequest;
+import com.medicall.chat.controller.v1.chat.dto.ChatRoomListRequest;
+import com.medicall.chat.controller.v1.chat.dto.ChatRoomResponse;
 import com.medicall.chat.controller.v1.chat.dto.SendChatMessageRequest;
 import com.medicall.chat.facade.ChatFacade;
 import com.medicall.common.support.CurrentUser;
@@ -53,13 +55,16 @@ public class ChatController {
                                               @Valid ChatMessageListRequest request,
                                               @Parameter(hidden = true) CurrentUser currentUser){
         CursorPageResult<ChatMessage> cursorPageResult = chatFacade.getChatMessages(chatRoomId, request, currentUser);
-        List<ChatMessage> chatMessages = cursorPageResult.data().stream()
-                .toList();
+        List<ChatMessage> chatMessages = cursorPageResult.data();
         return CursorPageResponse.of(chatMessages, request.cursorId(), cursorPageResult.nextCursorId());
     }
 
     @GetMapping
-    public ResponseEntity<List<ChatRoom>> getChatRooms(@Parameter(hidden = true) CurrentUser currentUser){
-        return null;
+    public CursorPageResponse<ChatRoomResponse> getChatRooms(@Parameter(hidden = true) CurrentUser currentUser,
+                                                             @Valid ChatRoomListRequest request){
+
+        CursorPageResult<ChatRoom> cursorPageResult = chatFacade.getChatRooms(request, currentUser);
+        List<ChatRoomResponse> chatRooms = cursorPageResult.data().stream().map(ChatRoomResponse::from).toList();
+        return CursorPageResponse.of(chatRooms, request.cursorId(), cursorPageResult.nextCursorId());
     }
 }
