@@ -2,22 +2,18 @@ package com.medicall.domain.prescription;
 
 import com.medicall.domain.prescription.dto.CreatePrescriptionCommand;
 import com.medicall.domain.prescription.dto.CreatePrescriptionResult;
-import com.medicall.domain.prescription.dto.PatientPrescriptionListCriteria;
 import com.medicall.domain.prescription.dto.PrescriptionDetailResult;
 import com.medicall.domain.medicine.MedicineValidator;
-import com.medicall.domain.prescription.dto.PrescriptionListResult;
 import com.medicall.domain.treatment.Treatment;
 import com.medicall.domain.treatment.TreatmentReader;
 import com.medicall.domain.treatment.TreatmentValidator;
-import com.medicall.support.CursorPageResult;
 
-import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class PrescriptionService {
 
     private final PrescriptionReader prescriptionReader;
@@ -41,6 +37,7 @@ public class PrescriptionService {
         this.prescriptionValidator = prescriptionValidator;
     }
 
+    @Transactional
     public CreatePrescriptionResult save(Long doctorId, CreatePrescriptionCommand request) {
         Treatment treatment = treatmentReader.findById(request.treatmentId());
 
@@ -63,6 +60,7 @@ public class PrescriptionService {
         return prescriptionWriter.save(newPrescription);
     }
 
+    @Transactional(readOnly = true)
     public List<PrescriptionDetailResult> getPrescriptionsByPatientIdAndDoctorId(Long patientId, Long doctorId) {
         List<Prescription> prescriptions = prescriptionReader.getAllPrescriptionsByPatientIdAndDoctorId(patientId, doctorId);
         return prescriptions.stream().map(pd -> new PrescriptionDetailResult(
@@ -76,6 +74,7 @@ public class PrescriptionService {
         )).toList();
     }
 
+    @Transactional(readOnly = true)
     public PrescriptionDetailResult getPrescriptionByHospital(Long prescriptionId, Long hospitalId) {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
         prescriptionValidator.validateHospitalPrescription(prescription, hospitalId);
@@ -91,6 +90,7 @@ public class PrescriptionService {
         );
     }
 
+    @Transactional(readOnly = true)
     public PrescriptionDetailResult getPrescriptionByPatient(Long prescriptionId, Long patientId) {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
         prescriptionValidator.validatePatientPrescription(prescription, patientId);
@@ -106,6 +106,7 @@ public class PrescriptionService {
         );
     }
 
+    @Transactional(readOnly = true)
     public PrescriptionDetailResult getPrescriptionByDoctor(Long prescriptionId, Long doctorId) {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
         prescriptionValidator.validateDoctorPrescription(prescription, doctorId);

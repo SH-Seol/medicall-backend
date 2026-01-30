@@ -10,14 +10,13 @@ import com.medicall.domain.doctor.Doctor;
 import com.medicall.domain.doctor.DoctorReader;
 import com.medicall.support.CursorPageResult;
 
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class HospitalService {
 
     private final HospitalReader hospitalReader;
@@ -39,16 +38,19 @@ public class HospitalService {
     }
 
     //예약 조회
+    @Transactional(readOnly = true)
     public Optional<List<Appointment>> getAppointments(Long hospitalId) {
         return hospitalReader.getAppointments(hospitalId);
     }
 
     //예약 거절
+    @Transactional
     public void rejectAppointment(Long hospitalId, Long appointmentId) {
         hospitalWriter.rejectAppointment(hospitalId, appointmentId);
     }
 
     //의사 없는 요청 의사 배정
+    @Transactional
     public Long designateDoctorToAppointment(Long hospitalId, Long doctorId, Long appointmentId) {
         Doctor doctor = doctorReader.findById(doctorId);
         Appointment appointment = appointmentReader.findById(appointmentId);
@@ -66,6 +68,7 @@ public class HospitalService {
     //병원 업무 시간 등록 주간 일괄 등록
     //병원 업무 시간 수정
     //공휴일 업무 여부 등록
+    @Transactional
     public void updateOperatingTime(Long hospitalId, List<OperatingTime> operatingTimes) {
         hospitalWriter.updaterOperatingTimes(hospitalId, operatingTimes);
     }
@@ -73,10 +76,12 @@ public class HospitalService {
     /**
      * 주변 병원 목록 조회 (이름 or 진료 과목)
      */
+    @Transactional(readOnly = true)
     public CursorPageResult<HospitalSearchResult> getHospitalsNearby(HospitalSearchCriteria criteria) {
         return hospitalReader.searchNearby(criteria);
     }
 
+    @Transactional(readOnly = true)
     public HospitalDetailResult findById(Long hospitalId, double lat, double lng) {
         return hospitalReader.findByIdWithLocation(hospitalId, lat, lng);
     }

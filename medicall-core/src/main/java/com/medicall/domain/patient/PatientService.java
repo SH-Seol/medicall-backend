@@ -1,6 +1,7 @@
 package com.medicall.domain.patient;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.medicall.domain.patient.dto.PatientDetailResult;
 
@@ -13,6 +14,7 @@ public class PatientService {
         this.patientReader = patientReader;
     }
 
+    @Transactional(readOnly = true)
     public PatientDetailResult findById(Long patientId){
         return patientReader.findById(patientId);
     }

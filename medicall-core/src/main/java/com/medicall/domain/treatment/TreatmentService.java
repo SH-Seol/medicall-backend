@@ -9,12 +9,10 @@ import com.medicall.domain.treatment.dto.TreatmentDetailResult;
 import com.medicall.domain.treatment.dto.TreatmentListResult;
 import com.medicall.support.CursorPageResult;
 
-import jakarta.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class TreatmentService {
 
     private final TreatmentReader treatmentReader;
@@ -29,6 +27,7 @@ public class TreatmentService {
     }
 
     //진료 기록 작성
+    @Transactional
     public CreateTreatmentResult addTreatment(Long doctorId, CreateTreatmentCommand request) {
         NewTreatment newTreatment = new NewTreatment(
                 request.patientId(),
@@ -43,6 +42,7 @@ public class TreatmentService {
     /**
      * 진료 기록 상세 조회(병원, 의사만 가능)
      */
+    @Transactional(readOnly = true)
     public TreatmentDetailResult getTreatmentByHospital(Long hospitalId, Long treatmentId) {
         Treatment treatment = treatmentReader.findById(treatmentId);
         treatmentValidator.validateHospitalTreatment(treatment, hospitalId);
@@ -50,6 +50,7 @@ public class TreatmentService {
         return TreatmentDetailResult.from(treatment);
     }
 
+    @Transactional(readOnly = true)
     public TreatmentDetailResult getTreatmentByDoctor(Long doctorId, Long treatmentId) {
         Treatment treatment = treatmentReader.findById(treatmentId);
         treatmentValidator.validateDoctorTreatment(treatment, doctorId);
@@ -57,14 +58,17 @@ public class TreatmentService {
         return TreatmentDetailResult.from(treatment);
     }
 
+    @Transactional(readOnly = true)
     public CursorPageResult<TreatmentListResult> getTreatmentListByPatient(PatientTreatmentListCriteria criteria){
         return treatmentReader.getTreatmentListByPatient(criteria);
     }
 
+    @Transactional(readOnly = true)
     public CursorPageResult<TreatmentListResult> getTreatmentListByHospital(HospitalTreatmentListCriteria criteria){
         return null;
     }
 
+    @Transactional(readOnly = true)
     public CursorPageResult<TreatmentListResult> getTreatmentListByDoctorAndPatient(DoctorTreatmentListCriteria criteria){
         return treatmentReader.getTreatmentsByDoctorIdAndPatientId(criteria);
     }
