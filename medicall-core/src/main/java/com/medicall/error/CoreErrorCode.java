@@ -22,6 +22,8 @@ public enum CoreErrorCode {
     PRESCRIPTION002("PRESCRIPTION-002"),
     CHAT001("CHAT-001"),
     CHAT002("CHAT-002"),
+    OPENAI001("OPENAI-001"),
+    OPENAI002("OPENAI-002"),
     ;
     private final String code;
 
