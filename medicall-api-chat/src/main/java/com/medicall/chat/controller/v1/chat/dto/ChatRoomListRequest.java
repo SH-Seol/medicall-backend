@@ -2,7 +2,7 @@ package com.medicall.chat.controller.v1.chat.dto;
 
 import io.swagger.v3.oas.annotations.Parameter;
 
-import com.medicall.domain.chat.ChatRoomListCriteria;
+import com.medicall.domain.chat.dto.ChatRoomListCriteria;
 import com.medicall.domain.common.enums.SenderType;
 
 public record ChatRoomListRequest(

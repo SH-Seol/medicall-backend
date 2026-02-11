@@ -2,7 +2,7 @@ package com.medicall.chat.controller.v1.chat.dto;
 
 import io.swagger.v3.oas.annotations.Parameter;
 
-import com.medicall.domain.chat.ChatMessageListCriteria;
+import com.medicall.domain.chat.dto.ChatMessageListCriteria;
 
 public record ChatMessageListRequest(
         @Parameter(description = "커서 ID (이전 페이지의 마지막 ID, null이면 최신순)", example = "100")

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.medicall.domain.appointment.Appointment;
+import com.medicall.domain.chat.dto.ChatMessageListCriteria;
+import com.medicall.domain.chat.dto.ChatRoomListCriteria;
 import com.medicall.domain.common.enums.ChatRoomType;
 import com.medicall.domain.common.enums.SenderType;
 import com.medicall.support.CursorPageResult;
