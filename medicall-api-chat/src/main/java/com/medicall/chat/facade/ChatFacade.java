@@ -10,7 +10,6 @@ import com.medicall.domain.appointment.AppointmentReader;
 import com.medicall.domain.appointment.AppointmentValidator;
 import com.medicall.domain.chat.ChatMessage;
 import com.medicall.domain.chat.ChatRoom;
-import com.medicall.domain.chat.ChatRoomListCriteria;
 import com.medicall.domain.chat.ChatService;
 import com.medicall.domain.common.enums.ChatRoomType;
 import com.medicall.domain.common.enums.SenderType;
