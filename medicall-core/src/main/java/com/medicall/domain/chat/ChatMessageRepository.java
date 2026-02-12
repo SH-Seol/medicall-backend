@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface ChatMessageRepository {
     void save(ChatMessage message);
     List<ChatMessage> findByChatRoomId(Long chatRoomId, Long cursorId, int size);
+    List<ChatMessage> findAllByChatRoomId(Long chatRoomId);
 }

@@ -47,4 +47,11 @@ public class ChatMessageCoreRepository implements ChatMessageRepository {
                 .map(ChatMessageEntity::toDomainModel)
                 .toList();
     }
+
+    public List<ChatMessage> findAllByChatRoomId(Long chatRoomId) {
+        List<ChatMessageEntity> entities = chatMessageJpaRepository.findAllByChatRoomEntityIdOrderByCreatedAtAsc(chatRoomId);
+        return entities.stream()
+                .map(ChatMessageEntity::toDomainModel)
+                .toList();
+    }
 }
