@@ -29,7 +29,7 @@ public class ChatFacade {
         this.appointmentValidator = appointmentValidator;
     }
 
-    public void sendMessage(CurrentUser user, Long appointmentId, String content) {
+    public void openChatAndSendMessage(CurrentUser user, Long appointmentId, String content) {
         Appointment appointment = appointmentReader.findById(appointmentId);
         SenderType senderType = toSenderType(user);
         ChatRoomType chatRoomType = resolveChatRoomType(user.serviceType());
@@ -43,6 +43,15 @@ public class ChatFacade {
                 chatRoom.id(),
                 senderType,
                 user.userId(),
+                content
+        );
+    }
+
+    public void sendMessage(Long chatRoomId, String content, CurrentUser currentUser) {
+        chatService.sendMessage(
+                chatRoomId,
+                toSenderType(currentUser),
+                currentUser.userId(),
                 content
         );
     }

@@ -41,7 +41,7 @@ public class ChatController {
             @RequestParam Long appointmentId,
             @RequestBody SendChatMessageRequest request, @Parameter(hidden = true) CurrentUser currentUser
     ) {
-        chatFacade.sendMessage(
+        chatFacade.openChatAndSendMessage(
                 currentUser,
                 appointmentId,
                 request.content()
@@ -66,5 +66,12 @@ public class ChatController {
         CursorPageResult<ChatRoom> cursorPageResult = chatFacade.getChatRooms(request, currentUser);
         List<ChatRoomResponse> chatRooms = cursorPageResult.data().stream().map(ChatRoomResponse::from).toList();
         return CursorPageResponse.of(chatRooms, request.cursorId(), cursorPageResult.nextCursorId());
+    }
+
+    @PostMapping("/{chatRoomId}")
+    public ResponseEntity<Void> sendChatMessage(@RequestBody SendChatMessageRequest request, @PathVariable Long chatRoomId,
+                                                @Parameter(hidden = true) CurrentUser currentUser){
+        chatFacade.sendMessage(chatRoomId, request.content(), currentUser);
+        return ResponseEntity.ok().build();
     }
 }
