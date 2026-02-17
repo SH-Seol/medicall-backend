@@ -1,9 +1,20 @@
+ext {
+    set('springAiVersion', "1.0.3")
+}
+
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     compileOnly 'org.springframework:spring-context'
     compileOnly 'jakarta.transaction:jakarta.transaction-api'
     implementation 'org.springframework:spring-tx'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
 }
 
 test {
