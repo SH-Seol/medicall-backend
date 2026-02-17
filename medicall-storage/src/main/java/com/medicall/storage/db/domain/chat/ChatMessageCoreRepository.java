@@ -37,7 +37,7 @@ public class ChatMessageCoreRepository implements ChatMessageRepository {
 
         List<ChatMessageEntity> entities;
 
-        if (cursorId == null) {
+        if (cursorId == null || cursorId == 0) {
             entities = chatMessageJpaRepository.findByChatRoomEntityIdOrderByIdDesc(chatRoomId, pageRequest);
         } else {
             entities = chatMessageJpaRepository.findByChatRoomEntityIdAndIdLessThanOrderByIdDesc(chatRoomId, cursorId, pageRequest);
