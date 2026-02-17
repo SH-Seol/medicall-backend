@@ -76,6 +76,7 @@ public class ChatSummaryService {
 
         try{
             ChatResult result = webClient.post()
+                    .uri("/chat/completions")
                     .bodyValue(command)
                     .retrieve()
                     .bodyToMono(ChatResult.class)
