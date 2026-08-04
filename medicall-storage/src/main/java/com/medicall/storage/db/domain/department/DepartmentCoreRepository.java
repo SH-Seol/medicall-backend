@@ -2,7 +2,9 @@ package com.medicall.storage.db.domain.department;
 
 import com.medicall.domain.department.Department;
 import com.medicall.domain.department.DepartmentRepository;
+import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -12,6 +14,12 @@ public class DepartmentCoreRepository implements DepartmentRepository {
 
     public DepartmentCoreRepository(DepartmentJpaRepository jpaRepository) {
         this.departmentJpaRepository = jpaRepository;
+    }
+
+    public List<Department> findAll(){
+        return departmentJpaRepository.findAll(Sort.by("name")).stream()
+                .map(this::toDomainModel)
+                .toList();
     }
 
     public Optional<Department> findById(Long id){

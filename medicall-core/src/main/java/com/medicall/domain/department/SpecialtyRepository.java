@@ -2,10 +2,11 @@ package com.medicall.domain.department;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DepartmentRepository {
-    Optional<Department> findById(Long id);
-    List<Department> findAll();
+public interface SpecialtyRepository {
+    Optional<Specialty> findById(Long id);
+    List<Specialty> findAllByDepartmentId(Long departmentId);
 }

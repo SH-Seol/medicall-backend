@@ -25,6 +25,10 @@ public class DoctorReader {
         return doctorRepository.findById(doctorId).orElseThrow(() -> new CoreException(CoreErrorType.DOCTOR_NOT_FOUND));
     }
 
+    public List<Doctor> findAllByHospitalId(Long hospitalId){
+        return doctorRepository.findAllByHospitalId(hospitalId);
+    }
+
     public Optional<Doctor> findByOAuthInfo(String oauthId, String provider){
         return doctorRepository.findByOAuthInfo(oauthId, provider);
     }

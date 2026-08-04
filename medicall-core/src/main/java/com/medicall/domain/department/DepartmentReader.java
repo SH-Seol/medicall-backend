@@ -1,5 +1,7 @@
 package com.medicall.domain.department;
 
+import java.util.List;
+
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
 import org.springframework.stereotype.Component;
@@ -11,6 +13,10 @@ public class DepartmentReader {
 
     public DepartmentReader(DepartmentRepository departmentRepository) {
         this.departmentRepository = departmentRepository;
+    }
+
+    public List<Department> findAll() {
+        return departmentRepository.findAll();
     }
 
     public Department findById(Long id) {

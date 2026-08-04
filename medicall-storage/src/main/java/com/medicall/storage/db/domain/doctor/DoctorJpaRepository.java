@@ -1,5 +1,6 @@
 package com.medicall.storage.db.domain.doctor;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,14 @@ public interface DoctorJpaRepository extends JpaRepository<DoctorEntity, Long> {
     DoctorEntity findByIdWithOptionalHospital(@Param("doctorId") Long doctorId);
 
     Optional<DoctorEntity> findByOauthIdAndOauthProvider(String oauthId, String oauthProvider);
+
+    @Query("""
+            SELECT d FROM DoctorEntity d
+            JOIN FETCH d.hospital
+            LEFT JOIN FETCH d.department
+            LEFT JOIN FETCH d.specialty
+            WHERE d.hospital.id = :hospitalId
+            ORDER BY d.name
+            """)
+    List<DoctorEntity> findAllByHospitalId(@Param("hospitalId") Long hospitalId);
 }
