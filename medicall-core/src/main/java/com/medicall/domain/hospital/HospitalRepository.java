@@ -18,9 +18,8 @@ public interface HospitalRepository {
     Optional<Hospital> findById(Long hospitalId);
     List<Hospital> findAllWithinBoundingBox(BoundingBox boundingBox, String keyword, Long departmentId, Long cursorId, int size);
     Optional<Hospital> findByOAuthInfo(String oauthId, String provider);
-    boolean addOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes);
-    boolean addAddress(Long hospitalId, Address address);
-    boolean addDepartments(Long hospitalId, List<Long> departments);
+    void updateAddress(Long hospitalId, Address address);
+    void updateDepartments(Long hospitalId, List<Long> departmentIds);
     boolean isHospitalExist(Long hospitalId);
     Hospital updateProfile(Long hospitalId, HospitalProfileUpdate profileUpdate);
 }

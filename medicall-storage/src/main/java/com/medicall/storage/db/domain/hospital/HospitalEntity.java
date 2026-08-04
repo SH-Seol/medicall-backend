@@ -149,6 +149,14 @@ public class HospitalEntity extends BaseEntity {
         departments.forEach(this::addDepartment);
     }
 
+    /**
+     * 진료과를 전달한 목록으로 전체 교체한다.
+     */
+    public void replaceDepartments(List<DepartmentEntity> departments) {
+        this.departments.clear();
+        addDepartments(departments);
+    }
+
     public void addDepartment(DepartmentEntity department) {
         HospitalDepartmentEntity hospitalDepartmentEntity = new HospitalDepartmentEntity(this, department);
         departments.add(hospitalDepartmentEntity);

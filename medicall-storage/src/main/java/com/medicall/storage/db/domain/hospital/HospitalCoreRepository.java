@@ -95,24 +95,6 @@ public class HospitalCoreRepository implements HospitalRepository {
         return true;
     }
 
-    public boolean addOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes){
-        return hospitalJpaRepository.findById(hospitalId).map(hospital -> {
-            for(OperatingTime operatingTime : operatingTimes){
-                OperatingTimeEntity operatingTimesEntity = new OperatingTimeEntity(
-                        hospital,
-                        operatingTime.dayOfWeek(),
-                        operatingTime.openingTime(),
-                        operatingTime.closingTime(),
-                        operatingTime.breakStartTime(),
-                        operatingTime.breakFinishTime()
-                );
-
-                hospital.addOperatingTime(operatingTimesEntity);
-            }
-            return true;
-        }).orElse(false);
-    }
-
     public boolean updateOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes){
         Optional<HospitalEntity> hospitalOptional = findWithOperationTimesById(hospitalId);
 
@@ -199,8 +181,10 @@ public class HospitalCoreRepository implements HospitalRepository {
         return hospitalJpaRepository.findByOauthIdAndOauthProvider(oauthId, provider).map(HospitalEntity::toDomainModel);
     }
 
-    public boolean addAddress(Long hospitalId, Address address){
-        Optional<HospitalEntity> hospitalOptional = hospitalJpaRepository.findById(hospitalId);
+    public void updateAddress(Long hospitalId, Address address){
+        HospitalEntity hospital = hospitalJpaRepository.findById(hospitalId)
+                .orElseThrow(() -> new CoreException(CoreErrorType.HOSPITAL_NOT_FOUND));
+
         AddressEntity addressEntity = new AddressEntity(
                 address.zoneCode(),
                 address.roadAddress(),
@@ -210,20 +194,20 @@ public class HospitalCoreRepository implements HospitalRepository {
                 address.longitude(),
                 address.latitude());
 
-        return hospitalOptional.map(hospital -> {
-            hospital.addAddress(addressEntity);
-            return true;
-        }).orElse(false);
+        // 병원 주소는 1건만 유지한다. (orphanRemoval로 기존 주소는 삭제)
+        hospital.addAddress(addressEntity);
     }
 
-    public boolean addDepartments(Long hospitalId, List<Long> departments){
-        List<DepartmentEntity> departmentEntities = departmentJpaRepository.findAllById(departments);
-        Optional<HospitalEntity> hospitalOptional = hospitalJpaRepository.findById(hospitalId);
+    public void updateDepartments(Long hospitalId, List<Long> departmentIds){
+        HospitalEntity hospital = hospitalJpaRepository.findById(hospitalId)
+                .orElseThrow(() -> new CoreException(CoreErrorType.HOSPITAL_NOT_FOUND));
 
-        return hospitalOptional.map(hospital -> {
-            hospital.addDepartments(departmentEntities);
-            return true;
-        }).orElse(false);
+        List<DepartmentEntity> departmentEntities = departmentJpaRepository.findAllById(departmentIds);
+        if(departmentEntities.size() != departmentIds.stream().distinct().count()){
+            throw new CoreException(CoreErrorType.DEPARTMENT_NOT_FOUND);
+        }
+
+        hospital.replaceDepartments(departmentEntities);
     }
 
     public Hospital updateProfile(Long hospitalId, HospitalProfileUpdate profileUpdate){

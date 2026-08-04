@@ -18,7 +18,7 @@ public record Hospital(
 ) {
     public boolean isSetUpComplete(){
         return address != null &&
-                departments != null &&
-                weeklySchedule != null;
+                departments != null && !departments.isEmpty() &&
+                weeklySchedule != null && !weeklySchedule.isEmpty();
     }
 }

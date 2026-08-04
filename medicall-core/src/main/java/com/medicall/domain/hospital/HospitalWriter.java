@@ -1,6 +1,8 @@
 package com.medicall.domain.hospital;
 
 import java.util.List;
+
+import com.medicall.domain.address.Address;
 import org.springframework.stereotype.Component;
 
 import com.medicall.domain.hospital.dto.HospitalProfileUpdate;
@@ -30,6 +32,14 @@ public class HospitalWriter {
             throw new CoreException(CoreErrorType.APPOINTMENT_ADD_DOCTOR_FAILED);
         }
         return success;
+    }
+
+    public void updateAddress(Long hospitalId, Address address) {
+        hospitalRepository.updateAddress(hospitalId, address);
+    }
+
+    public void updateDepartments(Long hospitalId, List<Long> departmentIds) {
+        hospitalRepository.updateDepartments(hospitalId, departmentIds);
     }
 
     public Hospital updateProfile(Long hospitalId, HospitalProfileUpdate profileUpdate) {
