@@ -46,6 +46,17 @@ public class AppointmentService {
         return CreateAppointmentResult.from(appointment);
     }
 
+    /**
+     * 환자 예약 취소 (본인 예약만, 요청/배정 상태에서만 가능)
+     */
+    @Transactional
+    public void cancelAppointmentByPatient(Long patientId, Long appointmentId) {
+        Appointment appointment = appointmentReader.findById(appointmentId);
+        appointmentValidator.validatePatientAccess(appointment, patientId);
+
+        appointmentWriter.cancelAppointment(appointmentId);
+    }
+
     @Transactional(readOnly = true)
     public AppointmentDetailResult findAppointmentByDoctor(Long doctorId, Long appointmentId) {
         Appointment appointment = appointmentReader.findById(appointmentId);

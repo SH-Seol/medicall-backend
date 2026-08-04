@@ -64,4 +64,17 @@ public interface PatientAppointmentApiDocs {
             @RequestBody CreatePatientAppointmentRequest request,
             @Parameter(hidden = true) CurrentUser currentUser
     );
+
+    @Operation(
+            summary = "예약 취소",
+            description = "환자가 본인의 예약을 취소합니다. 요청(REQUESTED) 또는 배정(ASSIGNED) 상태에서만 가능합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "성공"),
+            @ApiResponse(responseCode = "403", description = "본인의 예약이 아님"),
+            @ApiResponse(responseCode = "404", description = "예약을 찾을 수 없음"),
+            @ApiResponse(responseCode = "409", description = "취소할 수 없는 상태")
+    })
+    ResponseEntity<Void> cancelAppointment(@PathVariable("appointmentId") Long appointmentId,
+                                           @Parameter(hidden = true) CurrentUser currentUser);
 }

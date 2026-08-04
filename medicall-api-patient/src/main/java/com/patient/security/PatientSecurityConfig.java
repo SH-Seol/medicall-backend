@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -37,6 +38,7 @@ public class PatientSecurityConfig {
     public SecurityFilterChain patientAuthFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/api/v1/patient/auth/**")
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -61,6 +63,7 @@ public class PatientSecurityConfig {
                         "oauth2/**",
                         "/login/**"
                 )
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .oauth2Login(oauth -> oauth.successHandler(patientOAuthSuccessHandler));
@@ -73,6 +76,7 @@ public class PatientSecurityConfig {
     public SecurityFilterChain patientApiFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/api/v1/patient/**")
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)

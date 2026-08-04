@@ -6,6 +6,7 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,21 @@ public class PatientPrescriptionController {
         this.qrGenerator = qrGenerator;
     }
 
+    @GetMapping
+    public CursorPageResponse<PatientPrescriptionListResponse> getPrescriptionList(
+            @ParameterObject @Valid PatientPrescriptionListRequest request,
+            @Parameter(hidden = true) CurrentUser currentUser) {
+
+        CursorPageResult<PrescriptionListResult> result =
+                prescriptionService.getPrescriptionListByPatient(request.toCriteria(currentUser.userId()));
+
+        return CursorPageResponse.of(
+                result.data().stream().map(PatientPrescriptionListResponse::from).toList(),
+                request.cursorId(),
+                result.nextCursorId()
+        );
+    }
+
     @GetMapping("/{prescriptionId}")
     public PatientPrescriptionDetailResponse getPrescriptionDetail(@PathVariable("prescriptionId") Long prescriptionId,
                                                                    @Parameter(hidden = true) CurrentUser currentUser) {
@@ -50,8 +66,10 @@ public class PatientPrescriptionController {
                                                                @Parameter(hidden = true) CurrentUser currentUser){
 
         String qrToken = prescriptionService.generatePrescriptionQrToken(prescriptionId, currentUser.userId());
-        String qrImage = qrGenerator.generateQrCodeImage(qrToken);
 
-        return null;
+        return PatientPrescriptionQrResponse.of(
+                qrGenerator.buildQrUrl(qrToken),
+                qrGenerator.generateQrCodeImage(qrToken)
+        );
     }
 }

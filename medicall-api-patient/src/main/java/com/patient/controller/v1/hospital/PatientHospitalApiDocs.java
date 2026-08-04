@@ -6,11 +6,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.medicall.common.support.CurrentUser;
+import com.patient.controller.v1.doctor.dto.response.PatientDoctorResponse;
 import com.medicall.common.support.pagination.CursorPageResponse;
 import com.patient.controller.v1.hospital.dto.request.PatientHospitalDetailRequest;
 import com.patient.controller.v1.hospital.dto.request.PatientHospitalSearchRequest;
@@ -43,4 +46,15 @@ public interface PatientHospitalApiDocs {
     PatientHospitalDetailResponse getHospitalDetail(@PathVariable("hospitalId") Long hospitalId,
                                                      @Valid PatientHospitalDetailRequest request,
                                                      @Parameter(hidden = true) CurrentUser currentUser);
+
+    @Operation(
+            summary = "병원 소속 의사 목록 조회",
+            description = "병원 상세에서 예약할 의사를 선택하기 위한 목록입니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "404", description = "병원을 찾을 수 없음")
+    })
+    List<PatientDoctorResponse> getHospitalDoctors(@PathVariable("hospitalId") Long hospitalId,
+                                                   @Parameter(hidden = true) CurrentUser currentUser);
 }

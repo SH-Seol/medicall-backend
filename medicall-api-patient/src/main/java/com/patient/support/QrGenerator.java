@@ -24,8 +24,15 @@ public class QrGenerator {
     private static final int DEFAULT_WIDTH = 300;
     private static final int DEFAULT_HEIGHT = 300;
 
+    /**
+     * QR 이미지에 인코딩되는 URL. 약국이 스캔하면 이 주소로 이동한다.
+     */
+    public String buildQrUrl(String qrToken){
+        return baseUrl + "/api/v1/prescriptions/qr/" + qrToken;
+    }
+
     public String generateQrCodeImage(String qrToken){
-        String qrUrl = baseUrl + "/" + qrToken;
+        String qrUrl = buildQrUrl(qrToken);
 
         try{
             // QR 코드 생성 옵션 설정

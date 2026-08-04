@@ -2,6 +2,8 @@ package com.medicall.storage.db.domain.appointment;
 
 import com.medicall.domain.address.Address;
 import com.medicall.domain.appointment.Appointment;
+import com.medicall.error.CoreErrorType;
+import com.medicall.error.CoreException;
 import com.medicall.domain.appointment.AppointmentRepository;
 import com.medicall.domain.appointment.NewAppointment;
 import com.medicall.domain.appointment.dto.PatientAppointmentListCriteria;
@@ -134,6 +136,17 @@ public class AppointmentCoreRepository implements AppointmentRepository {
     public void acceptAppointment(Appointment appointment){
         AppointmentEntity appointmentEntity = appointmentJpaRepository.getReferenceById(appointment.id());
         appointmentEntity.acceptAppointment();
+    }
+
+    public void cancelAppointment(Long appointmentId){
+        AppointmentEntity appointmentEntity = appointmentJpaRepository.findById(appointmentId)
+                .orElseThrow(() -> new CoreException(CoreErrorType.APPOINTMENT_NOT_FOUND));
+
+        if(!appointmentEntity.isCancelable()){
+            throw new CoreException(CoreErrorType.APPOINTMENT_NOT_CANCELABLE);
+        }
+
+        appointmentEntity.cancelAppointment();
     }
 
     private BooleanExpression cursorIdGt(Long cursorId){

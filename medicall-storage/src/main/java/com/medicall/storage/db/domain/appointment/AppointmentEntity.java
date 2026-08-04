@@ -118,4 +118,12 @@ public class AppointmentEntity extends BaseEntity {
     public void acceptAppointment(){
         this.status = AppointmentStatus.ASSIGNED;
     }
+
+    public void cancelAppointment(){
+        this.status = AppointmentStatus.CANCELLED;
+    }
+
+    public boolean isCancelable(){
+        return this.status == AppointmentStatus.REQUESTED || this.status == AppointmentStatus.ASSIGNED;
+    }
 }

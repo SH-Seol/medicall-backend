@@ -5,6 +5,7 @@ import com.medicall.domain.doctor.Doctor;
 public record DoctorResult(
         Long id,
         String name,
+        Long hospitalId,
         String hospitalName,
         String introduction,
         String imageUrl,
@@ -17,6 +18,7 @@ public record DoctorResult(
         return new DoctorResult(
                 doctor.id(),
                 doctor.name(),
+                doctor.hospital() != null ? doctor.hospital().id() : null,
                 doctor.hospital() != null ? doctor.hospital().name() : null,
                 doctor.introduction(),
                 doctor.imageUrl(),

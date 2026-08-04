@@ -2,11 +2,16 @@ package com.medicall.domain.prescription;
 
 import com.medicall.domain.prescription.dto.CreatePrescriptionCommand;
 import com.medicall.domain.prescription.dto.CreatePrescriptionResult;
+import com.medicall.domain.prescription.dto.PatientPrescriptionListCriteria;
 import com.medicall.domain.prescription.dto.PrescriptionDetailResult;
+import com.medicall.domain.prescription.dto.PrescriptionListResult;
+import com.medicall.support.CursorPageResult;
 import com.medicall.domain.medicine.MedicineValidator;
 import com.medicall.domain.treatment.Treatment;
 import com.medicall.domain.treatment.TreatmentReader;
 import com.medicall.domain.treatment.TreatmentValidator;
+import com.medicall.error.CoreErrorType;
+import com.medicall.error.CoreException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,19 +27,22 @@ public class PrescriptionService {
     private final TreatmentValidator treatmentValidator;
     private final MedicineValidator medicineValidator;
     private final PrescriptionValidator prescriptionValidator;
+    private final PrescriptionQrTokenStore prescriptionQrTokenStore;
 
     public PrescriptionService(PrescriptionReader prescriptionReader,
                                PrescriptionWriter prescriptionWriter,
                                TreatmentReader treatmentReader,
                                TreatmentValidator treatmentValidator,
                                MedicineValidator medicineValidator,
-                               PrescriptionValidator prescriptionValidator) {
+                               PrescriptionValidator prescriptionValidator,
+                               PrescriptionQrTokenStore prescriptionQrTokenStore) {
         this.prescriptionReader = prescriptionReader;
         this.prescriptionWriter = prescriptionWriter;
         this.treatmentReader = treatmentReader;
         this.treatmentValidator = treatmentValidator;
         this.medicineValidator = medicineValidator;
         this.prescriptionValidator = prescriptionValidator;
+        this.prescriptionQrTokenStore = prescriptionQrTokenStore;
     }
 
     @Transactional
@@ -90,6 +98,19 @@ public class PrescriptionService {
         );
     }
 
+    /**
+     * 환자 처방전 목록 (커서 페이지네이션)
+     */
+    @Transactional(readOnly = true)
+    public CursorPageResult<PrescriptionListResult> getPrescriptionListByPatient(PatientPrescriptionListCriteria criteria) {
+        CursorPageResult<Prescription> result = prescriptionReader.findByPatientId(criteria);
+
+        return CursorPageResult.of(
+                result.data().stream().map(PrescriptionListResult::from).toList(),
+                result.nextCursorId()
+        );
+    }
+
     @Transactional(readOnly = true)
     public PrescriptionDetailResult getPrescriptionByPatient(Long prescriptionId, Long patientId) {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
@@ -122,11 +143,36 @@ public class PrescriptionService {
         );
     }
 
+    /**
+     * 처방전 QR에 담을 1회성 토큰 발급.
+     * 처방전 소유자인지 검증한 뒤 추측 불가능한 토큰을 만들어 저장한다.
+     */
     public String generatePrescriptionQrToken(Long prescriptionId, Long patientId) {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
 
         prescriptionValidator.validatePatientPrescription(prescription, patientId);
 
-        return null;
+        return prescriptionQrTokenStore.issue(prescription.id());
+    }
+
+    /**
+     * QR 토큰으로 처방전 조회 (약국에서 스캔한 경우)
+     */
+    @Transactional(readOnly = true)
+    public PrescriptionDetailResult getPrescriptionByQrToken(String qrToken) {
+        Long prescriptionId = prescriptionQrTokenStore.resolve(qrToken)
+                .orElseThrow(() -> new CoreException(CoreErrorType.PRESCRIPTION_QR_TOKEN_INVALID));
+
+        Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
+
+        return new PrescriptionDetailResult(
+                prescription.id(),
+                prescription.patient(),
+                prescription.medicines(),
+                prescription.hospital(),
+                prescription.doctor(),
+                prescription.treatment(),
+                prescription.date()
+        );
     }
 }

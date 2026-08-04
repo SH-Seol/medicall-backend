@@ -93,7 +93,7 @@ public class PrescriptionEntity extends BaseEntity {
                 this.PrescriptionMedicineList.stream().map(PrescriptionMedicineEntity::toDomainModel).toList(),
                 this.hospital.toDomainModel(),
                 this.doctor.toDomainModel(),
-                this.treatment.toDomainModel(),
+                this.treatment != null ? this.treatment.toDomainModel() : null,
                 this.prescriptionDate
         );
     }

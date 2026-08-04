@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,6 +64,16 @@ public class PatientAppointmentController implements PatientAppointmentApiDocs {
     {
         Appointment result = appointmentService.findAppointmentByPatient(currentUser.userId(), appointmentId);
         return PatientAppointmentDetailResponse.from(result);
+    }
+
+    @PatchMapping("/{appointmentId}/cancel")
+    public ResponseEntity<Void> cancelAppointment(
+            @PathVariable("appointmentId") Long appointmentId,
+            @Parameter(hidden = true) CurrentUser currentUser
+    ){
+        appointmentService.cancelAppointmentByPatient(currentUser.userId(), appointmentId);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping

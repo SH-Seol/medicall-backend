@@ -26,6 +26,10 @@ public class AppointmentWriter {
         return appointmentRepository.create(patientId, newAppointment);
     }
 
+    public void cancelAppointment(Long appointmentId){
+        appointmentRepository.cancelAppointment(appointmentId);
+    }
+
     public AppointmentDetailResult acceptAppointment(Appointment appointment){
         if(appointment.status().equals(AppointmentStatus.REQUESTED)){
             appointmentRepository.acceptAppointment(appointment);

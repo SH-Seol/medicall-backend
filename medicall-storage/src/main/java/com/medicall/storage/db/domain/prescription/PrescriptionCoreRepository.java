@@ -4,6 +4,8 @@ import com.medicall.domain.prescription.NewPrescription;
 import com.medicall.domain.prescription.Prescription;
 import com.medicall.domain.prescription.PrescriptionMedicine;
 import com.medicall.domain.prescription.PrescriptionRepository;
+import com.medicall.domain.prescription.dto.PatientPrescriptionListCriteria;
+import com.medicall.support.CursorPageResult;
 import com.medicall.storage.db.domain.doctor.DoctorEntity;
 import com.medicall.storage.db.domain.doctor.DoctorJpaRepository;
 import com.medicall.storage.db.domain.hospital.HospitalEntity;
@@ -114,6 +116,32 @@ public class PrescriptionCoreRepository implements PrescriptionRepository {
                 }).toList();
 
         prescriptionMedicineEntities.forEach(prescriptionEntity::addPrescriptionMedicine);
+    }
+
+    /**
+     * 환자 처방전 목록 (id 내림차순 커서 페이지네이션)
+     */
+    public CursorPageResult<Prescription> findByPatientId(PatientPrescriptionListCriteria criteria) {
+        QPrescriptionEntity prescriptionEntity = QPrescriptionEntity.prescriptionEntity;
+
+        List<PrescriptionEntity> entities = jpaQueryFactory
+                .selectFrom(prescriptionEntity)
+                .leftJoin(prescriptionEntity.patient).fetchJoin()
+                .leftJoin(prescriptionEntity.doctor).fetchJoin()
+                .leftJoin(prescriptionEntity.hospital).fetchJoin()
+                .where(
+                        prescriptionEntity.patient.id.eq(criteria.patientId()),
+                        criteria.hasCursor() ? prescriptionEntity.id.lt(criteria.cursorId()) : null
+                )
+                .orderBy(prescriptionEntity.id.desc())
+                .limit(criteria.size() + 1L)
+                .fetch();
+
+        boolean hasNext = entities.size() > criteria.size();
+        List<PrescriptionEntity> content = hasNext ? entities.subList(0, criteria.size()) : entities;
+        Long nextCursorId = hasNext && !content.isEmpty() ? content.get(content.size() - 1).getId() : null;
+
+        return CursorPageResult.of(content.stream().map(PrescriptionEntity::toDomainModel).toList(), nextCursorId);
     }
 
     public Optional<Prescription> getPrescriptionById(Long prescriptionId) {

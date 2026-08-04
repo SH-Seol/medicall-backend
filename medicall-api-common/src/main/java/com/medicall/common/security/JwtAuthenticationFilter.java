@@ -29,10 +29,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenRepository tokenRepository;
+    private final CookieManager cookieManager;
 
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, TokenRepository tokenRepository) {
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, TokenRepository tokenRepository,
+                                   CookieManager cookieManager) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.tokenRepository = tokenRepository;
+        this.cookieManager = cookieManager;
     }
 
     private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
@@ -79,12 +82,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * Authorization 헤더를 우선 사용하고(dev-login 등), 없으면 HttpOnly 쿠키에서 읽는다.
+     * OAuth 로그인은 토큰을 쿠키로만 내려주기 때문에 쿠키 fallback이 필요하다.
+     */
     private String extractTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-        return null;
+        return cookieManager.readAccessToken(request);
     }
 
     private void authenticateWithToken(String token){
