@@ -1,5 +1,6 @@
 package com.medicall.domain.patient;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public record Patient(
@@ -10,7 +11,12 @@ public record Patient(
         Double height,
         Double weight,
         int age,
-        List<String> chronicDiseases
+        List<String> chronicDiseases,
+        String imageUrl,
+        String email,
+        LocalDate dateOfBirth,
+        ContactPerson emergencyContact,
+        ContactPerson guardian
 ) {
     public boolean isProfileComplete(){
         return gender != null && bloodType != null && height != null && weight != null

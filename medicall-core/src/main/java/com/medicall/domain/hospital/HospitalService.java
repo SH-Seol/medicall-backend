@@ -4,6 +4,8 @@ import com.medicall.domain.appointment.Appointment;
 import com.medicall.domain.appointment.AppointmentReader;
 import com.medicall.domain.appointment.AppointmentWriter;
 import com.medicall.domain.hospital.dto.HospitalDetailResult;
+import com.medicall.domain.hospital.dto.HospitalProfileResult;
+import com.medicall.domain.hospital.dto.HospitalProfileUpdate;
 import com.medicall.domain.hospital.dto.HospitalSearchCriteria;
 import com.medicall.domain.hospital.dto.HospitalSearchResult;
 import com.medicall.domain.doctor.Doctor;
@@ -79,6 +81,22 @@ public class HospitalService {
     @Transactional(readOnly = true)
     public CursorPageResult<HospitalSearchResult> getHospitalsNearby(HospitalSearchCriteria criteria) {
         return hospitalReader.searchNearby(criteria);
+    }
+
+    /**
+     * 병원 내 정보 조회
+     */
+    @Transactional(readOnly = true)
+    public HospitalProfileResult getMyProfile(Long hospitalId) {
+        return HospitalProfileResult.from(hospitalReader.findById(hospitalId));
+    }
+
+    /**
+     * 병원 내 정보 수정 (null인 항목은 기존 값 유지)
+     */
+    @Transactional
+    public HospitalProfileResult updateMyProfile(Long hospitalId, HospitalProfileUpdate profileUpdate) {
+        return HospitalProfileResult.from(hospitalWriter.updateProfile(hospitalId, profileUpdate));
     }
 
     @Transactional(readOnly = true)

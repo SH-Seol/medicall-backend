@@ -1,7 +1,9 @@
 package com.medicall.domain.patient.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import com.medicall.domain.patient.ContactPerson;
 import com.medicall.domain.patient.Patient;
 
 public record PatientDetailResult(
@@ -12,7 +14,12 @@ public record PatientDetailResult(
         Double height,
         Double weight,
         int age,
-        List<String> chronicDiseases
+        List<String> chronicDiseases,
+        String imageUrl,
+        String email,
+        LocalDate dateOfBirth,
+        ContactPerson emergencyContact,
+        ContactPerson guardian
 ) {
     public static PatientDetailResult from(Patient patient) {
         return new PatientDetailResult(
@@ -23,7 +30,12 @@ public record PatientDetailResult(
                 patient.height(),
                 patient.weight(),
                 patient.age(),
-                patient.chronicDiseases()
+                patient.chronicDiseases(),
+                patient.imageUrl(),
+                patient.email(),
+                patient.dateOfBirth(),
+                patient.emergencyContact(),
+                patient.guardian()
         );
     }
 }

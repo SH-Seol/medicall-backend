@@ -166,12 +166,27 @@ public class HospitalEntity extends BaseEntity {
         this.address = address;
     }
 
+    /**
+     * 내 정보 수정 (null인 항목은 기존 값을 유지한다)
+     */
+    public void updateProfile(String name, String telephoneNumber, String imageUrl) {
+        if (name != null) {
+            this.name = name;
+        }
+        if (telephoneNumber != null) {
+            this.telephoneNumber = telephoneNumber;
+        }
+        if (imageUrl != null) {
+            this.imageUrl = imageUrl;
+        }
+    }
+
     public Hospital toDomainModel(){
         return new Hospital(
                 this.id,
                 this.name,
                 this.telephoneNumber,
-                this.address.toDomainModel(),
+                this.address != null ? this.address.toDomainModel() : null,
                 this.imageUrl,
                 this.departments.stream().map(HospitalDepartmentEntity::getDepartment).map(DepartmentEntity::toDomainModel).toList(),
                 this.operatingTimes.stream().map(OperatingTimeEntity::toDomainModel).toList(),

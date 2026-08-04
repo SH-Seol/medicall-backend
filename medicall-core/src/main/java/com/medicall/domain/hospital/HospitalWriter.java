@@ -3,6 +3,7 @@ package com.medicall.domain.hospital;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
+import com.medicall.domain.hospital.dto.HospitalProfileUpdate;
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
 
@@ -29,6 +30,10 @@ public class HospitalWriter {
             throw new CoreException(CoreErrorType.APPOINTMENT_ADD_DOCTOR_FAILED);
         }
         return success;
+    }
+
+    public Hospital updateProfile(Long hospitalId, HospitalProfileUpdate profileUpdate) {
+        return hospitalRepository.updateProfile(hospitalId, profileUpdate);
     }
 
     public boolean updaterOperatingTimes(Long hospitalId, List<OperatingTime> operatingTimes) {

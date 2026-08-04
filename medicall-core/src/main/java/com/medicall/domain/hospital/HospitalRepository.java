@@ -2,6 +2,7 @@ package com.medicall.domain.hospital;
 
 import com.medicall.domain.address.Address;
 import com.medicall.domain.appointment.Appointment;
+import com.medicall.domain.hospital.dto.HospitalProfileUpdate;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,4 +22,5 @@ public interface HospitalRepository {
     boolean addAddress(Long hospitalId, Address address);
     boolean addDepartments(Long hospitalId, List<Long> departments);
     boolean isHospitalExist(Long hospitalId);
+    Hospital updateProfile(Long hospitalId, HospitalProfileUpdate profileUpdate);
 }

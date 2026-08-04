@@ -7,6 +7,9 @@ import com.medicall.domain.hospital.Hospital;
 import com.medicall.domain.hospital.HospitalRepository;
 import com.medicall.domain.hospital.NewHospital;
 import com.medicall.domain.hospital.OperatingTime;
+import com.medicall.domain.hospital.dto.HospitalProfileUpdate;
+import com.medicall.error.CoreErrorType;
+import com.medicall.error.CoreException;
 import com.medicall.storage.db.domain.address.AddressEntity;
 import com.medicall.storage.db.domain.appointment.AppointmentEntity;
 import com.medicall.storage.db.domain.appointment.AppointmentJpaRepository;
@@ -138,6 +141,7 @@ public class HospitalCoreRepository implements HospitalRepository {
                         newTime.breakStartTime(),
                         newTime.breakFinishTime()
                 );
+                operatingTimeEntity.updateFromDomainModel(newTime);
                 hospitalEntity.addOperatingTime(operatingTimeEntity);
             }
         });
@@ -220,6 +224,19 @@ public class HospitalCoreRepository implements HospitalRepository {
             hospital.addDepartments(departmentEntities);
             return true;
         }).orElse(false);
+    }
+
+    public Hospital updateProfile(Long hospitalId, HospitalProfileUpdate profileUpdate){
+        HospitalEntity hospitalEntity = hospitalJpaRepository.findById(hospitalId)
+                .orElseThrow(() -> new CoreException(CoreErrorType.HOSPITAL_NOT_FOUND));
+
+        hospitalEntity.updateProfile(
+                profileUpdate.name(),
+                profileUpdate.telephoneNumber(),
+                profileUpdate.imageUrl()
+        );
+
+        return hospitalEntity.toDomainModel();
     }
 
     public boolean isHospitalExist(Long hospitalId){

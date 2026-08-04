@@ -3,6 +3,7 @@ package com.medicall.error;
 public enum CoreErrorCode {
     HOSPITAL001("HOSPITAL-001"),
     PATIENT001("PATIENT-001"),
+    PATIENT002("PATIENT-002"),
     DOCTOR001("DOCTOR-001"),
     DOCTOR002("DOCTOR-002"),
     DOCTOR003("DOCTOR-003"),

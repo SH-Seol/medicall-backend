@@ -1,5 +1,6 @@
 package com.medicall.storage.db.domain.patient;
 
+import com.medicall.domain.patient.ContactPerson;
 import com.medicall.domain.patient.Patient;
 import com.medicall.storage.db.domain.address.AddressEntity;
 import com.medicall.storage.db.domain.common.domain.BaseEntity;
@@ -16,6 +17,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,13 +160,66 @@ public class PatientEntity extends BaseEntity {
     public Patient toDomainModel(){
         return new Patient(this.id,
                 this.name,
-                this.gender.toString(),
+                this.gender != null ? this.gender.name() : null,
                 this.bloodType,
                 this.height,
                 this.weight,
                 this.age,
                 this.chronicDiseaseEntities.stream()
                         .map(PatientChronicDiseaseEntity::getDisease)
-                        .map(ChronicDiseaseEntity::getName).toList());
+                        .map(ChronicDiseaseEntity::getName).toList(),
+                this.imageUrl,
+                this.email,
+                this.dateOfBirth,
+                new ContactPerson(this.emergencyContactName, this.emergencyContactRelationship, this.emergencyContactPhoneNumber),
+                new ContactPerson(this.guardianName, this.guardianRelationship, this.guardianPhoneNumber));
+    }
+
+    /**
+     * 내 정보 수정 (null인 항목은 기존 값을 유지한다)
+     */
+    public void updateProfile(String name, Gender gender, String bloodType, Double height, Double weight,
+                              LocalDate dateOfBirth, String imageUrl,
+                              ContactPerson emergencyContact, ContactPerson guardian) {
+        if (name != null) {
+            this.name = name;
+        }
+        if (gender != null) {
+            this.gender = gender;
+        }
+        if (bloodType != null) {
+            this.bloodType = bloodType;
+        }
+        if (height != null) {
+            this.height = height;
+        }
+        if (weight != null) {
+            this.weight = weight;
+        }
+        if (dateOfBirth != null) {
+            this.dateOfBirth = dateOfBirth;
+            this.age = Period.between(dateOfBirth, LocalDate.now()).getYears();
+        }
+        if (imageUrl != null) {
+            this.imageUrl = imageUrl;
+        }
+        if (emergencyContact != null) {
+            this.emergencyContactName = emergencyContact.name();
+            this.emergencyContactRelationship = emergencyContact.relationship();
+            this.emergencyContactPhoneNumber = emergencyContact.phoneNumber();
+        }
+        if (guardian != null) {
+            this.guardianName = guardian.name();
+            this.guardianRelationship = guardian.relationship();
+            this.guardianPhoneNumber = guardian.phoneNumber();
+        }
+    }
+
+    /**
+     * 만성 질환 목록 전체 교체
+     */
+    public void replaceChronicDiseases(List<ChronicDiseaseEntity> diseases) {
+        this.chronicDiseaseEntities.clear();
+        diseases.forEach(disease -> this.chronicDiseaseEntities.add(new PatientChronicDiseaseEntity(this, disease)));
     }
 }
