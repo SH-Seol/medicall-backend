@@ -17,6 +17,8 @@ public enum AuthErrorType {
     ACCESS_DENIED(AuthErrorCode.AUTH10, HttpStatus.FORBIDDEN, "접근 거부되었습니다.", LogLevel.WARN),
     SERVICE_TYPE_MISMATCH(AuthErrorCode.AUTH11, HttpStatus.BAD_REQUEST, "잘못된 서비스 타입입니다.", LogLevel.WARN),
     UNSUPPORTED_OAUTH_PROVIDER(AuthErrorCode.AUTH12, HttpStatus.BAD_REQUEST, "지원하지 않는 OAuth 제공자입니다.", LogLevel.WARN),
+    OAUTH_USER_INFO_MISSING(AuthErrorCode.AUTH14, HttpStatus.BAD_REQUEST, "소셜 로그인 사용자 정보를 읽을 수 없습니다.", LogLevel.WARN),
+    INVALID_REFRESH_TOKEN(AuthErrorCode.AUTH13, HttpStatus.UNAUTHORIZED, "만료되었거나 폐기된 리프레시 토큰입니다.", LogLevel.WARN),
     ;
 
     private final AuthErrorCode authErrorCode;

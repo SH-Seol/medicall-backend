@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -34,20 +35,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.tokenRepository = tokenRepository;
     }
 
+    private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
+
     private static final List<String> EXCLUDED_PATHS = Arrays.asList(
             "/health",
             "/actuator/health",
             "/auth/login",
             "/swagger-ui",
             "/v3/api-docs",
-            "/api/v1/**/auth/dev-login"
+            "/api/v1/*/auth/**"
     );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        log.info("Request URI: {}", request.getRequestURI());
+        log.debug("Request URI: {}", request.getRequestURI());
         try{
             if(shouldSkipFilter(request)){
                 filterChain.doFilter(request, response);
@@ -88,8 +91,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(!jwtTokenProvider.validateToken(token)){
             throw new AuthException(AuthErrorType.INVALID_TOKEN);
         }
-        if(tokenRepository.isAccessTokenInBlacklist(token)){
+        if(tokenRepository.isAccessTokenInBlacklist(jwtTokenProvider.getJwtIdFromToken(token))){
             throw new AuthException(AuthErrorType.IS_BLACKED_TOKEN);
+        }
+        if(!"access".equals(jwtTokenProvider.getTokenTypeFromToken(token))){
+            // refresh token으로는 API를 호출할 수 없다.
+            throw new AuthException(AuthErrorType.INVALID_TOKEN);
         }
 
         Long userId = jwtTokenProvider.getUserIdFromToken(token);
@@ -117,6 +124,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         return EXCLUDED_PATHS.stream()
-                .anyMatch(requestURI::startsWith);
+                .anyMatch(pattern -> pattern.contains("*")
+                        ? PATH_MATCHER.match(pattern, requestURI)
+                        : requestURI.startsWith(pattern));
     }
 }

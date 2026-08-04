@@ -8,6 +8,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
 
@@ -46,10 +47,11 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String generateRefreshToken(Long userId){
+    public String generateRefreshToken(Long userId, String serviceType){
         return Jwts.builder()
                 .id(UUID.randomUUID().toString())
                 .subject(userId.toString())
+                .claim("serviceType", serviceType)
                 .claim("type", "refresh")
                 .issuedAt(new Date())
                 .notBefore(new Date())
@@ -100,6 +102,42 @@ public class JwtTokenProvider {
         }catch (NumberFormatException e){
             throw new AuthException(AuthErrorType.INVALID_TOKEN);
         }
+    }
+
+    /**
+     * 토큰 고유 식별자(jti) 조회 — refresh token 저장/조회, access token 블랙리스트 키로 사용
+     */
+    public String getJwtIdFromToken(String token) {
+        String jwtId = getClaimsFromToken(token).getId();
+        if(jwtId == null){
+            throw new AuthException(AuthErrorType.INVALID_TOKEN);
+        }
+        return jwtId;
+    }
+
+    /**
+     * 토큰 종류(access/refresh) 조회
+     */
+    public String getTokenTypeFromToken(String token) {
+        String type = getClaimsFromToken(token).get("type", String.class);
+        if(type == null){
+            throw new AuthException(AuthErrorType.INVALID_TOKEN);
+        }
+        return type;
+    }
+
+    /**
+     * 토큰 만료까지 남은 시간. 이미 만료됐으면 Duration.ZERO
+     */
+    public Duration getRemainingDuration(String token) {
+        Date expiration = getClaimsFromToken(token).getExpiration();
+        long remainingMillis = expiration.getTime() - System.currentTimeMillis();
+
+        return remainingMillis > 0 ? Duration.ofMillis(remainingMillis) : Duration.ZERO;
+    }
+
+    public Duration getRefreshTokenDuration() {
+        return Duration.ofSeconds(refreshTokenExpiration);
     }
 
     public String getServiceTypeFromToken(String token) {

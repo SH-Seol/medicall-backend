@@ -3,6 +3,8 @@ package com.medicall.storage.db.domain.doctor;
 import com.medicall.domain.appointment.Appointment;
 import com.medicall.domain.doctor.Doctor;
 import com.medicall.domain.doctor.DoctorRepository;
+import com.medicall.error.CoreErrorType;
+import com.medicall.error.CoreException;
 import com.medicall.storage.db.domain.appointment.AppointmentEntity;
 import com.medicall.storage.db.domain.department.DepartmentEntity;
 import com.medicall.storage.db.domain.department.DepartmentJpaRepository;
@@ -22,8 +24,10 @@ public class DoctorCoreRepository implements DoctorRepository {
     }
 
     public Doctor save(Doctor newDoctor) {
-        DepartmentEntity department = departmentJpaRepository.getReferenceById(newDoctor.department()
-                .id());
+        // OAuth 최초 가입 시점에는 진료과가 정해지지 않은 상태로 저장된다. (이후 내 정보 수정에서 등록)
+        DepartmentEntity department = newDoctor.department() == null ? null
+                : departmentJpaRepository.findById(newDoctor.department().id())
+                        .orElseThrow(() -> new CoreException(CoreErrorType.DEPARTMENT_NOT_FOUND));
         DoctorEntity savedDoctor = doctorJpaRepository.save(new DoctorEntity(newDoctor.name(), newDoctor.imageUrl(),
                 newDoctor.introduction(), department, newDoctor.oauthId(), newDoctor.provider()));
 

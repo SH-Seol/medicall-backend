@@ -27,14 +27,39 @@ public class DoctorSecurityConfig {
         this.doctorOAuthSuccessHandler = doctorOAuthSuccessHandler;
     }
 
+    /**
+     * 토큰 재발급·로그아웃 등 auth API 전용 체인.
+     * oauth2Login이 걸린 체인에 두면 AuthException(=AuthenticationException) 발생 시
+     * 카카오 인가 URL로 302 되므로 분리한다.
+     */
+    @Bean
+    @Order(0)
+    public SecurityFilterChain doctorAuthFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/api/v1/doctor/auth/**")
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((req, res, e) ->
+                                res.sendError(HttpServletResponse.SC_UNAUTHORIZED)
+                        )
+                );
+
+        return http.build();
+    }
+
     @Bean
     @Order(1)
     public SecurityFilterChain doctorOauthFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher(
                         "/oauth2/**",
-                        "/login/**",
-                        "/api/v1/doctor/auth/**"
+                        "/login/**"
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())

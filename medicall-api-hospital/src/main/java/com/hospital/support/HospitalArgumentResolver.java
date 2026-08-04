@@ -41,7 +41,7 @@ public class HospitalArgumentResolver implements HandlerMethodArgumentResolver {
         if(!(authentication.getPrincipal() instanceof CustomUserDetails userDetails)) {
             throw new AuthException(AuthErrorType.INVALID_TOKEN);
         }
-        if(!userDetails.isDoctor()){
+        if(!userDetails.isHospital()){
             throw new AuthException(AuthErrorType.SERVICE_TYPE_MISMATCH);
         }
 

@@ -16,7 +16,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import com.medicall.common.security.CookieManager;
-import com.medicall.common.security.JwtTokenProvider;
+import com.medicall.common.security.TokenPair;
+import com.medicall.common.security.TokenService;
 import com.medicall.common.security.OAuthUserInfo;
 import com.medicall.common.security.error.AuthErrorType;
 import com.medicall.common.security.error.AuthException;
@@ -31,17 +32,17 @@ public class PatientOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
     private static final Logger log = LoggerFactory.getLogger(PatientOAuthSuccessHandler.class);
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenService tokenService;
     private final PatientReader patientReader;
     private final PatientWriter patientWriter;
     private final CookieManager cookieManager;
     private final PatientRedirectProperties patientRedirectProperties;
 
-    public PatientOAuthSuccessHandler(JwtTokenProvider jwtTokenProvider,
+    public PatientOAuthSuccessHandler(TokenService tokenService,
                                       PatientReader patientReader, PatientWriter patientWriter,
                                       CookieManager cookieManager,
                                       PatientRedirectProperties patientRedirectProperties) {
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenService = tokenService;
         this.patientReader = patientReader;
         this.patientWriter = patientWriter;
         this.cookieManager = cookieManager;
@@ -60,11 +61,10 @@ public class PatientOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
             Patient patient = findOrCreatePatient(userInfo);
 
-            String accessToken = jwtTokenProvider.generateAccessToken(patient.id(), "patient");
-            String refreshToken = jwtTokenProvider.generateRefreshToken(patient.id());
+            TokenPair tokens = tokenService.issue(patient.id(), "patient");
 
-            response.addCookie(cookieManager.createAccessTokenCookie(accessToken));
-            response.addCookie(cookieManager.createRefreshTokenCookie(refreshToken));
+            response.addCookie(cookieManager.createAccessTokenCookie(tokens.accessToken()));
+            response.addCookie(cookieManager.createRefreshTokenCookie(tokens.refreshToken()));
 
             String redirectUrl = determineRedirectUrl(patient);
 

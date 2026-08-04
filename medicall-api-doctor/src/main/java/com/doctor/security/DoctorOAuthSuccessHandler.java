@@ -17,7 +17,8 @@ import org.springframework.stereotype.Component;
 
 import com.doctor.config.DoctorRedirectProperties;
 import com.medicall.common.security.CookieManager;
-import com.medicall.common.security.JwtTokenProvider;
+import com.medicall.common.security.TokenPair;
+import com.medicall.common.security.TokenService;
 import com.medicall.common.security.OAuthUserInfo;
 import com.medicall.common.security.error.AuthErrorType;
 import com.medicall.common.security.error.AuthException;
@@ -30,18 +31,18 @@ public class DoctorOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private static final Logger log = LoggerFactory.getLogger(DoctorOAuthSuccessHandler.class);
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenService tokenService;
     private final DoctorReader doctorReader;
     private final DoctorWriter doctorWriter;
     private final CookieManager cookieManager;
     private final DoctorRedirectProperties doctorRedirectProperties;
 
-    public DoctorOAuthSuccessHandler(JwtTokenProvider jwtTokenProvider,
+    public DoctorOAuthSuccessHandler(TokenService tokenService,
                                      DoctorReader doctorReader,
                                      DoctorWriter doctorWriter,
                                      CookieManager cookieManager,
                                      DoctorRedirectProperties doctorRedirectProperties) {
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenService = tokenService;
         this.doctorReader = doctorReader;
         this.doctorWriter = doctorWriter;
         this.cookieManager = cookieManager;
@@ -60,11 +61,10 @@ public class DoctorOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
             Doctor doctor = findOrCreateDoctor(userInfo);
 
-            String accessToken = jwtTokenProvider.generateAccessToken(doctor.id(), "doctor");
-            String refreshToken = jwtTokenProvider.generateRefreshToken(doctor.id());
+            TokenPair tokens = tokenService.issue(doctor.id(), "doctor");
 
-            response.addCookie(cookieManager.createAccessTokenCookie(accessToken));
-            response.addCookie(cookieManager.createRefreshTokenCookie(refreshToken));
+            response.addCookie(cookieManager.createAccessTokenCookie(tokens.accessToken()));
+            response.addCookie(cookieManager.createRefreshTokenCookie(tokens.refreshToken()));
 
             String redirectUrl = determineRedirectUri(doctor);
 

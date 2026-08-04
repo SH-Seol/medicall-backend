@@ -92,7 +92,7 @@ public class DoctorEntity extends BaseEntity {
                 this.hospital != null ? this.hospital.toDomainModel() : null,
                 this.introduction,
                 this.imageUrl,
-                this.department.toDomainModel(),
+                this.department != null ? this.department.toDomainModel() : null,
                 this.oauthId,
                 this.oauthProvider
         );

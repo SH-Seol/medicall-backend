@@ -47,3 +47,7 @@ infrastructure/db/mysql/mysql-conf
 
 ### application.yml ###
 **/application*.yml
+
+### macOS ###
+.DS_Store
+**/.DS_Store

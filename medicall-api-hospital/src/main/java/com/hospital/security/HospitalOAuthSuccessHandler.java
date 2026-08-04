@@ -17,11 +17,11 @@ import org.springframework.stereotype.Component;
 
 import com.hospital.config.HospitalRedirectProperties;
 import com.medicall.common.security.CookieManager;
-import com.medicall.common.security.JwtTokenProvider;
+import com.medicall.common.security.TokenPair;
+import com.medicall.common.security.TokenService;
 import com.medicall.common.security.OAuthUserInfo;
 import com.medicall.common.security.error.AuthErrorType;
 import com.medicall.common.security.error.AuthException;
-import com.medicall.domain.doctor.DoctorWriter;
 import com.medicall.domain.hospital.Hospital;
 import com.medicall.domain.hospital.HospitalReader;
 import com.medicall.domain.hospital.HospitalWriter;
@@ -32,16 +32,16 @@ public class HospitalOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessH
 
     private static final Logger log = LoggerFactory.getLogger(HospitalOAuthSuccessHandler.class);
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenService tokenService;
     private final HospitalReader hospitalReader;
     private final HospitalWriter hospitalWriter;
     private final CookieManager cookieManager;
     private final HospitalRedirectProperties hospitalRedirectProperties;
 
-    public HospitalOAuthSuccessHandler(JwtTokenProvider jwtTokenProvider, HospitalReader hospitalReader,
+    public HospitalOAuthSuccessHandler(TokenService tokenService, HospitalReader hospitalReader,
                                        HospitalWriter hospitalWriter, CookieManager cookieManager,
-                                       HospitalRedirectProperties hospitalRedirectProperties, DoctorWriter doctorWriter) {
-        this.jwtTokenProvider = jwtTokenProvider;
+                                       HospitalRedirectProperties hospitalRedirectProperties) {
+        this.tokenService = tokenService;
         this.hospitalReader = hospitalReader;
         this.hospitalWriter = hospitalWriter;
         this.cookieManager = cookieManager;
@@ -60,11 +60,10 @@ public class HospitalOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessH
 
             Hospital hospital = findOrCreateHospital(userInfo);
 
-            String accessToken = jwtTokenProvider.generateAccessToken(hospital.id(), "hospital");
-            String refreshToken = jwtTokenProvider.generateRefreshToken(hospital.id());
+            TokenPair tokens = tokenService.issue(hospital.id(), "hospital");
 
-            response.addCookie(cookieManager.createAccessTokenCookie(accessToken));
-            response.addCookie(cookieManager.createRefreshTokenCookie(refreshToken));
+            response.addCookie(cookieManager.createAccessTokenCookie(tokens.accessToken()));
+            response.addCookie(cookieManager.createRefreshTokenCookie(tokens.refreshToken()));
 
             String redirectUrl = determineRedirectUri(hospital);
 
