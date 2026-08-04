@@ -22,7 +22,7 @@ public record TreatmentDetailResult(
                 treatment.symptoms(),
                 treatment.treatment(),
                 treatment.detailedTreatment(),
-                treatment.prescription().id()
+                treatment.prescription() != null ? treatment.prescription().id() : null
         );
     }
 }

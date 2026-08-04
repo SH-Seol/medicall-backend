@@ -82,7 +82,8 @@ public class TreatmentEntity extends BaseEntity {
                 this.symptom,
                 this.treatment,
                 this.detailTreatment,
-                this.prescription.toDomainModel(),
+                // 처방이 아직 없는 진료도 존재한다.
+                this.prescription != null ? this.prescription.toDomainModel() : null,
                 this.getCreatedAt()
         );
     }

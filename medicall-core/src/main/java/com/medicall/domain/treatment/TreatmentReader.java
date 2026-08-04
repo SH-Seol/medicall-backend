@@ -33,7 +33,8 @@ public class TreatmentReader {
                                 treatment.hospital(),
                                 treatment.doctor(),
                                 treatment.createdAt(),
-                                treatment.prescription().id()
+                                // 처방이 없는 진료도 존재한다.
+                                treatment.prescription() != null ? treatment.prescription().id() : null
                         )
                 ).toList();
         return CorePageUtils.buildCursorResult(result, criteria.size(), TreatmentListResult::treatmentId);
@@ -54,7 +55,8 @@ public class TreatmentReader {
                                 treatment.hospital(),
                                 treatment.doctor(),
                                 treatment.createdAt(),
-                                treatment.prescription().id()
+                                // 처방이 없는 진료도 존재한다.
+                                treatment.prescription() != null ? treatment.prescription().id() : null
                         )
                 ).toList();
         return CorePageUtils.buildCursorResult(result, criteria.size(), TreatmentListResult::treatmentId);

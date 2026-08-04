@@ -37,7 +37,11 @@ public class HospitalReader {
 
     public HospitalDetailResult findByIdWithLocation(Long hospitalId, double lat, double lng) {
         Hospital hospital = hospitalRepository.findById(hospitalId).orElseThrow(() -> new CoreException(CoreErrorType.HOSPITAL_NOT_FOUND));
-        double distance = distanceCalculator.calculateDistance(lat, lng, hospital.address().latitude(), hospital.address().longitude());
+
+        // 온보딩(주소 등록)을 마치지 않은 병원은 거리를 계산할 수 없다.
+        double distance = hospital.address() != null
+                ? distanceCalculator.calculateDistance(lat, lng, hospital.address().latitude(), hospital.address().longitude())
+                : -1;
 
         return HospitalDetailResult.of(hospital, distance);
     }

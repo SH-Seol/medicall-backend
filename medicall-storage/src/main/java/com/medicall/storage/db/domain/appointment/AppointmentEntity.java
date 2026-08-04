@@ -101,7 +101,8 @@ public class AppointmentEntity extends BaseEntity {
                 this.symptom,
                 this.reservationTime,
                 this.hospital.toDomainModel(),
-                this.doctor.toDomainModel(),
+                // 의사 미배정(REQUESTED) 상태의 예약이 존재한다.
+                this.doctor != null ? this.doctor.toDomainModel() : null,
                 this.status
                 );
     }

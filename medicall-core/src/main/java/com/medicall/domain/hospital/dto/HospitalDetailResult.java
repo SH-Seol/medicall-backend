@@ -1,5 +1,6 @@
 package com.medicall.domain.hospital.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.medicall.domain.address.Address;
@@ -27,7 +28,7 @@ public record HospitalDetailResult(
                 hospital.imageUrl(),
                 hospital.departments().stream().map(Department::name).toList(),
                 hospital.weeklySchedule(),
-                hospital.businessStatus().name(),
+                hospital.resolveBusinessStatus(LocalDateTime.now()).name(),
                 Math.round(distance * 100.0) / 100.0
         );
     }

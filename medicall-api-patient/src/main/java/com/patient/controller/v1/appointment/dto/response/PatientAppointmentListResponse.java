@@ -12,7 +12,7 @@ public record PatientAppointmentListResponse(
         @Schema(description = "예약 id", example = "10")
         Long appointmentId,
 
-        @Schema(description = "예약에 등록된 의사 이름", example = "홍길동")
+        @Schema(description = "배정된 의사 이름 (미배정이면 null)", example = "홍길동", nullable = true)
         String doctorName,
 
         @Schema(description = "예약 병원", example = "메디콜정형외과")
@@ -30,7 +30,7 @@ public record PatientAppointmentListResponse(
     public static PatientAppointmentListResponse from(Appointment appointment) {
         return new PatientAppointmentListResponse(
                 appointment.id(),
-                appointment.doctor().name(),
+                appointment.doctor() != null ? appointment.doctor().name() : null,
                 appointment.hospital().name(),
                 appointment.reservationTime(),
                 appointment.status()
