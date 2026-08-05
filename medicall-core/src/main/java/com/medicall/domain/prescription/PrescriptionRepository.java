@@ -13,4 +13,5 @@ public interface PrescriptionRepository {
     Prescription save(NewPrescription newPrescription);
     Optional<Prescription> getPrescriptionById(Long prescriptionId);
     CursorPageResult<Prescription> findByPatientId(PatientPrescriptionListCriteria criteria);
+    boolean dispense(Long prescriptionId);
 }

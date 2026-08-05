@@ -71,15 +71,7 @@ public class PrescriptionService {
     @Transactional(readOnly = true)
     public List<PrescriptionDetailResult> getPrescriptionsByPatientIdAndDoctorId(Long patientId, Long doctorId) {
         List<Prescription> prescriptions = prescriptionReader.getAllPrescriptionsByPatientIdAndDoctorId(patientId, doctorId);
-        return prescriptions.stream().map(pd -> new PrescriptionDetailResult(
-                pd.id(),
-                pd.patient(),
-                pd.medicines(),
-                pd.hospital(),
-                pd.doctor(),
-                pd.treatment(),
-                pd.date()
-        )).toList();
+        return prescriptions.stream().map(pd -> PrescriptionDetailResult.from(pd)).toList();
     }
 
     @Transactional(readOnly = true)
@@ -87,15 +79,7 @@ public class PrescriptionService {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
         prescriptionValidator.validateHospitalPrescription(prescription, hospitalId);
 
-        return new PrescriptionDetailResult(
-                prescription.id(),
-                prescription.patient(),
-                prescription.medicines(),
-                prescription.hospital(),
-                prescription.doctor(),
-                prescription.treatment(),
-                prescription.date()
-        );
+        return PrescriptionDetailResult.from(prescription);
     }
 
     /**
@@ -116,15 +100,7 @@ public class PrescriptionService {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
         prescriptionValidator.validatePatientPrescription(prescription, patientId);
 
-        return new PrescriptionDetailResult(
-                prescription.id(),
-                prescription.patient(),
-                prescription.medicines(),
-                prescription.hospital(),
-                prescription.doctor(),
-                prescription.treatment(),
-                prescription.date()
-        );
+        return PrescriptionDetailResult.from(prescription);
     }
 
     @Transactional(readOnly = true)
@@ -132,15 +108,7 @@ public class PrescriptionService {
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
         prescriptionValidator.validateDoctorPrescription(prescription, doctorId);
 
-        return new PrescriptionDetailResult(
-                prescription.id(),
-                prescription.patient(),
-                prescription.medicines(),
-                prescription.hospital(),
-                prescription.doctor(),
-                prescription.treatment(),
-                prescription.date()
-        );
+        return PrescriptionDetailResult.from(prescription);
     }
 
     /**
@@ -156,6 +124,20 @@ public class PrescriptionService {
     }
 
     /**
+     * 약국이 QR 토큰으로 조제를 완료 처리한다.
+     * 조회는 유효 시간 동안 여러 번 가능하지만 조제는 한 번만 가능하다.
+     */
+    @Transactional
+    public PrescriptionDetailResult dispenseByQrToken(String qrToken) {
+        Long prescriptionId = prescriptionQrTokenStore.resolve(qrToken)
+                .orElseThrow(() -> new CoreException(CoreErrorType.PRESCRIPTION_QR_TOKEN_INVALID));
+
+        prescriptionWriter.dispense(prescriptionId);
+
+        return PrescriptionDetailResult.from(prescriptionReader.getPrescriptionById(prescriptionId));
+    }
+
+    /**
      * QR 토큰으로 처방전 조회 (약국에서 스캔한 경우)
      */
     @Transactional(readOnly = true)
@@ -165,14 +147,6 @@ public class PrescriptionService {
 
         Prescription prescription = prescriptionReader.getPrescriptionById(prescriptionId);
 
-        return new PrescriptionDetailResult(
-                prescription.id(),
-                prescription.patient(),
-                prescription.medicines(),
-                prescription.hospital(),
-                prescription.doctor(),
-                prescription.treatment(),
-                prescription.date()
-        );
+        return PrescriptionDetailResult.from(prescription);
     }
 }

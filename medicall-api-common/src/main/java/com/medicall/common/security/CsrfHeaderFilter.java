@@ -34,7 +34,9 @@ public class CsrfHeaderFilter extends OncePerRequestFilter {
     /** OAuth 로그인 리다이렉트 등 브라우저가 직접 이동하는 경로는 헤더를 붙일 수 없다. */
     private static final Set<String> EXCLUDED_PATTERNS = Set.of(
             "/oauth2/**",
-            "/login/**"
+            "/login/**",
+            // 약국은 로그인 주체가 아니라 쿠키가 없다. QR 토큰 자체가 인증 수단이다.
+            "/api/v1/prescriptions/qr/**"
     );
 
     private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();

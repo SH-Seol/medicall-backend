@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,6 +42,22 @@ public class PrescriptionQrController {
     @GetMapping("/{qrToken}")
     public PatientPrescriptionDetailResponse getPrescriptionByQrToken(@PathVariable("qrToken") String qrToken) {
         PrescriptionDetailResult result = prescriptionService.getPrescriptionByQrToken(qrToken);
+
+        return PatientPrescriptionDetailResponse.from(result);
+    }
+
+    @Operation(
+            summary = "조제 완료 처리",
+            description = "약국이 조제를 마쳤을 때 호출합니다. 이미 조제된 처방전이면 실패합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "404", description = "만료되었거나 유효하지 않은 QR"),
+            @ApiResponse(responseCode = "409", description = "이미 조제 완료된 처방전")
+    })
+    @PostMapping("/{qrToken}/dispense")
+    public PatientPrescriptionDetailResponse dispense(@PathVariable("qrToken") String qrToken) {
+        PrescriptionDetailResult result = prescriptionService.dispenseByQrToken(qrToken);
 
         return PatientPrescriptionDetailResponse.from(result);
     }

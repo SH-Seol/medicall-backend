@@ -1,5 +1,6 @@
 package com.medicall.storage.db.domain.prescription;
 
+import com.medicall.domain.common.enums.PrescriptionStatus;
 import com.medicall.domain.prescription.Prescription;
 import com.medicall.storage.db.domain.common.domain.BaseEntity;
 import com.medicall.storage.db.domain.doctor.DoctorEntity;
@@ -10,6 +11,8 @@ import com.medicall.storage.db.domain.treatment.TreatmentEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -17,12 +20,19 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "prescriptions")
 public class PrescriptionEntity extends BaseEntity {
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private PrescriptionStatus status;
+
+    private LocalDateTime dispensedAt;
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
@@ -60,6 +70,7 @@ public class PrescriptionEntity extends BaseEntity {
         this.PrescriptionMedicineList = prescriptionMedicineList;
         this.treatment = treatment;
         this.prescriptionDate = prescriptionDate;
+        this.status = PrescriptionStatus.ISSUED;
     }
 
     public PatientEntity getPatient() {
@@ -94,7 +105,9 @@ public class PrescriptionEntity extends BaseEntity {
                 this.hospital.toDomainModel(),
                 this.doctor.toDomainModel(),
                 this.treatment != null ? this.treatment.toDomainModel() : null,
-                this.prescriptionDate
+                this.prescriptionDate,
+                this.status,
+                this.dispensedAt
         );
     }
 

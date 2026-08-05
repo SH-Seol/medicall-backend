@@ -18,6 +18,7 @@ import com.medicall.storage.db.domain.prescription.QPrescriptionMedicineEntity;
 import com.medicall.storage.db.domain.treatment.TreatmentEntity;
 import com.medicall.storage.db.domain.treatment.TreatmentJpaRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -142,6 +143,10 @@ public class PrescriptionCoreRepository implements PrescriptionRepository {
         Long nextCursorId = hasNext && !content.isEmpty() ? content.get(content.size() - 1).getId() : null;
 
         return CursorPageResult.of(content.stream().map(PrescriptionEntity::toDomainModel).toList(), nextCursorId);
+    }
+
+    public boolean dispense(Long prescriptionId) {
+        return prescriptionJpaRepository.dispenseIfIssued(prescriptionId, LocalDateTime.now()) > 0;
     }
 
     public Optional<Prescription> getPrescriptionById(Long prescriptionId) {

@@ -6,6 +6,9 @@ import com.medicall.domain.hospital.Hospital;
 import com.medicall.domain.treatment.Treatment;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.medicall.domain.common.enums.PrescriptionStatus;
 import java.util.List;
 
 public record Prescription(
@@ -15,6 +18,11 @@ public record Prescription(
         Hospital hospital,
         Doctor doctor,
         Treatment treatment,
-        LocalDate date
+        LocalDate date,
+        PrescriptionStatus status,
+        LocalDateTime dispensedAt
 ) {
+    public boolean isDispensed(){
+        return status == PrescriptionStatus.DISPENSED;
+    }
 }

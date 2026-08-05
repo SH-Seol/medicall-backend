@@ -31,6 +31,7 @@ public enum CoreErrorType {
     PRESCRIPTION_NOT_FOUND(CoreErrorCode.PRESCRIPTION001, CoreErrorKind.NOT_FOUND, "처방전을 찾을 수 없습니다", CoreErrorLevel.WARN),
     PRESCRIPTION_NOT_ACCESSIBLE(CoreErrorCode.PRESCRIPTION002, CoreErrorKind.FORBIDDEN, "해당 처방전을 조회할 수 없습니다.", CoreErrorLevel.WARN),
     PRESCRIPTION_QR_TOKEN_INVALID(CoreErrorCode.PRESCRIPTION003, CoreErrorKind.NOT_FOUND, "만료되었거나 유효하지 않은 처방전 QR입니다.", CoreErrorLevel.WARN),
+    PRESCRIPTION_ALREADY_DISPENSED(CoreErrorCode.PRESCRIPTION004, CoreErrorKind.CONFLICT, "이미 조제가 완료된 처방전입니다.", CoreErrorLevel.WARN),
     CHATROOM_NOT_FOUND(CoreErrorCode.CHAT001, CoreErrorKind.NOT_FOUND, "존재하지 않는 채팅방입니다", CoreErrorLevel.WARN),
     CHATROOM_MOT_ACCESSIBLE(CoreErrorCode.CHAT002, CoreErrorKind.FORBIDDEN, "해당 채팅에 접근할 수 없습니다.", CoreErrorLevel.WARN),
     OPENAI_NO_RESPONSE(CoreErrorCode.OPENAI001, CoreErrorKind.SERVER_ERROR, "OpenAI 응답이 없습니다.", CoreErrorLevel.WARN),
