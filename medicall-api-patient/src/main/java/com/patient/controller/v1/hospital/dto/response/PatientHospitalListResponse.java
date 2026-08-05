@@ -2,6 +2,8 @@ package com.patient.controller.v1.hospital.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.List;
+
 import com.medicall.domain.hospital.dto.HospitalSearchResult;
 
 @Schema(description = "환자 병원 목록 조회 응답")
@@ -15,7 +17,9 @@ public record PatientHospitalListResponse(
         @Schema(description = "환자와 병원 간 거리(km)", example = "5.10")
         double distance,
         @Schema(description = "병원 영업 여부", example = "OPEN")
-        String businessStatus
+        String businessStatus,
+        @Schema(description = "진료과 목록", example = "[\"내과\", \"가정의학과\"]")
+        List<String> departments
 ) {
     /**
      * core 모듈 내 dto를 api dto로 전환
@@ -26,7 +30,8 @@ public record PatientHospitalListResponse(
                 result.name(),
                 result.imageUrl(),
                 result.distance(),
-                result.businessStatus()
+                result.businessStatus(),
+                result.departments()
         );
     }
 }
