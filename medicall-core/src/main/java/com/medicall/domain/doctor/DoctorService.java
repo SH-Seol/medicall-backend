@@ -11,6 +11,7 @@ import com.medicall.error.CoreException;
 import com.medicall.domain.doctor.dto.DoctorResult;
 
 import java.util.List;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,25 @@ public class DoctorService {
         this.doctorReader = doctorReader;
         this.departmentReader = departmentReader;
         this.specialtyReader = specialtyReader;
+    }
+
+    /**
+     * 소셜 로그인 시 기존 회원을 찾고 없으면 생성한다.
+     * 동시 요청으로 유니크 제약에 걸리면 한 번 더 조회해 정상 로그인으로 이어지게 한다.
+     * (생성이 독립 트랜잭션에서 롤백되도록 이 메서드에는 트랜잭션을 걸지 않는다)
+     */
+    public Doctor findOrCreateByOAuth(Doctor newDoctor){
+        return doctorReader.findByOAuthInfo(newDoctor.oauthId(), newDoctor.provider())
+                .orElseGet(() -> createOnConflictRetry(newDoctor));
+    }
+
+    private Doctor createOnConflictRetry(Doctor newDoctor){
+        try{
+            return doctorWriter.createDoctor(newDoctor);
+        }catch (DataIntegrityViolationException e){
+            return doctorReader.findByOAuthInfo(newDoctor.oauthId(), newDoctor.provider())
+                    .orElseThrow(() -> new CoreException(CoreErrorType.SIGNUP_CONFLICT, e));
+        }
     }
 
     @Transactional

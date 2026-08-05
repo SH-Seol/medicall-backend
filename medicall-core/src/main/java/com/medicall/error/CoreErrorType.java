@@ -8,6 +8,7 @@ public enum CoreErrorType {
     DOCTOR_IN_TREATMENT_NOT_MATCH(CoreErrorCode.DOCTOR002, CoreErrorKind.FORBIDDEN, "진단 의사와 처방전 작성한 의사가 다른 요청입니다.", CoreErrorLevel.WARN),
     DOCTOR_BELONGS_TO_HOSPITAL(CoreErrorCode.DOCTOR003, CoreErrorKind.FORBIDDEN, "이미 소속된 병원이 있는 의사입니다.", CoreErrorLevel.WARN),
     DEPARTMENT_NOT_FOUND(CoreErrorCode.DEPARTMENT001, CoreErrorKind.NOT_FOUND, "존재하지 않는 전공입니다.", CoreErrorLevel.WARN),
+    SIGNUP_CONFLICT(CoreErrorCode.SIGNUP001, CoreErrorKind.CONFLICT, "이미 가입에 사용된 정보입니다.", CoreErrorLevel.WARN),
     SPECIALTY_NOT_FOUND(CoreErrorCode.SPECIALTY001, CoreErrorKind.NOT_FOUND, "존재하지 않는 세부 전공입니다.", CoreErrorLevel.WARN),
     SPECIALTY_DEPARTMENT_MISMATCH(CoreErrorCode.SPECIALTY002, CoreErrorKind.BAD_REQUEST, "선택한 진료과에 속하지 않는 세부 전공입니다.", CoreErrorLevel.WARN),
     INVITATION_NOT_FOUND(CoreErrorCode.INVITATION001, CoreErrorKind.NOT_FOUND, "존재하지 않는 초대 코드입니다.", CoreErrorLevel.WARN),

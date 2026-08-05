@@ -24,8 +24,7 @@ import com.medicall.common.security.OAuthUserInfo;
 import com.medicall.common.security.error.AuthErrorType;
 import com.medicall.common.security.error.AuthException;
 import com.medicall.domain.hospital.Hospital;
-import com.medicall.domain.hospital.HospitalReader;
-import com.medicall.domain.hospital.HospitalWriter;
+import com.medicall.domain.hospital.HospitalService;
 import com.medicall.domain.hospital.NewHospital;
 
 @Component
@@ -34,17 +33,15 @@ public class HospitalOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessH
     private static final Logger log = LoggerFactory.getLogger(HospitalOAuthSuccessHandler.class);
 
     private final TokenService tokenService;
-    private final HospitalReader hospitalReader;
-    private final HospitalWriter hospitalWriter;
+    private final HospitalService hospitalService;
     private final CookieManager cookieManager;
     private final HospitalRedirectProperties hospitalRedirectProperties;
 
-    public HospitalOAuthSuccessHandler(TokenService tokenService, HospitalReader hospitalReader,
-                                       HospitalWriter hospitalWriter, CookieManager cookieManager,
+    public HospitalOAuthSuccessHandler(TokenService tokenService, HospitalService hospitalService,
+                                       CookieManager cookieManager,
                                        HospitalRedirectProperties hospitalRedirectProperties) {
         this.tokenService = tokenService;
-        this.hospitalReader = hospitalReader;
-        this.hospitalWriter = hospitalWriter;
+        this.hospitalService = hospitalService;
         this.cookieManager = cookieManager;
         this.hospitalRedirectProperties = hospitalRedirectProperties;
     }
@@ -79,18 +76,13 @@ public class HospitalOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessH
     }
 
     private Hospital findOrCreateHospital(OAuthUserInfo oAuthUserInfo) {
-        Optional<Hospital> existingHospital = hospitalReader.findByOAuthInfo(
-                oAuthUserInfo.oauthId(),
-                oAuthUserInfo.provider()
-        );
-
-        return existingHospital.orElseGet(() -> hospitalWriter.create(new NewHospital(
+        return hospitalService.findOrCreateByOAuth(new NewHospital(
                 oAuthUserInfo.name(),
                 oAuthUserInfo.profileImageUrl(),
                 oAuthUserInfo.oauthId(),
                 oAuthUserInfo.provider(),
-                oAuthUserInfo.email())));
-
+                oAuthUserInfo.email()
+        ));
     }
 
     private String determineRedirectUri(Hospital hospital){

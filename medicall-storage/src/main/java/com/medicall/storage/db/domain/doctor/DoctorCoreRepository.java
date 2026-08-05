@@ -16,8 +16,10 @@ import com.medicall.storage.db.domain.hospital.HospitalJpaRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
+@Transactional(readOnly = true)
 public class DoctorCoreRepository implements DoctorRepository {
 
     private final DoctorJpaRepository doctorJpaRepository;
@@ -35,6 +37,7 @@ public class DoctorCoreRepository implements DoctorRepository {
         this.hospitalJpaRepository = hospitalJpaRepository;
     }
 
+    @Transactional
     public Doctor save(Doctor newDoctor) {
         // OAuth 최초 가입 시점에는 진료과가 정해지지 않은 상태로 저장된다. (이후 내 정보 수정에서 등록)
         DepartmentEntity department = newDoctor.department() == null ? null

@@ -24,8 +24,7 @@ import com.medicall.common.security.error.AuthErrorType;
 import com.medicall.common.security.error.AuthException;
 import com.medicall.domain.patient.NewPatient;
 import com.medicall.domain.patient.Patient;
-import com.medicall.domain.patient.PatientReader;
-import com.medicall.domain.patient.PatientWriter;
+import com.medicall.domain.patient.PatientService;
 import com.patient.config.PatientRedirectProperties;
 
 @Component
@@ -34,18 +33,16 @@ public class PatientOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHa
     private static final Logger log = LoggerFactory.getLogger(PatientOAuthSuccessHandler.class);
 
     private final TokenService tokenService;
-    private final PatientReader patientReader;
-    private final PatientWriter patientWriter;
+    private final PatientService patientService;
     private final CookieManager cookieManager;
     private final PatientRedirectProperties patientRedirectProperties;
 
     public PatientOAuthSuccessHandler(TokenService tokenService,
-                                      PatientReader patientReader, PatientWriter patientWriter,
+                                      PatientService patientService,
                                       CookieManager cookieManager,
                                       PatientRedirectProperties patientRedirectProperties) {
         this.tokenService = tokenService;
-        this.patientReader = patientReader;
-        this.patientWriter = patientWriter;
+        this.patientService = patientService;
         this.cookieManager = cookieManager;
         this.patientRedirectProperties = patientRedirectProperties;
     }
@@ -79,18 +76,13 @@ public class PatientOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHa
     }
 
     private Patient findOrCreatePatient(OAuthUserInfo oAuthUserInfo) {
-        Optional<Patient> existingPatient = patientReader.findByOAuthInfo(
-                oAuthUserInfo.oauthId(),
-                oAuthUserInfo.provider()
-        );
-
-        return existingPatient.orElseGet(() -> patientWriter.create(new NewPatient(
+        return patientService.findOrCreateByOAuth(new NewPatient(
                 oAuthUserInfo.name(),
                 oAuthUserInfo.profileImageUrl(),
                 oAuthUserInfo.email(),
                 oAuthUserInfo.oauthId(),
                 oAuthUserInfo.provider()
-        )));
+        ));
     }
 
     private String determineRedirectUrl(Patient patient) {

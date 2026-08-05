@@ -13,11 +13,14 @@ import com.medicall.domain.address.Address;
 import com.medicall.domain.department.DepartmentReader;
 import com.medicall.domain.doctor.Doctor;
 import com.medicall.domain.doctor.DoctorReader;
+import com.medicall.error.CoreErrorType;
+import com.medicall.error.CoreException;
 import com.medicall.support.CursorPageResult;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +68,25 @@ public class HospitalService {
     @Transactional(readOnly = true)
     public CursorPageResult<HospitalSearchResult> getHospitalsNearby(HospitalSearchCriteria criteria) {
         return hospitalReader.searchNearby(criteria);
+    }
+
+    /**
+     * 소셜 로그인 시 기존 회원을 찾고 없으면 생성한다.
+     * 동시 요청으로 유니크 제약에 걸리면 한 번 더 조회해 정상 로그인으로 이어지게 한다.
+     * (생성이 독립 트랜잭션에서 롤백되도록 이 메서드에는 트랜잭션을 걸지 않는다)
+     */
+    public Hospital findOrCreateByOAuth(NewHospital newHospital) {
+        return hospitalReader.findByOAuthInfo(newHospital.oauthId(), newHospital.provider())
+                .orElseGet(() -> createOnConflictRetry(newHospital));
+    }
+
+    private Hospital createOnConflictRetry(NewHospital newHospital) {
+        try{
+            return hospitalWriter.create(newHospital);
+        }catch (DataIntegrityViolationException e){
+            return hospitalReader.findByOAuthInfo(newHospital.oauthId(), newHospital.provider())
+                    .orElseThrow(() -> new CoreException(CoreErrorType.SIGNUP_CONFLICT, e));
+        }
     }
 
     /**

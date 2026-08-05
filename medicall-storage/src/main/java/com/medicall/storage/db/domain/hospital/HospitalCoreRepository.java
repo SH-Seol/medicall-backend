@@ -25,8 +25,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
+@Transactional(readOnly = true)
 public class HospitalCoreRepository implements HospitalRepository {
 
     private final HospitalJpaRepository hospitalJpaRepository;
@@ -46,6 +48,7 @@ public class HospitalCoreRepository implements HospitalRepository {
         this.doctorJpaRepository = doctorJpaRepository;
         this.queryFactory = queryFactory;
     }
+    @Transactional
     public Hospital save(NewHospital newHospital){
         HospitalEntity savedHospitalEntity = new HospitalEntity(
                 newHospital.name(),

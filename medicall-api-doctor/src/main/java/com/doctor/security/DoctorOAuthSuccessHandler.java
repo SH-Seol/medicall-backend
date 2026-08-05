@@ -24,8 +24,7 @@ import com.medicall.common.security.OAuthUserInfo;
 import com.medicall.common.security.error.AuthErrorType;
 import com.medicall.common.security.error.AuthException;
 import com.medicall.domain.doctor.Doctor;
-import com.medicall.domain.doctor.DoctorReader;
-import com.medicall.domain.doctor.DoctorWriter;
+import com.medicall.domain.doctor.DoctorService;
 
 @Component
 public class DoctorOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -33,19 +32,16 @@ public class DoctorOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private static final Logger log = LoggerFactory.getLogger(DoctorOAuthSuccessHandler.class);
 
     private final TokenService tokenService;
-    private final DoctorReader doctorReader;
-    private final DoctorWriter doctorWriter;
+    private final DoctorService doctorService;
     private final CookieManager cookieManager;
     private final DoctorRedirectProperties doctorRedirectProperties;
 
     public DoctorOAuthSuccessHandler(TokenService tokenService,
-                                     DoctorReader doctorReader,
-                                     DoctorWriter doctorWriter,
+                                     DoctorService doctorService,
                                      CookieManager cookieManager,
                                      DoctorRedirectProperties doctorRedirectProperties) {
         this.tokenService = tokenService;
-        this.doctorReader = doctorReader;
-        this.doctorWriter = doctorWriter;
+        this.doctorService = doctorService;
         this.cookieManager = cookieManager;
         this.doctorRedirectProperties = doctorRedirectProperties;
     }
@@ -81,17 +77,12 @@ public class DoctorOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     }
 
     private Doctor findOrCreateDoctor(OAuthUserInfo oAuthUserInfo) {
-        Optional<Doctor> existingDoctor = doctorReader.findByOAuthInfo(
-                oAuthUserInfo.oauthId(),
-                oAuthUserInfo.provider()
-        );
-
-        return existingDoctor.orElseGet(() -> doctorWriter.createDoctor(new Doctor(
+        return doctorService.findOrCreateByOAuth(new Doctor(
                 oAuthUserInfo.name(),
                 oAuthUserInfo.profileImageUrl(),
                 oAuthUserInfo.oauthId(),
                 oAuthUserInfo.provider()
-        )));
+        ));
     }
 
     private String determineRedirectUri(Doctor doctor) {
