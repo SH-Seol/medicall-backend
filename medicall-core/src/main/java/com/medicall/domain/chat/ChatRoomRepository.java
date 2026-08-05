@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.medicall.domain.chat.dto.ChatRoomSummary;
 import com.medicall.domain.common.enums.ChatRoomType;
 import com.medicall.domain.common.enums.SenderType;
 
@@ -14,4 +15,5 @@ public interface ChatRoomRepository {
     Optional<ChatRoom> findByAppointmentId(Long appointmentId, ChatRoomType type);
     List<ChatRoom> findByUserIdAndType(Long userId, SenderType type);
     Optional<ChatRoom> findById(Long chatRoomId);
+    List<ChatRoomSummary> findSummariesByUserIdAndType(Long userId, SenderType type);
 }

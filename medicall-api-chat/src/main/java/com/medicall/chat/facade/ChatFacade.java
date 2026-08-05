@@ -10,6 +10,7 @@ import com.medicall.domain.appointment.AppointmentReader;
 import com.medicall.domain.appointment.AppointmentValidator;
 import com.medicall.domain.chat.ChatMessage;
 import com.medicall.domain.chat.ChatRoom;
+import com.medicall.domain.chat.dto.ChatRoomSummary;
 import com.medicall.domain.chat.ChatService;
 import com.medicall.domain.common.enums.ChatRoomType;
 import com.medicall.domain.common.enums.SenderType;
@@ -61,7 +62,7 @@ public class ChatFacade {
         return chatService.getChatMessages(request.toCriteria(chatRoomId), user.userId(), toSenderType(user));
     }
 
-    public CursorPageResult<ChatRoom> getChatRooms(ChatRoomListRequest request, CurrentUser user) {
+    public CursorPageResult<ChatRoomSummary> getChatRooms(ChatRoomListRequest request, CurrentUser user) {
         return chatService.getChatRooms(request.toCriteria(user.userId(), toSenderType(user)));
     }
 

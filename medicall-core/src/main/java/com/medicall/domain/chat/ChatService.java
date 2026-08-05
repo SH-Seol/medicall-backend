@@ -11,6 +11,7 @@ import com.medicall.domain.chat.dto.ChatMessageListCriteria;
 import com.medicall.domain.chat.dto.ChatRoomListCriteria;
 import com.medicall.domain.common.enums.ChatRoomType;
 import com.medicall.domain.common.enums.SenderType;
+import com.medicall.domain.chat.dto.ChatRoomSummary;
 import com.medicall.support.CursorPageResult;
 
 @Service
@@ -62,16 +63,22 @@ public class ChatService {
                 .orElseGet(() -> chatRoomWriter.create(appointment, chatRoomType));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public CursorPageResult<ChatMessage> getChatMessages(ChatMessageListCriteria criteria, Long userId, SenderType senderType) {
         chatValidator.validateChatRoomAccess(criteria.chatRoomId(), userId, senderType);
-        return chatMessageReader.read(criteria.chatRoomId(), criteria.cursorId(), criteria.size());
+
+        CursorPageResult<ChatMessage> messages = chatMessageReader.read(criteria.chatRoomId(), criteria.cursorId(), criteria.size());
+
+        // 방을 열었으므로 상대가 보낸 메시지는 읽은 것으로 처리한다.
+        chatMessageWriter.markAsRead(criteria.chatRoomId(), senderType);
+
+        return messages;
     }
 
     @Transactional(readOnly = true)
-    public CursorPageResult<ChatRoom> getChatRooms(ChatRoomListCriteria criteria) {
-        List<ChatRoom> chatRooms =  chatRoomReader.getChatRoomList(criteria.userId(), criteria.senderType());
+    public CursorPageResult<ChatRoomSummary> getChatRooms(ChatRoomListCriteria criteria) {
+        List<ChatRoomSummary> summaries = chatRoomReader.getChatRoomSummaries(criteria.userId(), criteria.senderType());
 
-        return CursorPageResult.of(chatRooms, criteria.cursorId());
+        return CursorPageResult.of(summaries, criteria.cursorId());
     }
 }

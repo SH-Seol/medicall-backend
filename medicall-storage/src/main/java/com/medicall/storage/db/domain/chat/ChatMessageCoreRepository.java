@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.medicall.domain.chat.ChatMessage;
+import com.medicall.domain.common.enums.SenderType;
 import com.medicall.domain.chat.ChatMessageRepository;
 
 @Repository
@@ -53,5 +54,9 @@ public class ChatMessageCoreRepository implements ChatMessageRepository {
         return entities.stream()
                 .map(ChatMessageEntity::toDomainModel)
                 .toList();
+    }
+
+    public void markAsRead(Long chatRoomId, SenderType readerType) {
+        chatMessageJpaRepository.markAsRead(chatRoomId, readerType);
     }
 }

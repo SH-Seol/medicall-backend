@@ -84,6 +84,10 @@ public class ChatRoomEntity extends BaseEntity {
         return doctor;
     }
 
+    public AppointmentEntity getAppointment() {
+        return appointment;
+    }
+
     public PatientEntity getPatient() {
         return patient;
     }

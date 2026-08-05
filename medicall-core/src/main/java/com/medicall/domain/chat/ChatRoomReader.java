@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import com.medicall.domain.chat.dto.ChatRoomSummary;
 import com.medicall.domain.common.enums.ChatRoomType;
 import com.medicall.domain.common.enums.SenderType;
 import com.medicall.error.CoreErrorType;
@@ -25,6 +26,10 @@ public class ChatRoomReader {
 
     public List<ChatRoom> getChatRoomList(Long userId, SenderType senderType) {
         return chatRoomRepository.findByUserIdAndType(userId, senderType);
+    }
+
+    public List<ChatRoomSummary> getChatRoomSummaries(Long userId, SenderType senderType) {
+        return chatRoomRepository.findSummariesByUserIdAndType(userId, senderType);
     }
 
     public ChatRoom getChatRoomById(Long chatRoomId) {

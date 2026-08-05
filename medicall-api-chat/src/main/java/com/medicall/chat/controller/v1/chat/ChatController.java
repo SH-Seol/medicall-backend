@@ -21,6 +21,7 @@ import com.medicall.chat.controller.v1.chat.dto.ChatRoomResponse;
 import com.medicall.chat.controller.v1.chat.dto.SendChatMessageRequest;
 import com.medicall.chat.facade.ChatFacade;
 import com.medicall.common.support.CurrentUser;
+import com.medicall.domain.chat.dto.ChatRoomSummary;
 import com.medicall.common.support.pagination.CursorPageResponse;
 import com.medicall.domain.chat.ChatMessage;
 import com.medicall.domain.chat.ChatRoom;
@@ -63,7 +64,7 @@ public class ChatController {
     public CursorPageResponse<ChatRoomResponse> getChatRooms(@Parameter(hidden = true) CurrentUser currentUser,
                                                              @Valid ChatRoomListRequest request){
 
-        CursorPageResult<ChatRoom> cursorPageResult = chatFacade.getChatRooms(request, currentUser);
+        CursorPageResult<ChatRoomSummary> cursorPageResult = chatFacade.getChatRooms(request, currentUser);
         List<ChatRoomResponse> chatRooms = cursorPageResult.data().stream().map(ChatRoomResponse::from).toList();
         return CursorPageResponse.of(chatRooms, request.cursorId(), cursorPageResult.nextCursorId());
     }

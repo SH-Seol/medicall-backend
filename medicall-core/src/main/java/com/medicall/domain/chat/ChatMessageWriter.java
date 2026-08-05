@@ -2,6 +2,8 @@ package com.medicall.domain.chat;
 
 import org.springframework.stereotype.Component;
 
+import com.medicall.domain.common.enums.SenderType;
+
 @Component
 public class ChatMessageWriter {
 
@@ -13,5 +15,9 @@ public class ChatMessageWriter {
 
     public void write(ChatMessage message) {
         chatMessageRepository.save(message);
+    }
+
+    public void markAsRead(Long chatRoomId, SenderType readerType) {
+        chatMessageRepository.markAsRead(chatRoomId, readerType);
     }
 }
