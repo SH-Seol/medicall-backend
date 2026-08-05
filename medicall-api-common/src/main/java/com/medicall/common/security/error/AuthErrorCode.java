@@ -15,6 +15,7 @@ public enum AuthErrorCode {
     AUTH12("AUTH-12"),
     AUTH13("AUTH-13"),
     AUTH14("AUTH-14"),
+    AUTH15("AUTH-15"),
     ;
 
     private final String errorCode;

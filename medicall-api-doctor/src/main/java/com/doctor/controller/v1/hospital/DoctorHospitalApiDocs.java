@@ -21,9 +21,11 @@ public interface DoctorHospitalApiDocs {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 초대 코드"),
-            @ApiResponse(responseCode = "409", description = "이미 사용되었거나 만료된 초대")
+            @ApiResponse(responseCode = "409", description = "이미 사용되었거나 만료된 초대"),
+            @ApiResponse(responseCode = "429", description = "시도 횟수 초과")
     })
-    DoctorInvitationResponse getInvitation(@PathVariable("code") String code);
+    DoctorInvitationResponse getInvitation(@PathVariable("code") String code,
+                                           @Parameter(hidden = true) CurrentUser currentUser);
 
     @Operation(
             summary = "초대 수락",
