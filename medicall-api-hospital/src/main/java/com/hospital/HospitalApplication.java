@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         "com.medicall.domain",
         "com.medicall.common",
         "com.medicall.storage",
+        "com.medicall.chat",
         "com.medicall.config"
 })
 @ConfigurationPropertiesScan("com.hospital.config")

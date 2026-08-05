@@ -80,7 +80,7 @@ public class HospitalSecurityConfig {
     @Order(2)
     public SecurityFilterChain hospitalApiFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/v1/hospital/**")
+                .securityMatcher("/api/v1/hospital/**", "/api/v1/chats/**")
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
