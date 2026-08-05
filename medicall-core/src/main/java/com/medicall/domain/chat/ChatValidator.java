@@ -1,5 +1,7 @@
 package com.medicall.domain.chat;
 
+import java.util.Objects;
+
 import org.springframework.stereotype.Component;
 
 import com.medicall.domain.common.enums.SenderType;
@@ -18,22 +20,15 @@ public class ChatValidator {
     public void validateChatRoomAccess(Long chatRoomId, Long userId, SenderType type) {
         ChatRoom chatRoom = chatRoomReader.getChatRoomById(chatRoomId);
 
-        switch (type) {
-            case DOCTOR -> {
-                if(!chatRoom.doctorId().equals(userId)){
-                    throw new CoreException(CoreErrorType.CHATROOM_MOT_ACCESSIBLE);
-                }
-            }
-            case PATIENT -> {
-                if(!chatRoom.patientId().equals(userId)){
-                    throw new CoreException(CoreErrorType.CHATROOM_MOT_ACCESSIBLE);
-                }
-            }
-            case HOSPITAL -> {
-                if(!chatRoom.hospitalId().equals(userId)){
-                throw new CoreException(CoreErrorType.CHATROOM_MOT_ACCESSIBLE);
-                }
-            }
+        // doctorId/hospitalId는 채팅방 종류에 따라 null이므로 null-safe하게 비교한다.
+        Long participantId = switch (type) {
+            case DOCTOR -> chatRoom.doctorId();
+            case PATIENT -> chatRoom.patientId();
+            case HOSPITAL -> chatRoom.hospitalId();
+        };
+
+        if(!Objects.equals(participantId, userId)){
+            throw new CoreException(CoreErrorType.CHATROOM_MOT_ACCESSIBLE);
         }
     }
 }
