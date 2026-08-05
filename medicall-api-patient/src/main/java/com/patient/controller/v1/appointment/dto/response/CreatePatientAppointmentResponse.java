@@ -8,11 +8,13 @@ import com.medicall.domain.appointment.dto.CreateAppointmentResult;
 
 @Schema(name = "환자 예약 생성 응답")
 public record CreatePatientAppointmentResponse(
+        @Schema(description = "생성된 예약 id", example = "10")
+        Long appointmentId,
         @Schema(name = "병원 이름", example = "메디콜정형외과")
         String hospital,
         @Schema(name = "예약 요청 시간", example = "2025-9-27T15:00:00")
         LocalDateTime reservationTime,
-        @Schema(name = "의사 이름", example = "홍길동")
+        @Schema(name = "의사 이름 (미지정이면 null)", example = "홍길동", nullable = true)
         String doctor
 ) {
     /**
@@ -20,6 +22,7 @@ public record CreatePatientAppointmentResponse(
      */
     public static CreatePatientAppointmentResponse from(CreateAppointmentResult result){
         return new CreatePatientAppointmentResponse(
+                result.appointmentId(),
                 result.hospital(),
                 result.reservationTime(),
                 result.doctor()

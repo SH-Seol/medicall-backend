@@ -1,5 +1,7 @@
 package com.medicall.domain.doctor;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.medicall.domain.department.Department;
 import com.medicall.domain.department.Specialty;
 import com.medicall.domain.hospital.Hospital;
@@ -12,8 +14,9 @@ public record Doctor(
         String imageUrl,
         Department department,
         Specialty specialty,
-        String oauthId,
-        String provider
+        // 소셜 식별자는 외부로 나가면 안 된다. (응답 DTO가 도메인 객체를 그대로 노출하는 곳이 있다)
+        @JsonIgnore String oauthId,
+        @JsonIgnore String provider
 ) {
     public Doctor(String name, String introduction, Hospital hospital, String imageUrl, Department department, String oauthId, String provider){
         this(null, name, hospital, introduction, imageUrl, department, null, oauthId, provider);

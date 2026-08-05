@@ -8,12 +8,15 @@ import java.util.List;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hospital.controller.appointment.dto.request.HospitalAppointmentListRequest;
+import com.hospital.controller.appointment.dto.request.AssignDoctorRequest;
 import com.hospital.controller.appointment.dto.response.HospitalAppointmentAcceptResponse;
 import com.hospital.controller.appointment.dto.response.HospitalAppointmentDetailResponse;
 import com.hospital.controller.appointment.dto.response.HospitalAppointmentListResponse;
@@ -66,6 +69,30 @@ public class HospitalAppointmentController {
     public HospitalAppointmentAcceptResponse acceptAppointmentById(@PathVariable Long appointmentId, @Parameter(hidden = true) CurrentUser currentUser) {
         appointmentService.acceptAppointmentByHospital(appointmentId, currentUser.userId());
         return new HospitalAppointmentAcceptResponse(appointmentId, LocalDateTime.now());
+    }
+
+    /**
+     * 예약 거절
+     */
+    @PatchMapping("/{appointmentId}/reject")
+    public ResponseEntity<Void> rejectAppointmentById(@PathVariable Long appointmentId,
+                                                      @Parameter(hidden = true) CurrentUser currentUser) {
+        appointmentService.rejectAppointmentByHospital(appointmentId, currentUser.userId());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 의사 미지정 예약에 의사 배정
+     */
+    @PatchMapping("/{appointmentId}/doctor")
+    public HospitalAppointmentDetailResponse assignDoctor(@PathVariable Long appointmentId,
+                                                          @Valid @RequestBody AssignDoctorRequest request,
+                                                          @Parameter(hidden = true) CurrentUser currentUser) {
+        AppointmentDetailResult result = appointmentService.assignDoctorByHospital(
+                appointmentId, currentUser.userId(), request.doctorId());
+
+        return HospitalAppointmentDetailResponse.from(result);
     }
 
 }

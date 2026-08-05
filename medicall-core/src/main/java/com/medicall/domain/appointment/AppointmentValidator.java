@@ -55,17 +55,17 @@ public class AppointmentValidator {
      * 얘역 생성 종합 검증
      */
     public void validateAppointmentCreation(Long patientId, NewAppointment newAppointment) {
-        doctorValidator.validateDoctor(newAppointment.doctorId());
         hospitalValidator.validateHospital(newAppointment.hospitalId());
-
-        validatePatientDuplicateReservation(patientId, newAppointment.reservationTime());
-        validateDoctorAvailability(newAppointment.doctorId(), newAppointment.reservationTime());
         validateReservationTime(newAppointment.reservationTime());
+        validatePatientDuplicateReservation(patientId, newAppointment.reservationTime());
+
+        // 의사를 지정하지 않고 병원에만 요청할 수 있다.
+        if(newAppointment.doctorId() != null){
+            doctorValidator.validateDoctor(newAppointment.doctorId());
+            validateDoctorAvailability(newAppointment.doctorId(), newAppointment.reservationTime());
+        }
     }
 
-    /**
-     * 환자가 같은 시간에 다른 예약을 했는지 검증
-     */
     public void validatePatientDuplicateReservation(Long patientId, LocalDateTime reservationTime) {
         boolean result = appointmentRepository.existsByPatientIdAndReservationTime(patientId, reservationTime);
         if(result){
@@ -89,6 +89,10 @@ public class AppointmentValidator {
     private void validateReservationTime(LocalDateTime reservationTime) {
         if(reservationTime.isBefore(LocalDateTime.now())) {
             throw new CoreException(CoreErrorType.APPOINTMENT_RESERVATION_TIME_IS_PAST);
+        }
+        // 방문 진료는 이동 시간이 필요해 1시간 단위 슬롯으로만 예약을 받는다.
+        if(reservationTime.getMinute() != 0 || reservationTime.getSecond() != 0 || reservationTime.getNano() != 0) {
+            throw new CoreException(CoreErrorType.APPOINTMENT_RESERVATION_TIME_NOT_SLOT);
         }
     }
 

@@ -22,6 +22,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -49,12 +50,11 @@ public class AppointmentCoreRepository implements AppointmentRepository {
         return appointmentJpaRepository.findById(appointmentId).map(AppointmentEntity::toDomainModel);
     }
 
-    public void assignDoctorToAppointment(Appointment appointment){
-        DoctorEntity doctorEntity = doctorJpaRepository.getReferenceById(appointment.doctor()
-                .id());
-        AppointmentEntity appointmentEntity = appointmentJpaRepository.getReferenceById(appointment.id());
+    public boolean assignDoctorToAppointment(Long appointmentId, Long hospitalId, Long doctorId){
+        DoctorEntity doctorEntity = doctorJpaRepository.findById(doctorId)
+                .orElseThrow(() -> new CoreException(CoreErrorType.DOCTOR_NOT_FOUND));
 
-        appointmentEntity.addDoctor(doctorEntity);
+        return appointmentJpaRepository.assignDoctorIfUnassigned(appointmentId, hospitalId, doctorEntity) > 0;
     }
 
     public CursorPageResult<Appointment> findByPatientId(PatientAppointmentListCriteria criteria){
@@ -76,7 +76,10 @@ public class AppointmentCoreRepository implements AppointmentRepository {
 
     public Appointment create(Long patientId, NewAppointment newAppointment){
         PatientEntity patientEntity = patientJpaRepository.getReferenceById(patientId);
-        DoctorEntity doctorEntity = doctorJpaRepository.getReferenceById(newAppointment.doctorId());
+        // 의사를 지정하지 않고 병원에만 요청할 수 있다.
+        DoctorEntity doctorEntity = newAppointment.doctorId() != null
+                ? doctorJpaRepository.getReferenceById(newAppointment.doctorId())
+                : null;
         HospitalEntity hospitalEntity = hospitalJpaRepository.getReferenceById(newAppointment.hospitalId());
 
         Address address = newAppointment.address();
@@ -88,9 +91,13 @@ public class AppointmentCoreRepository implements AppointmentRepository {
         AppointmentEntity appointmentEntity = new AppointmentEntity(patientEntity, doctorEntity, hospitalEntity,
                 newAppointment.symptom(), addressEntity, newAppointment.reservationTime());
 
-        AppointmentEntity savedAppointment = appointmentJpaRepository.save(appointmentEntity);
-
-        return savedAppointment.toDomainModel();
+        try{
+            AppointmentEntity savedAppointment = appointmentJpaRepository.saveAndFlush(appointmentEntity);
+            return savedAppointment.toDomainModel();
+        }catch (DataIntegrityViolationException e){
+            // (의사, 시간) 또는 (환자, 시간) 유니크 제약 위반 = 사전 검사 이후에 다른 요청이 선점했다.
+            throw new CoreException(CoreErrorType.APPOINTMENT_ALREADY_EXIST_FOR_DOCTOR, e);
+        }
     }
 
     public boolean existsByDoctorIdAndReservationTime(Long doctorId, LocalDateTime reservationTime){
@@ -133,20 +140,16 @@ public class AppointmentCoreRepository implements AppointmentRepository {
                 .toList();
     }
 
-    public void acceptAppointment(Appointment appointment){
-        AppointmentEntity appointmentEntity = appointmentJpaRepository.getReferenceById(appointment.id());
-        appointmentEntity.acceptAppointment();
+    public boolean acceptAppointment(Long appointmentId, Long hospitalId){
+        return appointmentJpaRepository.acceptIfRequested(appointmentId, hospitalId) > 0;
     }
 
-    public void cancelAppointment(Long appointmentId){
-        AppointmentEntity appointmentEntity = appointmentJpaRepository.findById(appointmentId)
-                .orElseThrow(() -> new CoreException(CoreErrorType.APPOINTMENT_NOT_FOUND));
+    public boolean rejectAppointment(Long appointmentId, Long hospitalId){
+        return appointmentJpaRepository.rejectIfRequested(appointmentId, hospitalId) > 0;
+    }
 
-        if(!appointmentEntity.isCancelable()){
-            throw new CoreException(CoreErrorType.APPOINTMENT_NOT_CANCELABLE);
-        }
-
-        appointmentEntity.cancelAppointment();
+    public boolean cancelAppointment(Long appointmentId, Long patientId){
+        return appointmentJpaRepository.cancelIfCancelable(appointmentId, patientId) > 0;
     }
 
     private BooleanExpression cursorIdGt(Long cursorId){

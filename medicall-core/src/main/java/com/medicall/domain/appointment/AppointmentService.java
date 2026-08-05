@@ -54,7 +54,7 @@ public class AppointmentService {
         Appointment appointment = appointmentReader.findById(appointmentId);
         appointmentValidator.validatePatientAccess(appointment, patientId);
 
-        appointmentWriter.cancelAppointment(appointmentId);
+        appointmentWriter.cancelAppointment(appointmentId, patientId);
     }
 
     @Transactional(readOnly = true)
@@ -87,6 +87,33 @@ public class AppointmentService {
     public AppointmentDetailResult acceptAppointmentByHospital(Long appointmentId, Long hospitalId) {
         Appointment appointment = appointmentReader.findById(appointmentId);
         appointmentValidator.validateHospitalAccess(appointment, hospitalId);
-        return appointmentWriter.acceptAppointment(appointment);
+
+        appointmentWriter.acceptAppointment(appointmentId, hospitalId);
+
+        return AppointmentDetailResult.from(appointmentReader.findById(appointmentId));
+    }
+
+    /**
+     * 병원이 예약을 거절한다.
+     */
+    @Transactional
+    public void rejectAppointmentByHospital(Long appointmentId, Long hospitalId) {
+        Appointment appointment = appointmentReader.findById(appointmentId);
+        appointmentValidator.validateHospitalAccess(appointment, hospitalId);
+
+        appointmentWriter.rejectAppointment(appointmentId, hospitalId);
+    }
+
+    /**
+     * 병원이 의사 미지정 예약에 의사를 배정한다.
+     */
+    @Transactional
+    public AppointmentDetailResult assignDoctorByHospital(Long appointmentId, Long hospitalId, Long doctorId) {
+        Appointment appointment = appointmentReader.findById(appointmentId);
+        appointmentValidator.validateHospitalAccess(appointment, hospitalId);
+
+        appointmentWriter.assignDoctorToAppointment(appointmentId, hospitalId, doctorId);
+
+        return AppointmentDetailResult.from(appointmentReader.findById(appointmentId));
     }
 }

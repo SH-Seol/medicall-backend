@@ -12,13 +12,14 @@ import com.medicall.support.CursorPageResult;
 @Repository
 public interface AppointmentRepository {
     Optional<Appointment> findById(Long appointmentId);
-    void assignDoctorToAppointment(Appointment appointmentWithDoctor);
+    boolean assignDoctorToAppointment(Long appointmentId, Long hospitalId, Long doctorId);
     CursorPageResult<Appointment> findByPatientId(PatientAppointmentListCriteria criteria);
     Appointment create(Long patientId, NewAppointment newAppointment);
     boolean existsByDoctorIdAndReservationTime(Long doctorId, LocalDateTime reservationTime);
     boolean existsByPatientIdAndReservationTime(Long patientId, LocalDateTime reservationTime);
     List<Appointment> findAllByDoctorId(Long doctorId, Long cursorId, int size);
     List<Appointment> findAllByHospitalId(Long hospitalId, Long cursorId, int size);
-    void acceptAppointment(Appointment appointment);
-    void cancelAppointment(Long appointmentId);
+    boolean acceptAppointment(Long appointmentId, Long hospitalId);
+    boolean cancelAppointment(Long appointmentId, Long patientId);
+    boolean rejectAppointment(Long appointmentId, Long hospitalId);
 }
