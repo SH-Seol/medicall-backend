@@ -38,9 +38,12 @@ public class PrescriptionQrTokenRedisStore implements PrescriptionQrTokenStore {
         return token;
     }
 
+    /**
+     * 토큰은 1회용이다. 조회와 동시에 삭제해 같은 QR을 여러 번 사용할 수 없게 한다.
+     */
     @Override
     public Optional<Long> resolve(String qrToken) {
-        String prescriptionId = redisTemplate.opsForValue().get(KEY_PREFIX + qrToken);
+        String prescriptionId = redisTemplate.opsForValue().getAndDelete(KEY_PREFIX + qrToken);
 
         return Optional.ofNullable(prescriptionId).map(Long::valueOf);
     }

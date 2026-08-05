@@ -60,8 +60,28 @@ public class PatientSecurityConfig {
         return http.build();
     }
 
+    /**
+     * 약국이 처방전 QR을 스캔하는 경로. 약국은 로그인 주체가 아니므로 QR 토큰 자체가 인증 수단이다.
+     */
     @Bean
     @Order(1)
+    public SecurityFilterChain prescriptionQrFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/api/v1/prescriptions/qr/**")
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain patientOauthFilterChain(HttpSecurity http) throws Exception {
         http.
                 securityMatcher(
@@ -77,7 +97,7 @@ public class PatientSecurityConfig {
     }
 
     @Bean
-    @Order(2)
+    @Order(3)
     public SecurityFilterChain patientApiFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/api/v1/patient/**", "/api/v1/chats/**")
