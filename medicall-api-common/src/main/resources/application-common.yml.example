@@ -1,0 +1,39 @@
+# 세 서비스가 공유하는 설정 예시
+# application-common.yml 로 복사해 사용한다.
+
+springdoc:
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+
+jwt:
+  # 운영에서는 반드시 환경변수로 주입하고 저장소에 값을 남기지 않는다.
+  secret-key: ${JWT_SECRET_KEY:최소_32자_이상의_임의_문자열을_넣는다}
+  access-token-expiration: 3600
+  refresh-token-expiration: 172800
+
+cookie:
+  access-token-name: accessToken
+  refresh-token-name: refreshToken
+  # 비워두면 요청 호스트에만 쿠키가 내려간다.
+  domain: ""
+  # 운영 환경(HTTPS)에서는 반드시 true
+  secure: false
+  # 프론트와 API가 같은 등록 도메인이면 Lax로 충분하다.
+  # 다른 도메인에 배포하면 None으로 바꾸고 secure를 true로 해야 쿠키가 전송된다.
+  same-site: Lax
+
+security:
+  csrf-header:
+    # 상태 변경 요청에 X-Medicall-Client 헤더를 요구한다.
+    enabled: true
+
+docs:
+  server:
+    api-url: "http://localhost:8080/api"
+    admin-url: "http://localhost:8080/admin"
+  cors:
+    allowed-origins:
+      - "http://localhost:3000"
+      - "http://localhost:3001"
+      - "http://localhost:3002"
+    max-age: 3600

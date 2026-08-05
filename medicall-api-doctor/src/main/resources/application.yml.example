@@ -1,0 +1,63 @@
+# medicall-api-doctor 설정 예시
+# 이 파일을 같은 디렉터리에 application.yml 로 복사한 뒤 값을 채워 사용한다.
+# (application*.yml 은 .gitignore 대상이라 저장소에 올라가지 않는다)
+
+spring:
+  config:
+    import: classpath:/application-common.yml
+  datasource:
+    url: jdbc:mysql://localhost:3306/medicall
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:비밀번호}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      # 스키마 변경은 infrastructure/db 의 SQL로 관리한다.
+      ddl-auto: update
+      dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+  application:
+    name: "medicall-doctor"
+    version: "1.0.0"
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-name: kakao
+            client-id: ${KAKAO_CLIENT_ID:카카오_REST_API_키}
+            # 카카오 개발자 콘솔에 이 주소를 그대로 등록해야 한다.
+            redirect-uri: http://localhost:8083/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+server:
+  port: 8083
+
+medicall:
+  # 개발용 우회 로그인. 운영 환경에는 이 설정을 두지 않는다.(없으면 엔드포인트가 존재하지 않음)
+  dev-login:
+    enabled: true
+  doctor:
+    cors:
+      # 프론트 개발 서버 주소. 콤마로 여러 개 지정 가능
+      allowed-origin: http://localhost:3000
+      max-age: 3600
+    redirect:
+      # 진료과 미등록 상태면 온보딩으로 이동
+      profile-complete-url: "http://localhost:3000/onboarding"
+      dashboard-url: "http://localhost:3000/dashboard"
+
+openai:
+  api-key: ${OPENAI_API_KEY:sk-not-configured}
+  model: gpt-4o-mini
+  temperature: 0.3
