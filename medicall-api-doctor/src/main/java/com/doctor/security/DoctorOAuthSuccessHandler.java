@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -63,8 +64,8 @@ public class DoctorOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
             TokenPair tokens = tokenService.issue(doctor.id(), "doctor");
 
-            response.addCookie(cookieManager.createAccessTokenCookie(tokens.accessToken()));
-            response.addCookie(cookieManager.createRefreshTokenCookie(tokens.refreshToken()));
+            response.addHeader(HttpHeaders.SET_COOKIE, cookieManager.createAccessTokenCookie(tokens.accessToken()).toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, cookieManager.createRefreshTokenCookie(tokens.refreshToken()).toString());
 
             String redirectUrl = determineRedirectUri(doctor);
 

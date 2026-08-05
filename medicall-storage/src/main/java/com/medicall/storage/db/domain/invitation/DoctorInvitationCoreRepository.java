@@ -1,5 +1,6 @@
 package com.medicall.storage.db.domain.invitation;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,18 +53,20 @@ public class DoctorInvitationCoreRepository implements DoctorInvitationRepositor
     }
 
     public void accept(Long invitationId, Long doctorId) {
-        DoctorInvitationEntity invitation = invitationJpaRepository.findById(invitationId)
-                .orElseThrow(() -> new CoreException(CoreErrorType.INVITATION_NOT_FOUND));
         DoctorEntity doctor = doctorJpaRepository.findById(doctorId)
                 .orElseThrow(() -> new CoreException(CoreErrorType.DOCTOR_NOT_FOUND));
 
-        invitation.accept(doctor);
+        int updated = invitationJpaRepository.acceptIfPending(invitationId, doctor, LocalDateTime.now());
+        if (updated == 0) {
+            // 그 사이 다른 의사가 수락했거나 병원이 취소한 경우
+            throw new CoreException(CoreErrorType.INVITATION_NOT_USABLE);
+        }
     }
 
     public void cancel(Long invitationId) {
-        DoctorInvitationEntity invitation = invitationJpaRepository.findById(invitationId)
-                .orElseThrow(() -> new CoreException(CoreErrorType.INVITATION_NOT_FOUND));
-
-        invitation.cancel();
+        int updated = invitationJpaRepository.cancelIfPending(invitationId);
+        if (updated == 0) {
+            throw new CoreException(CoreErrorType.INVITATION_NOT_USABLE);
+        }
     }
 }

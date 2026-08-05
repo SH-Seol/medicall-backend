@@ -2,6 +2,7 @@ package com.medicall.common.security;
 
 import java.time.Duration;
 import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,48 @@ public class TokenRepository {
         }catch (Exception e){
             log.error("Refresh Token을 이용한 유저 조회 실패 - jwtId: {}", jwtId, e);
             return Optional.empty();
+        }
+    }
+
+    /**
+     * Refresh Token을 원자적으로 조회하고 삭제한다. (회전 시 재사용 방지)
+     * 동시에 두 요청이 같은 토큰으로 재발급을 시도하면 한 쪽만 값을 받는다.
+     */
+    public Optional<Long> consumeRefreshToken(String jwtId) {
+        try{
+            String key = REFRESH_TOKEN_PREFIX + jwtId;
+            String userId = redisTemplate.opsForValue().getAndDelete(key);
+
+            if(userId == null){
+                log.debug("이미 사용되었거나 존재하지 않는 Refresh Token - jwtId: {}", jwtId);
+                return Optional.empty();
+            }
+
+            redisTemplate.opsForSet().remove(USER_TOKEN_PREFIX + userId, jwtId);
+
+            return Optional.of(Long.valueOf(userId));
+        }catch (Exception e){
+            log.error("Refresh Token 소비 실패 - jwtId: {}", jwtId, e);
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * 사용자의 모든 Refresh Token 폐기 (토큰 재사용이 감지된 경우)
+     */
+    public void deleteAllRefreshTokensByUserId(Long userId) {
+        try{
+            String userTokenKey = USER_TOKEN_PREFIX + userId;
+            Set<String> jwtIds = redisTemplate.opsForSet().members(userTokenKey);
+
+            if(jwtIds != null){
+                jwtIds.forEach(jwtId -> redisTemplate.delete(REFRESH_TOKEN_PREFIX + jwtId));
+            }
+            redisTemplate.delete(userTokenKey);
+
+            log.warn("사용자의 모든 Refresh Token 폐기 - userId: {}", userId);
+        }catch (Exception e){
+            log.error("Refresh Token 일괄 폐기 실패 - userId: {}", userId, e);
         }
     }
 

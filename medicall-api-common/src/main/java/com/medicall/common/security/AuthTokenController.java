@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -36,8 +37,8 @@ public abstract class AuthTokenController {
     public ResponseEntity<Void> reissue(HttpServletRequest request, HttpServletResponse response) {
         TokenPair tokens = tokenService.reissue(cookieManager.readRefreshToken(request));
 
-        response.addCookie(cookieManager.createAccessTokenCookie(tokens.accessToken()));
-        response.addCookie(cookieManager.createRefreshTokenCookie(tokens.refreshToken()));
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieManager.createAccessTokenCookie(tokens.accessToken()).toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieManager.createRefreshTokenCookie(tokens.refreshToken()).toString());
 
         return ResponseEntity.ok().build();
     }
@@ -54,8 +55,8 @@ public abstract class AuthTokenController {
                 cookieManager.readRefreshToken(request)
         );
 
-        response.addCookie(cookieManager.expireAccessTokenCookie());
-        response.addCookie(cookieManager.expireRefreshTokenCookie());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieManager.expireAccessTokenCookie().toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieManager.expireRefreshTokenCookie().toString());
 
         return ResponseEntity.noContent().build();
     }

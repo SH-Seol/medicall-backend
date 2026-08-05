@@ -77,16 +77,6 @@ public class DoctorInvitationEntity extends BaseEntity {
         return acceptedAt;
     }
 
-    public void accept(DoctorEntity doctor) {
-        this.status = InvitationStatus.ACCEPTED;
-        this.acceptedDoctor = doctor;
-        this.acceptedAt = LocalDateTime.now();
-    }
-
-    public void cancel() {
-        this.status = InvitationStatus.CANCELED;
-    }
-
     public DoctorInvitation toDomainModel() {
         return new DoctorInvitation(
                 this.id,

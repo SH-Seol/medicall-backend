@@ -87,8 +87,9 @@ public class DoctorInvitationService {
             throw new CoreException(CoreErrorType.DOCTOR_BELONGS_TO_HOSPITAL);
         }
 
-        doctorWriter.registerHospital(doctorId, invitation.hospitalId());
+        // 먼저 초대를 원자적으로 선점한다. 동시 수락 시 한 명만 통과한다.
         invitationWriter.accept(invitation.id(), doctorId);
+        doctorWriter.registerHospital(doctorId, invitation.hospitalId());
 
         return invitationReader.findByCode(code);
     }

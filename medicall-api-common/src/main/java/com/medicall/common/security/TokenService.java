@@ -61,18 +61,23 @@ public class TokenService {
         }
 
         String jwtId = jwtTokenProvider.getJwtIdFromToken(refreshToken);
-        Long userId = tokenRepository.findUserIdByRefreshToken(jwtId)
-                .orElseThrow(() -> new AuthException(AuthErrorType.INVALID_REFRESH_TOKEN));
+
+        // 조회와 삭제가 원자적으로 이루어져 동시 재발급 요청은 한 번만 성공한다.
+        Long userId = tokenRepository.consumeRefreshToken(jwtId)
+                .orElseThrow(() -> {
+                    // 서명은 유효한데 저장소에 없다 = 이미 사용된 토큰의 재사용
+                    Long tokenUserId = jwtTokenProvider.getUserIdFromToken(refreshToken);
+                    tokenRepository.deleteAllRefreshTokensByUserId(tokenUserId);
+
+                    return new AuthException(AuthErrorType.INVALID_REFRESH_TOKEN);
+                });
 
         if(!userId.equals(jwtTokenProvider.getUserIdFromToken(refreshToken))){
-            // 저장된 매핑과 토큰의 subject가 다르면 위조로 판단하고 폐기한다.
-            tokenRepository.deleteRefreshToken(jwtId);
+            // 저장된 매핑과 토큰의 subject가 다르면 위조로 판단한다.
             throw new AuthException(AuthErrorType.INVALID_REFRESH_TOKEN);
         }
 
         String serviceType = jwtTokenProvider.getServiceTypeFromToken(refreshToken);
-
-        tokenRepository.deleteRefreshToken(jwtId);
 
         log.debug("토큰 재발급 - userId: {}, serviceType: {}", userId, serviceType);
 

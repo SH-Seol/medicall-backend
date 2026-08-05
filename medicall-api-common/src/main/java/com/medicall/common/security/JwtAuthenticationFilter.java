@@ -43,9 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final List<String> EXCLUDED_PATHS = Arrays.asList(
             "/health",
             "/actuator/health",
-            "/auth/login",
-            "/swagger-ui",
-            "/v3/api-docs",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/v3/api-docs/**",
             "/api/v1/*/auth/**"
     );
 
@@ -130,9 +130,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return true;
         }
 
+        // prefix 매칭은 의도치 않은 경로까지 열어줄 수 있어 정확 매칭/Ant 패턴만 사용한다.
         return EXCLUDED_PATHS.stream()
-                .anyMatch(pattern -> pattern.contains("*")
-                        ? PATH_MATCHER.match(pattern, requestURI)
-                        : requestURI.startsWith(pattern));
+                .anyMatch(pattern -> PATH_MATCHER.match(pattern, requestURI));
     }
 }

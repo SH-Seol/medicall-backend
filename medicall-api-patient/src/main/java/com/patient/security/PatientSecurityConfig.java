@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.medicall.common.security.CsrfHeaderFilter;
 import com.medicall.common.security.JwtAuthenticationFilter;
 
 @Configuration
@@ -20,11 +21,14 @@ import com.medicall.common.security.JwtAuthenticationFilter;
 public class PatientSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CsrfHeaderFilter csrfHeaderFilter;
     private final PatientOAuthSuccessHandler patientOAuthSuccessHandler;
 
     public PatientSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                                 CsrfHeaderFilter csrfHeaderFilter,
                                  PatientOAuthSuccessHandler patientOAuthSuccessHandler) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.csrfHeaderFilter = csrfHeaderFilter;
         this.patientOAuthSuccessHandler = patientOAuthSuccessHandler;
     }
 
@@ -46,6 +50,7 @@ public class PatientSecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .addFilterBefore(csrfHeaderFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((req, res, e) ->
                                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED)
@@ -91,9 +96,10 @@ public class PatientSecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(
+                .addFilterBefore(csrfHeaderFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(
                         jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
+                        CsrfHeaderFilter.class
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((req, res, e) ->
