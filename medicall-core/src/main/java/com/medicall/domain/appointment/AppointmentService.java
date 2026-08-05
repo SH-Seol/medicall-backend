@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.medicall.domain.appointment.dto.AppointmentDetailResult;
+import com.medicall.domain.common.enums.AppointmentStatus;
 import com.medicall.domain.appointment.dto.AppointmentListResult;
 import com.medicall.domain.appointment.dto.CreateAppointmentResult;
 import com.medicall.domain.appointment.dto.DoctorAppointmentListCriteria;
@@ -55,6 +56,49 @@ public class AppointmentService {
         appointmentValidator.validatePatientAccess(appointment, patientId);
 
         appointmentWriter.cancelAppointment(appointmentId, patientId);
+    }
+
+    /**
+     * 의사가 환자에게 출발한다. ("다음 환자")
+     * 이 시점부터 환자에게 위치를 공개할 수 있다.
+     */
+    @Transactional
+    public AppointmentDetailResult departByDoctor(Long appointmentId, Long doctorId) {
+        return changeStatusByDoctor(appointmentId, doctorId, AppointmentStatus.ASSIGNED, AppointmentStatus.EN_ROUTE);
+    }
+
+    /**
+     * 의사가 환자 위치에 도착했다.
+     */
+    @Transactional
+    public AppointmentDetailResult arriveByDoctor(Long appointmentId, Long doctorId) {
+        return changeStatusByDoctor(appointmentId, doctorId, AppointmentStatus.EN_ROUTE, AppointmentStatus.ARRIVED);
+    }
+
+    /**
+     * 진료를 시작한다.
+     */
+    @Transactional
+    public AppointmentDetailResult startTreatmentByDoctor(Long appointmentId, Long doctorId) {
+        return changeStatusByDoctor(appointmentId, doctorId, AppointmentStatus.ARRIVED, AppointmentStatus.IN_PROGRESS);
+    }
+
+    /**
+     * 진료를 완료한다.
+     */
+    @Transactional
+    public AppointmentDetailResult completeByDoctor(Long appointmentId, Long doctorId) {
+        return changeStatusByDoctor(appointmentId, doctorId, AppointmentStatus.IN_PROGRESS, AppointmentStatus.COMPLETED);
+    }
+
+    private AppointmentDetailResult changeStatusByDoctor(Long appointmentId, Long doctorId,
+                                                         AppointmentStatus expected, AppointmentStatus next) {
+        Appointment appointment = appointmentReader.findById(appointmentId);
+        appointmentValidator.validateDoctorAccess(appointment, doctorId);
+
+        appointmentWriter.updateStatusByDoctor(appointmentId, doctorId, expected, next);
+
+        return AppointmentDetailResult.from(appointmentReader.findById(appointmentId));
     }
 
     @Transactional(readOnly = true)

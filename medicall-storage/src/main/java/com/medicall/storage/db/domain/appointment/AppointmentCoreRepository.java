@@ -2,6 +2,7 @@ package com.medicall.storage.db.domain.appointment;
 
 import com.medicall.domain.address.Address;
 import com.medicall.domain.appointment.Appointment;
+import com.medicall.domain.common.enums.AppointmentStatus;
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
 import com.medicall.domain.appointment.AppointmentRepository;
@@ -101,11 +102,11 @@ public class AppointmentCoreRepository implements AppointmentRepository {
     }
 
     public boolean existsByDoctorIdAndReservationTime(Long doctorId, LocalDateTime reservationTime){
-        return appointmentJpaRepository.existsByDoctorIdAndReservationTime(doctorId, reservationTime);
+        return appointmentJpaRepository.existsActiveByDoctorIdAndReservationTime(doctorId, reservationTime);
     }
 
     public boolean existsByPatientIdAndReservationTime(Long patientId, LocalDateTime reservationTime){
-        return appointmentJpaRepository.existsByPatientIdAndReservationTime(patientId, reservationTime);
+        return appointmentJpaRepository.existsActiveByPatientIdAndReservationTime(patientId, reservationTime);
     }
 
     public List<Appointment> getAppointmentsByHospitalId(Long hospitalId){
@@ -146,6 +147,16 @@ public class AppointmentCoreRepository implements AppointmentRepository {
 
     public boolean rejectAppointment(Long appointmentId, Long hospitalId){
         return appointmentJpaRepository.rejectIfRequested(appointmentId, hospitalId) > 0;
+    }
+
+    public boolean updateStatusByDoctor(Long appointmentId, Long doctorId,
+                                        AppointmentStatus expected, AppointmentStatus next){
+        try{
+            return appointmentJpaRepository.updateStatusByDoctor(appointmentId, doctorId, expected, next) > 0;
+        }catch (DataIntegrityViolationException e){
+            // 이미 이동 중인 다른 예약이 있다. (의사당 동시 이동 1건 제한)
+            throw new CoreException(CoreErrorType.APPOINTMENT_ALREADY_EN_ROUTE, e);
+        }
     }
 
     public boolean cancelAppointment(Long appointmentId, Long patientId){

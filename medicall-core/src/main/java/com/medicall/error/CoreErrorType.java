@@ -24,6 +24,7 @@ public enum CoreErrorType {
     APPOINTMENT_NOT_CANCELABLE(CoreErrorCode.APPOINTMENT008, CoreErrorKind.CONFLICT, "취소할 수 없는 상태의 예약입니다.", CoreErrorLevel.WARN),
     APPOINTMENT_RESERVATION_TIME_NOT_SLOT(CoreErrorCode.APPOINTMENT009, CoreErrorKind.BAD_REQUEST, "예약은 정시(1시간) 단위로만 가능합니다.", CoreErrorLevel.WARN),
     APPOINTMENT_STATUS_CHANGED(CoreErrorCode.APPOINTMENT010, CoreErrorKind.CONFLICT, "예약 상태가 변경되어 처리할 수 없습니다.", CoreErrorLevel.WARN),
+    APPOINTMENT_ALREADY_EN_ROUTE(CoreErrorCode.APPOINTMENT011, CoreErrorKind.CONFLICT, "이미 이동 중인 예약이 있습니다. 현재 방문을 마친 뒤 진행해주세요.", CoreErrorLevel.WARN),
     TREATMENT_NOT_FOUND(CoreErrorCode.TREATMENT001, CoreErrorKind.NOT_FOUND, "존재하지 않는 진료 내역입니다.", CoreErrorLevel.WARN),
     TREATMENT_ALREADY_HAS_PRESCRIPTION(CoreErrorCode.TREATMENT002, CoreErrorKind.FORBIDDEN, "해당 진료에 처방이 이미 이루어졌습니다.", CoreErrorLevel.WARN),
     TREATMENT_NOT_ACCESSIBLE(CoreErrorCode.TREATMENT003, CoreErrorKind.FORBIDDEN, "해당 진료에 접근할 수 없습니다.", CoreErrorLevel.WARN),

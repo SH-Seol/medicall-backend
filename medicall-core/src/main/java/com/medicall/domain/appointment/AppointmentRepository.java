@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.medicall.domain.appointment.dto.PatientAppointmentListCriteria;
+import com.medicall.domain.common.enums.AppointmentStatus;
 import com.medicall.support.CursorPageResult;
 
 @Repository
@@ -22,4 +23,5 @@ public interface AppointmentRepository {
     boolean acceptAppointment(Long appointmentId, Long hospitalId);
     boolean cancelAppointment(Long appointmentId, Long patientId);
     boolean rejectAppointment(Long appointmentId, Long hospitalId);
+    boolean updateStatusByDoctor(Long appointmentId, Long doctorId, AppointmentStatus expected, AppointmentStatus next);
 }

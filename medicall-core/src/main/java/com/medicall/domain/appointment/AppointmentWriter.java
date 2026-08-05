@@ -5,6 +5,8 @@ import com.medicall.error.CoreException;
 
 import org.springframework.stereotype.Component;
 
+import com.medicall.domain.common.enums.AppointmentStatus;
+
 @Component
 public class AppointmentWriter {
 
@@ -38,6 +40,16 @@ public class AppointmentWriter {
 
     public void rejectAppointment(Long appointmentId, Long hospitalId) {
         if(!appointmentRepository.rejectAppointment(appointmentId, hospitalId)){
+            throw new CoreException(CoreErrorType.APPOINTMENT_STATUS_CHANGED);
+        }
+    }
+
+    /**
+     * 의사가 방문을 진행시킨다. (출발 → 도착 → 진료 시작 → 완료)
+     */
+    public void updateStatusByDoctor(Long appointmentId, Long doctorId,
+                                     AppointmentStatus expected, AppointmentStatus next) {
+        if(!appointmentRepository.updateStatusByDoctor(appointmentId, doctorId, expected, next)){
             throw new CoreException(CoreErrorType.APPOINTMENT_STATUS_CHANGED);
         }
     }
