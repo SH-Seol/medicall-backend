@@ -8,7 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -67,6 +73,39 @@ public class GlobalExceptionHandler {
                 "COMMON-400",
                 "요청 값이 올바르지 않습니다.",
                 fieldErrors
+        ));
+    }
+
+    /**
+     * 매핑되지 않은 경로. Spring 6.1+ 는 예외로 전달하므로 명시적으로 404로 변환한다.
+     * (그렇지 않으면 아래 Exception 핸들러가 잡아 500으로 나간다)
+     */
+    @ExceptionHandler({NoResourceFoundException.class, NoHandlerFoundException.class})
+    public ResponseEntity<ErrorResponse> handleNotFound(Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.of(
+                "COMMON-404",
+                "존재하지 않는 요청입니다."
+        ));
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException e) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(ErrorResponse.of(
+                "COMMON-405",
+                "지원하지 않는 요청 방식입니다."
+        ));
+    }
+
+    /**
+     * 요청 본문/파라미터를 읽지 못한 경우 (형식 오류, 필수 파라미터 누락 등)
+     */
+    @ExceptionHandler({HttpMessageNotReadableException.class,
+            MissingServletRequestParameterException.class,
+            MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ErrorResponse> handleBadRequest(Exception e) {
+        return ResponseEntity.badRequest().body(ErrorResponse.of(
+                "COMMON-400",
+                "요청 값이 올바르지 않습니다."
         ));
     }
 
