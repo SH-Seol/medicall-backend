@@ -53,7 +53,7 @@ public class PatientEntity extends BaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "patient_id")
-    private List<AddressEntity> addresses;
+    private List<AddressEntity> addresses = new ArrayList<>();
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PatientChronicDiseaseEntity> chronicDiseaseEntities = new ArrayList<>();
@@ -213,6 +213,28 @@ public class PatientEntity extends BaseEntity {
             this.guardianRelationship = guardian.relationship();
             this.guardianPhoneNumber = guardian.phoneNumber();
         }
+    }
+
+    public void addAddress(AddressEntity address) {
+        // 첫 주소는 자동으로 기본 주소가 된다.
+        if(this.addresses.isEmpty()){
+            address.markAsDefault();
+        }
+        this.addresses.add(address);
+    }
+
+    public void removeAddress(AddressEntity address) {
+        this.addresses.remove(address);
+
+        // 기본 주소를 지우면 남은 주소 중 첫 번째를 기본으로 승격한다.
+        if(address.isDefault() && !this.addresses.isEmpty()){
+            this.addresses.get(0).markAsDefault();
+        }
+    }
+
+    public void changeDefaultAddress(AddressEntity target) {
+        this.addresses.forEach(AddressEntity::unmarkAsDefault);
+        target.markAsDefault();
     }
 
     /**

@@ -1,11 +1,13 @@
 package com.medicall.storage.db.domain.patient;
 
+import com.medicall.domain.address.Address;
 import com.medicall.domain.patient.NewPatient;
 import com.medicall.domain.patient.Patient;
 import com.medicall.domain.patient.PatientRepository;
 import com.medicall.domain.patient.dto.PatientProfileUpdate;
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
+import com.medicall.storage.db.domain.address.AddressEntity;
 import com.medicall.storage.db.domain.common.enums.Gender;
 
 import java.util.ArrayList;
@@ -71,6 +73,87 @@ public class PatientCoreRepository implements PatientRepository {
         }
 
         return patientEntity.toDomainModel();
+    }
+
+    public List<Address> findAddresses(Long patientId) {
+        return findPatient(patientId).getAddresses().stream()
+                .map(AddressEntity::toDomainModel)
+                .toList();
+    }
+
+    @Transactional
+    public Address addAddress(Long patientId, Address address) {
+        PatientEntity patientEntity = findPatient(patientId);
+        AddressEntity addressEntity = toEntity(address);
+
+        patientEntity.addAddress(addressEntity);
+        patientJpaRepository.flush();
+
+        return addressEntity.toDomainModel();
+    }
+
+    @Transactional
+    public Address updateAddress(Long patientId, Long addressId, Address address) {
+        AddressEntity addressEntity = findAddress(patientId, addressId);
+
+        addressEntity.update(
+                address.zoneCode(),
+                address.roadAddress(),
+                address.jibunAddress(),
+                address.detailAddress(),
+                address.buildingName(),
+                address.longitude(),
+                address.latitude()
+        );
+
+        return addressEntity.toDomainModel();
+    }
+
+    @Transactional
+    public void deleteAddress(Long patientId, Long addressId) {
+        PatientEntity patientEntity = findPatient(patientId);
+        AddressEntity addressEntity = findAddressIn(patientEntity, addressId);
+
+        patientEntity.removeAddress(addressEntity);
+    }
+
+    @Transactional
+    public void changeDefaultAddress(Long patientId, Long addressId) {
+        PatientEntity patientEntity = findPatient(patientId);
+        AddressEntity addressEntity = findAddressIn(patientEntity, addressId);
+
+        patientEntity.changeDefaultAddress(addressEntity);
+    }
+
+    private PatientEntity findPatient(Long patientId) {
+        return patientJpaRepository.findById(patientId)
+                .orElseThrow(() -> new CoreException(CoreErrorType.PATIENT_NOT_FOUND));
+    }
+
+    /**
+     * 본인 주소만 다룰 수 있도록 환자를 통해 조회한다.
+     */
+    private AddressEntity findAddress(Long patientId, Long addressId) {
+        return findAddressIn(findPatient(patientId), addressId);
+    }
+
+    private AddressEntity findAddressIn(PatientEntity patientEntity, Long addressId) {
+        return patientEntity.getAddresses().stream()
+                .filter(address -> address.getId().equals(addressId))
+                .findFirst()
+                .orElseThrow(() -> new CoreException(CoreErrorType.ADDRESS_NOT_FOUND));
+    }
+
+    private AddressEntity toEntity(Address address) {
+        return new AddressEntity(
+                address.zoneCode(),
+                address.roadAddress(),
+                address.jibunAddress(),
+                address.detailAddress(),
+                address.buildingName(),
+                address.longitude(),
+                address.latitude()
+        );
     }
 
     private Gender toGender(String gender) {

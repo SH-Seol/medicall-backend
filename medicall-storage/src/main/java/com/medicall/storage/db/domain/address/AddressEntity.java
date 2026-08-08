@@ -91,8 +91,28 @@ public class AddressEntity extends BaseEntity {
         return isDefault;
     }
 
+    public void markAsDefault() {
+        this.isDefault = true;
+    }
+
+    public void unmarkAsDefault() {
+        this.isDefault = false;
+    }
+
+    public void update(String zoneCode, String roadAddress, String jibunAddress,
+                       String detailAddress, String buildingName, Double longitude, Double latitude) {
+        this.zoneCode = zoneCode;
+        this.roadAddress = roadAddress;
+        this.jibunAddress = jibunAddress;
+        this.detailAddress = detailAddress;
+        this.buildingName = buildingName;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
     public Address toDomainModel(){
         return new Address(
+                this.id,
                 this.zoneCode,
                 this.roadAddress,
                 this.jibunAddress,

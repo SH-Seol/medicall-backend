@@ -113,6 +113,10 @@ public class AppointmentCoreRepository implements AppointmentRepository {
         return null;
     }
 
+    public List<LocalDateTime> findActiveReservationTimes(Long doctorId, LocalDateTime from, LocalDateTime to){
+        return appointmentJpaRepository.findActiveReservationTimes(doctorId, from, to);
+    }
+
     public List<Appointment> findAllByDoctorId(Long doctorId, Long cursorId, int size){
         QAppointmentEntity appointmentEntity = QAppointmentEntity.appointmentEntity;
 

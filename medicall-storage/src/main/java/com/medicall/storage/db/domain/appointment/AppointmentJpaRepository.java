@@ -115,4 +115,21 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
                              @Param("doctorId") Long doctorId,
                              @Param("expectedStatus") AppointmentStatus expectedStatus,
                              @Param("nextStatus") AppointmentStatus nextStatus);
+
+    /**
+     * 특정 기간에 이미 잡혀 있는(진행 중인) 예약 시각
+     */
+    @Query("""
+            SELECT a.reservationTime FROM AppointmentEntity a
+            WHERE a.doctor.id = :doctorId
+              AND a.reservationTime >= :from AND a.reservationTime < :to
+              AND a.status IN (com.medicall.domain.common.enums.AppointmentStatus.REQUESTED,
+                               com.medicall.domain.common.enums.AppointmentStatus.ASSIGNED,
+                               com.medicall.domain.common.enums.AppointmentStatus.EN_ROUTE,
+                               com.medicall.domain.common.enums.AppointmentStatus.ARRIVED,
+                               com.medicall.domain.common.enums.AppointmentStatus.IN_PROGRESS)
+            """)
+    List<LocalDateTime> findActiveReservationTimes(@Param("doctorId") Long doctorId,
+                                                   @Param("from") LocalDateTime from,
+                                                   @Param("to") LocalDateTime to);
 }

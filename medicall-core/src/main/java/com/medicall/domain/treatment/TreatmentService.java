@@ -51,6 +51,13 @@ public class TreatmentService {
     }
 
     @Transactional(readOnly = true)
+    public TreatmentDetailResult getTreatmentByPatient(Long patientId, Long treatmentId) {
+        Treatment treatment = treatmentReader.findById(treatmentId);
+        treatmentValidator.validatePatientTreatment(treatment, patientId);
+
+        return TreatmentDetailResult.from(treatment);
+    }
+
     public TreatmentDetailResult getTreatmentByDoctor(Long doctorId, Long treatmentId) {
         Treatment treatment = treatmentReader.findById(treatmentId);
         treatmentValidator.validateDoctorTreatment(treatment, doctorId);

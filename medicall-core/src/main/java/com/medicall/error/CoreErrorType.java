@@ -3,10 +3,12 @@ package com.medicall.error;
 public enum CoreErrorType {
     HOSPITAL_NOT_FOUND(CoreErrorCode.HOSPITAL001, CoreErrorKind.NOT_FOUND, "존재하지 않는 병원입니다.", CoreErrorLevel.WARN),
     PATIENT_NOT_FOUND(CoreErrorCode.PATIENT001, CoreErrorKind.NOT_FOUND, "존재하지 않는 환자입니다.", CoreErrorLevel.WARN),
+    ADDRESS_NOT_FOUND(CoreErrorCode.PATIENT003, CoreErrorKind.NOT_FOUND, "존재하지 않는 주소입니다.", CoreErrorLevel.WARN),
     PATIENT_INVALID_GENDER(CoreErrorCode.PATIENT002, CoreErrorKind.BAD_REQUEST, "지원하지 않는 성별 값입니다.", CoreErrorLevel.WARN),
     DOCTOR_NOT_FOUND(CoreErrorCode.DOCTOR001, CoreErrorKind.NOT_FOUND, "존재하지 않는 의사입니다.", CoreErrorLevel.WARN),
     DOCTOR_IN_TREATMENT_NOT_MATCH(CoreErrorCode.DOCTOR002, CoreErrorKind.FORBIDDEN, "진단 의사와 처방전 작성한 의사가 다른 요청입니다.", CoreErrorLevel.WARN),
     DOCTOR_BELONGS_TO_HOSPITAL(CoreErrorCode.DOCTOR003, CoreErrorKind.FORBIDDEN, "이미 소속된 병원이 있는 의사입니다.", CoreErrorLevel.WARN),
+    DOCTOR_NOT_BELONGS_TO_HOSPITAL(CoreErrorCode.DOCTOR004, CoreErrorKind.BAD_REQUEST, "소속 병원이 없는 의사입니다.", CoreErrorLevel.WARN),
     DEPARTMENT_NOT_FOUND(CoreErrorCode.DEPARTMENT001, CoreErrorKind.NOT_FOUND, "존재하지 않는 전공입니다.", CoreErrorLevel.WARN),
     SIGNUP_CONFLICT(CoreErrorCode.SIGNUP001, CoreErrorKind.CONFLICT, "이미 가입에 사용된 정보입니다.", CoreErrorLevel.WARN),
     SPECIALTY_NOT_FOUND(CoreErrorCode.SPECIALTY001, CoreErrorKind.NOT_FOUND, "존재하지 않는 세부 전공입니다.", CoreErrorLevel.WARN),

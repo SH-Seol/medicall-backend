@@ -1,5 +1,8 @@
 package com.medicall.common.exception;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -106,6 +109,25 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ErrorResponse.of(
                 "COMMON-400",
                 "요청 값이 올바르지 않습니다."
+        ));
+    }
+
+    /**
+     * @RequestParam/@PathVariable 등 메서드 파라미터 검증 실패
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException e) {
+        Map<String, String> violations = new LinkedHashMap<>();
+        for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
+            String path = violation.getPropertyPath().toString();
+            String field = path.contains(".") ? path.substring(path.lastIndexOf('.') + 1) : path;
+            violations.put(field, violation.getMessage());
+        }
+
+        return ResponseEntity.badRequest().body(ErrorResponse.of(
+                "COMMON-400",
+                "요청 값이 올바르지 않습니다.",
+                violations
         ));
     }
 

@@ -1,6 +1,7 @@
 package com.medicall.domain.address;
 
 public record Address(
+    Long id,
     String zoneCode,
     String roadAddress,
     String jibunAddress,

@@ -1,6 +1,7 @@
 package com.medicall.domain.appointment;
 
 import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.medicall.domain.appointment.dto.AppointmentListResult;
@@ -47,5 +48,9 @@ public class AppointmentReader {
         List<AppointmentListResult> result = appointmentList.stream().map(AppointmentListResult::from).toList();
 
         return CorePageUtils.buildCursorResult(result, criteria.size(), AppointmentListResult::appointmentId);
+    }
+
+    public List<LocalDateTime> findActiveReservationTimes(Long doctorId, LocalDateTime from, LocalDateTime to) {
+        return appointmentRepository.findActiveReservationTimes(doctorId, from, to);
     }
 }

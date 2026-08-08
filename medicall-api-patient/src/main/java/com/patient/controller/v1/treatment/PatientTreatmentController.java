@@ -7,6 +7,7 @@ import java.util.List;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +17,8 @@ import com.medicall.domain.treatment.TreatmentService;
 import com.medicall.domain.treatment.dto.TreatmentListResult;
 import com.medicall.support.CursorPageResult;
 import com.patient.controller.v1.treatment.dto.request.PatientTreatmentListRequest;
+import com.medicall.domain.treatment.dto.TreatmentDetailResult;
+import com.patient.controller.v1.treatment.dto.response.PatientTreatmentDetailResponse;
 import com.patient.controller.v1.treatment.dto.response.PatientTreatmentListResponse;
 
 @RestController
@@ -36,5 +39,13 @@ public class PatientTreatmentController implements PatientTreatmentApiDocs{
         List<PatientTreatmentListResponse> responses = result.data().stream().map(PatientTreatmentListResponse::from).toList();
 
         return CursorPageResponse.of(responses, request.cursorId(), result.nextCursorId());
+    }
+
+    @GetMapping("/{treatmentId}")
+    public PatientTreatmentDetailResponse getPatientTreatmentDetail(@PathVariable("treatmentId") Long treatmentId,
+                                                                    @Parameter(hidden = true) CurrentUser currentUser) {
+        TreatmentDetailResult result = treatmentService.getTreatmentByPatient(currentUser.userId(), treatmentId);
+
+        return PatientTreatmentDetailResponse.from(result);
     }
 }

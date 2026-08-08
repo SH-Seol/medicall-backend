@@ -4,6 +4,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import com.medicall.domain.address.Address;
 import com.medicall.domain.patient.dto.PatientDetailResult;
 import com.medicall.error.CoreErrorType;
 import com.medicall.error.CoreException;
@@ -14,10 +17,13 @@ public class PatientService {
 
     private final PatientReader patientReader;
     private final PatientWriter patientWriter;
+    private final PatientRepository patientRepository;
 
-    public PatientService(PatientReader patientReader, PatientWriter patientWriter) {
+    public PatientService(PatientReader patientReader, PatientWriter patientWriter,
+                          PatientRepository patientRepository) {
         this.patientReader = patientReader;
         this.patientWriter = patientWriter;
+        this.patientRepository = patientRepository;
     }
 
     /**
@@ -53,5 +59,33 @@ public class PatientService {
         Patient patient = patientWriter.updateProfile(patientId, profileUpdate);
 
         return PatientDetailResult.from(patient);
+    }
+
+    /**
+     * 저장된 주소 목록. 예약 시 매번 주소를 입력하지 않도록 한다.
+     */
+    @Transactional(readOnly = true)
+    public List<Address> getAddresses(Long patientId){
+        return patientRepository.findAddresses(patientId);
+    }
+
+    @Transactional
+    public Address addAddress(Long patientId, Address address){
+        return patientRepository.addAddress(patientId, address);
+    }
+
+    @Transactional
+    public Address updateAddress(Long patientId, Long addressId, Address address){
+        return patientRepository.updateAddress(patientId, addressId, address);
+    }
+
+    @Transactional
+    public void deleteAddress(Long patientId, Long addressId){
+        patientRepository.deleteAddress(patientId, addressId);
+    }
+
+    @Transactional
+    public void changeDefaultAddress(Long patientId, Long addressId){
+        patientRepository.changeDefaultAddress(patientId, addressId);
     }
 }

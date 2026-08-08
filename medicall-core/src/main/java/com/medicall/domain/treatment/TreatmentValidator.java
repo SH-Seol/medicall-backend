@@ -28,4 +28,10 @@ public class TreatmentValidator {
             throw new CoreException(CoreErrorType.TREATMENT_NOT_ACCESSIBLE);
         }
     }
+
+    public void validatePatientTreatment(Treatment treatment, Long patientId) {
+        if(!treatment.patient().id().equals(patientId)){
+            throw new CoreException(CoreErrorType.TREATMENT_NOT_ACCESSIBLE);
+        }
+    }
 }

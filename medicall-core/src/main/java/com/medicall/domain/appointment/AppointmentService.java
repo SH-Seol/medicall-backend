@@ -4,7 +4,22 @@ package com.medicall.domain.appointment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Set;
+
 import com.medicall.domain.appointment.dto.AppointmentDetailResult;
+import com.medicall.domain.appointment.dto.AvailableSlotResult;
+import com.medicall.domain.doctor.Doctor;
+import com.medicall.domain.doctor.DoctorReader;
+import com.medicall.domain.hospital.Hospital;
+import com.medicall.domain.hospital.HospitalReader;
+import com.medicall.domain.hospital.OperatingTime;
+import com.medicall.error.CoreErrorType;
+import com.medicall.error.CoreException;
 import com.medicall.domain.common.enums.AppointmentStatus;
 import com.medicall.domain.appointment.dto.AppointmentListResult;
 import com.medicall.domain.appointment.dto.CreateAppointmentResult;
@@ -19,16 +34,90 @@ public class AppointmentService {
     private final AppointmentReader appointmentReader;
     private final AppointmentWriter appointmentWriter;
     private final AppointmentValidator appointmentValidator;
+    private final DoctorReader doctorReader;
+    private final HospitalReader hospitalReader;
 
-    public AppointmentService(AppointmentReader appointmentReader, AppointmentWriter appointmentWriter, AppointmentValidator appointmentValidator) {
+    public AppointmentService(AppointmentReader appointmentReader, AppointmentWriter appointmentWriter,
+                              AppointmentValidator appointmentValidator,
+                              DoctorReader doctorReader, HospitalReader hospitalReader) {
         this.appointmentReader = appointmentReader;
         this.appointmentWriter = appointmentWriter;
         this.appointmentValidator = appointmentValidator;
+        this.doctorReader = doctorReader;
+        this.hospitalReader = hospitalReader;
     }
 
     @Transactional(readOnly = true)
     public CursorPageResult<Appointment> getAppointmentListByPatient(PatientAppointmentListCriteria criteria) {
         return appointmentReader.findByPatientId(criteria);
+    }
+
+    /**
+     * 특정 의사의 하루 예약 가능 슬롯 조회.
+     * 병원 운영 시간(휴게 시간 제외) 안에서 1시간 단위로 만들고,
+     * 이미 예약이 있거나 지난 시간은 제외한다.
+     */
+    @Transactional(readOnly = true)
+    public List<AvailableSlotResult> getAvailableSlots(Long doctorId, LocalDate date) {
+        Doctor doctor = doctorReader.findById(doctorId);
+        if(doctor.hospital() == null){
+            throw new CoreException(CoreErrorType.DOCTOR_NOT_BELONGS_TO_HOSPITAL);
+        }
+
+        Hospital hospital = hospitalReader.findById(doctor.hospital().id());
+        OperatingTime operatingTime = hospital.weeklySchedule().stream()
+                .filter(time -> time.dayOfWeek() == date.getDayOfWeek())
+                .findFirst()
+                .orElse(null);
+
+        if(operatingTime == null || operatingTime.isClosed()){
+            return List.of();
+        }
+
+        Set<LocalDateTime> reserved = Set.copyOf(appointmentReader.findActiveReservationTimes(
+                doctorId, date.atStartOfDay(), date.plusDays(1).atStartOfDay()));
+
+        LocalDateTime now = LocalDateTime.now();
+        List<AvailableSlotResult> slots = new ArrayList<>();
+
+        // 정시 단위로만 예약을 받으므로 운영 시작 시각을 정시로 올려 시작한다.
+        LocalTime cursor = operatingTime.openingTime().withMinute(0).withSecond(0).withNano(0);
+        if(cursor.isBefore(operatingTime.openingTime())){
+            cursor = cursor.plusHours(1);
+        }
+
+        while(!cursor.plusHours(1).isAfter(operatingTime.closingTime())){
+            LocalDateTime slotTime = LocalDateTime.of(date, cursor);
+            slots.add(resolveSlot(slotTime, cursor, operatingTime, reserved, now));
+
+            cursor = cursor.plusHours(1);
+        }
+
+        return slots;
+    }
+
+    private AvailableSlotResult resolveSlot(LocalDateTime slotTime, LocalTime cursor,
+                                            OperatingTime operatingTime, Set<LocalDateTime> reserved,
+                                            LocalDateTime now) {
+        if(slotTime.isBefore(now)){
+            return AvailableSlotResult.unavailable(slotTime, "지난 시간");
+        }
+        if(isInBreak(cursor, operatingTime)){
+            return AvailableSlotResult.unavailable(slotTime, "휴게 시간");
+        }
+        if(reserved.contains(slotTime)){
+            return AvailableSlotResult.unavailable(slotTime, "이미 예약됨");
+        }
+        return AvailableSlotResult.available(slotTime);
+    }
+
+    private boolean isInBreak(LocalTime cursor, OperatingTime operatingTime) {
+        if(operatingTime.breakStartTime() == null || operatingTime.breakFinishTime() == null){
+            return false;
+        }
+        // 슬롯이 휴게 시간과 조금이라도 겹치면 예약을 받지 않는다.
+        return cursor.isBefore(operatingTime.breakFinishTime())
+                && cursor.plusHours(1).isAfter(operatingTime.breakStartTime());
     }
 
     @Transactional(readOnly = true)
