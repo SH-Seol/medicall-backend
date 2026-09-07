@@ -1,5 +1,6 @@
 package com.medicall.storage.db.domain.chat;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -51,6 +52,16 @@ public class ChatMessageCoreRepository implements ChatMessageRepository {
 
     public List<ChatMessage> findAllByChatRoomId(Long chatRoomId) {
         List<ChatMessageEntity> entities = chatMessageJpaRepository.findAllByChatRoomEntityIdOrderByCreatedAtAsc(chatRoomId);
+        return entities.stream()
+                .map(ChatMessageEntity::toDomainModel)
+                .toList();
+    }
+
+    public List<ChatMessage> findByChatRoomIdSince(Long chatRoomId, LocalDateTime since) {
+        List<ChatMessageEntity> entities =
+                chatMessageJpaRepository.findAllByChatRoomEntityIdAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(
+                        chatRoomId, since);
+
         return entities.stream()
                 .map(ChatMessageEntity::toDomainModel)
                 .toList();

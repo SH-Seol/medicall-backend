@@ -1,5 +1,6 @@
 package com.medicall.storage.db.domain.chat;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,9 @@ public interface ChatMessageJpaRepository extends JpaRepository<ChatMessageEntit
     List<ChatMessageEntity> findByChatRoomEntityIdAndIdLessThanOrderByIdDesc(Long chatRoomId, Long cursorId, Pageable pageable);
     List<ChatMessageEntity> findByChatRoomEntityIdOrderByIdDesc(Long chatRoomId, Pageable pageable);
     List<ChatMessageEntity> findAllByChatRoomEntityIdOrderByCreatedAtAsc(Long chatRoomId);
+
+    List<ChatMessageEntity> findAllByChatRoomEntityIdAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(
+            Long chatRoomId, LocalDateTime since);
 
     /**
      * 채팅방별 마지막 메시지 (목록 화면에서 방 개수만큼 조회하지 않도록 한 번에 가져온다)

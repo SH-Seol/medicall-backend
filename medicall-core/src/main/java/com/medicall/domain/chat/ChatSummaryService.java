@@ -1,5 +1,7 @@
 package com.medicall.domain.chat;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +22,6 @@ public class ChatSummaryService {
     private final WebClient webClient;
     private final ChatMessageRepository chatMessageRepository;
     private final ChatValidator chatValidator;
-    private static final int MAX_MESSAGE_WINDOW = 30;
 
     @Value("${openai.model}")
     private String apiModel;
@@ -48,16 +49,23 @@ public class ChatSummaryService {
 
         List<ChatMessage> messages = getChatMessages(roomId);
         if(messages.isEmpty()){
-            return "요약할 대화 내용이 없습니다.";
+            return "오늘 요약할 대화 내용이 없습니다.";
         }
         String chats = formatChats(messages);
 
         return callOpenAiSummary(chats);
     }
 
+    /**
+     * 요약 대상은 오늘 오간 대화로 한정한다.
+     * 진료는 그날 단위로 이뤄지므로 지난 상담까지 섞이면 요약이 흐려지고,
+     * 방이 오래될수록 프롬프트가 길어져 호출 비용과 입력 한도 초과 위험도 같이 커진다.
+     */
     @Transactional(readOnly = true)
     protected List<ChatMessage> getChatMessages(Long roomId) {
-        return chatMessageRepository.findAllByChatRoomId(roomId);
+        LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
+
+        return chatMessageRepository.findByChatRoomIdSince(roomId, startOfToday);
     }
 
     private String formatChats(List<ChatMessage> chatMessages) {
